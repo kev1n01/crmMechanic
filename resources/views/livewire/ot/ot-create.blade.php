@@ -1,0 +1,143 @@
+<div>
+    <div class="row mt-3">
+        <div class="col-12">
+            <x-form method="save">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row mb-4 justify-content-center ">
+                            <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.code"
+                                label="Código" type="text" :error="$errors->first('editing.code')" :required=true />
+
+                            <x-input.select class="col-xl-2 me-1 mb-2" name="editing.customer" label="Cliente"
+                                :required=true :options="$customers" :error="$errors->first('editing.customer')" />
+
+                            <x-input.select class="col-xl-2 me-1 mb-2" name="editing.status" label="Estado" :required=true
+                                :options="$statuses" :error="$errors->first('editing.status')" />
+            
+                            <x-input.select class="col-xl-2 me-1 mb-2" name="editing.vehicle" label="Vehiculo" :required=true
+                                :options="$vehicles" :error="$errors->first('editing.vehicle')" />
+
+                            <x-input.input-tooltip-error class="col-xl-2 me-1 mb-2" name="editing.odo"
+                                label="ODO" type="text" :error="$errors->first('editing.odo')" :required=true />
+
+                            <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.arrival_date"
+                                label="Fecha de llegada" type="date" :error="$errors->first('editing.arrival_date')" :required=true />
+                            
+                            <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.arrival_hour"
+                                label="Hora de llegada" type="time" :error="$errors->first('editing.arrival_hour')" :required=true />
+                            
+                            <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.departure_date"
+                                label="Fecha de salida" type="date" :error="$errors->first('editing.departure_date')" />
+                            
+                            <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.departure_hour"
+                                label="Fecha de salida" type="time" :error="$errors->first('editing.departure_hour')" />
+
+                            <x-input.textarea class="col-xl-3 " name="editing.observation" label="Observaciones" />
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row m-1">
+                            <div class="app-search dropdown d-lg-block mb-3">
+                                <div class="input-group w-auto" >
+                                    <input type="search" class="form-control me-2"
+                                        placeholder="Buscar conceptos por nombre o tipo..."
+                                        wire:model="searchConcept"
+                                        {{ !$editing->customer ? 'disabled' : '' }}
+                                        >
+                                    <span class="mdi mdi-magnify search-icon"></span>
+                                    <button type="button" wire:click="clearCart" class="btn border border-secondary"
+                                    {{ !$editing->customer ? 'disabled' : '' }}
+                                    ><i class="mdi mdi-reload"></i></button>
+                                </div>
+
+                                <div class="dropdown-menu dropdown-menu-animated dropdown-lg w-75 {{ $concepts ? 'd-block' : '' }}">
+                                    @forelse ($concepts as $c)
+                                        <span class="dropdown-item notify-item"
+                                            wire:click.prevent="addConcept({{ $c->id }})">
+                                            <span>{{ $c->name }}</span>
+                                        </span>
+                                    @empty
+                                        <a class="dropdown-item notify-item">
+                                            <span>No existe este concepto..</span>
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <x-table footer class="table-striped">
+                                <x-slot name="head">
+                                    <th width="40%">Producto</th>
+                                    <th width="20%">Precio U.</th>
+                                    <th width="15%">Cantidad</th>
+                                    <th width="20%">Subtotal</th>
+                                    <th width="10%">Acción</th>
+                                </x-slot>
+    
+                                <x-slot name="body">
+                                    @forelse($cart as $c)
+                                    <x-table.row>
+                                        <x-table.cell>{{ $c->name }}</x-table.cell>
+                                        <x-table.cell>
+                                            <input type="text" id="p{{$c->id}}" class="form-control w-auto"  
+                                            wire:change="updatePriceCart({{ $c->id }}, $('#p' + {{ $c->id }}).val())"
+                                            value="S/ {{ number_format($c->price, 2)}}" >
+                                        </x-table.cell>
+                                        <x-table.cell>
+                                            <input type="number" id="q{{$c->id}}"
+                                            wire:change="updateQuantityCart({{ $c->id }}, $('#q' + {{ $c->id }}).val())"
+                                            style="font-size: 1rem !important;" class="form-control text-center" value="{{$c->quantity}}">
+                                        </x-table.cell>
+                                        <x-table.cell>
+                                            <input type="text" class="form-control w-auto"
+                                            value="S/ {{ number_format( $c->quantity * $c->price, 2) }}" disabled>
+                                        </x-table.cell>
+                                        
+                                        <x-table.cell>
+                                            <a class="action-icon"
+                                            wire:click.prevent="removeItem({{ $c->id }})"><i
+                                                class="mdi mdi-delete"></i></a>
+                                        </x-table.cell>
+                                    </x-table.row>
+                                    @empty
+                                    <x-table.row>
+                                        <x-table.cell class="text-center" colspan="5">
+                                            No hay servicios agregados al OT
+                                        </x-table.cell>
+                                    </x-table.row>
+                                    @endif
+                                    
+                                </x-slot>
+                                <x-slot name="foot">
+                                    <td colspan="2"></td>
+                                    <td>TOTAL</td>
+                                    <td>S/ {{ number_format($total,2) }}</td>
+                                </x-slot>
+                            </x-table>
+                        </div>
+                        
+                        <div class="mt-2"> 
+                            <button type="button" class="btn border border-danger me-2 ms-2" wire:click="cancel"
+                            {{ !$editing->customer ? 'disabled' : '' }}
+                            >Cancelar</button>
+
+                            <button type="submit" class="btn border border-primary me-2">
+                                <span wire:loading.delay wire:target="save" class="spinner-border spinner-border-sm"></span>
+                                Guardar
+                            </button>
+                            
+                            <button type="submit" wire:click="changeAnother" class="btn border border-secondary">
+                                <span wire:loading.delay wire:target="save" class="spinner-border spinner-border-sm"></span>
+                                Guardar y Crear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </x-form>
+        </div>
+    </div>
+</div>
+
