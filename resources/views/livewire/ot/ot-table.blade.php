@@ -129,6 +129,8 @@
                                                 <i class="mdi mdi-square-edit-outline"></i> </a>
                                             <a class="action-icon" onclick="Confirm({{ $wo->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
+                                            <a class="action-icon" wire:click="generatePdf({{ $wo->id }})"><i
+                                                    class="mdi mdi-file-pdf-outline"></i></a>
                                         </x-table.cell>
 
                                     </x-table.row>

@@ -4,8 +4,10 @@ namespace App\Http\Livewire\Ot;
 
 use App\Models\User;
 use App\Models\WorkOrder;
+use App\Models\workOrderDetail;
 use App\Traits\DataTable;
 use Carbon\Carbon;
+use PDF;
 use Livewire\Component;
 
 class OtTable extends Component
@@ -58,11 +60,11 @@ class OtTable extends Component
     public function getWorksProperty()
     {
         return WorkOrder::query()
-            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) => 
-                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
+            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
+            $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
             ->when($this->search, fn ($q, $search) => $q->where('code', 'like', '%' . $search . '%')
-                    ->orwhere('odo', 'like', '%' . $search . '%')
-                    ->withWhereHas('customer', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%')))
+                ->orwhere('odo', 'like', '%' . $search . '%')
+                ->withWhereHas('customer', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%')))
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
             ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer', $customer))
             ->orderBy($this->sortField, $this->sortDirection)
@@ -82,6 +84,17 @@ class OtTable extends Component
         $wo->workOrderDetail()->delete();
         $wo->delete();
         $this->emit('success_alert', 'El orden de trabajo fue eliminado');
+    }
+
+    public function generatePdf(WorkOrder $wo)
+    {
+        $wod = $wo->workOrderDetail()->get();
+
+        $pdf = PDF::loadView('invoice', ['wo' => $wo, 'wod' => $wod])->setPaper('a4', 'landscape')->stream();
+        return response()->streamDownload(
+            fn () => print($pdf),
+            $wo->code . ' ' . $wo->vehiclePlate->license_plate . ' ' . $wo->customerUser->name . ".pdf"
+        );
     }
 
     public function exportSelected()
