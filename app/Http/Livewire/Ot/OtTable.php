@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Ot;
 use App\Models\User;
 use App\Models\WorkOrder;
 use App\Traits\DataTable;
+use Carbon\Carbon;
 use Livewire\Component;
 
 class OtTable extends Component
@@ -57,7 +58,8 @@ class OtTable extends Component
     public function getWorksProperty()
     {
         return WorkOrder::query()
-            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q) => $q->whereBetween('created_at', [$this->filters['fromDate'] . ' 00:00:00', $this->filters['toDate'] . ' 23:59:00']))
+            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) => 
+                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
             ->when($this->search, fn ($q, $search) => $q->where('code', 'like', '%' . $search . '%')
                     ->orwhere('odo', 'like', '%' . $search . '%')
                     ->withWhereHas('customer', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%')))

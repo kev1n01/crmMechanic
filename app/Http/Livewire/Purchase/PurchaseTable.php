@@ -6,6 +6,7 @@ use App\Models\Provider;
 use App\Models\Purchase;
 use App\Models\User;
 use App\Traits\DataTable;
+use Carbon\Carbon;
 use Livewire\Component;
 
 class PurchaseTable extends Component
@@ -60,8 +61,8 @@ class PurchaseTable extends Component
     public function getPurchasesProperty()
     {
         return Purchase::query()
-            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q) => $q->whereBetween('created_at', [$this->filters['fromDate'] . ' 00:00:00', $this->filters['toDate'] . ' 23:59:00']))
-            ->when($this->search, fn ($q, $search) => $q->where('code_purchase', 'like', '%' . $search . '%'))
+            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) => 
+                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))            ->when($this->search, fn ($q, $search) => $q->where('code_purchase', 'like', '%' . $search . '%'))
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
             ->when($this->filters['buyer'], fn ($q, $buyer) => $q->where('user_id', $buyer))
             ->when($this->filters['provider'], fn ($q, $provider) => $q->where('provider_id', $provider))

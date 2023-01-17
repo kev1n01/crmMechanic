@@ -20,11 +20,11 @@
 
                                 <div class="col-6">
                                     <input type="search" class="form-control" wire:model="search"
-                                        placeholder="Buscar..." >
+                                        placeholder="Buscar...">
                                 </div>
 
                                 <div class="col-3">
-                                        <a wire:click="showFilter"
+                                    <a wire:click="showFilter"
                                         class="action-icon">{{ $showFilters ? 'Ocultar filtros..' : 'Mostrar filtros..' }}</a>
                                 </div>
                             </div>
@@ -38,13 +38,14 @@
                             </div>
                         </div>
                         @if ($showFilters)
-                            <div class="w-100 border shadow-none bg-light rounded">
-                                <div class="m-2" wire:target="showFilter">
-                                        <x-input.input-group>
-                                            <x-input.input-label name="filters.fromDate" label="Desde" class="me-2"
-                                                type="date" />
-                                            <x-input.input-label name="filters.toDate" label="Hasta" type="date" />
-                                        </x-input.input-group>
+                            <div class="border shadow-none bg-light rounded">
+                                <div class="row m-1">
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" />
+                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -85,19 +86,21 @@
                                                     class="mdi mdi-delete"></i></a>
                                         </x-table.cell>
 
-                                    </x-table.row>                                   
+                                    </x-table.row>
                                 @empty
-                                        <x-table.row>
-                                            <x-table.cell class="text-center" colspan="5">
-                                                No hay modelos encontrados
-                                            </x-table.cell>
-                                        </x-table.row>
+                                    <x-table.row>
+                                        <x-table.cell class="text-center" colspan="5">
+                                            No hay modelos encontrados
+                                        </x-table.cell>
+                                    </x-table.row>
                                 @endforelse
                             </x-slot>
-
                         </x-table>
-
-                        {{ $models->links() }}
+                    </div>
+                    <div class="d-flex flex-row-reverse bd-highlight">
+                        <div class="p-2 bd-highlight">
+                            {{ $models->links() }}
+                        </div>
                     </div>
                 </div>
             </div>

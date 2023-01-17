@@ -6,6 +6,7 @@ use App\Models\BrandProduct;
 use App\Models\CategoryProduct;
 use App\Models\Product;
 use App\Traits\DataTable;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Illuminate\Validation\Rule;
@@ -70,7 +71,8 @@ class ProductTable extends Component
     public function getProductsProperty()
     {
         return Product::query()
-            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q) => $q->whereBetween('created_at', [$this->filters['fromDate'] . ' 00:00:00', $this->filters['toDate'] . ' 23:59:00']))
+            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) => 
+                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
             ->when($this->search, fn ($q, $search) => $q->where('name', 'like', '%' . $search . '%')
                 ->orWhere('code', 'like', '%' . $search . '%')->orWhere('stock', 'like', '%' . $search . '%'))
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))

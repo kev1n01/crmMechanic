@@ -34,17 +34,17 @@
                                 <button type="button" wire:click="create" class="btn btn-dark mb-2 me-2"><i
                                         class="mdi mdi-plus me-1"></i>
                                     Nuevo</button>
-                                <button type="button" class="btn btn-light mb-2">Export</button>
                             </div>
                         </div>
                         @if ($showFilters)
                             <div class="w-100 border shadow-none bg-light rounded">
-                                <div class="m-2" wire:target="showFilter">
-                                        <x-input.input-group>
-                                            <x-input.input-label name="filters.fromDate" label="Desde" class="me-2"
-                                                type="date" />
-                                            <x-input.input-label name="filters.toDate" label="Hasta" type="date" />
-                                        </x-input.input-group>
+                                <div class="row m-1" >
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" />
+                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -93,14 +93,14 @@
                                             No hay marcas encontradas
                                         </x-table.cell>
                                     </x-table.row>
-                                    
                                 @endforelse
-
                             </x-slot>
-
                         </x-table>
-
-                        {{ $brands->links() }}
+                    </div>
+                    <div class="d-flex flex-row-reverse bd-highlight">
+                        <div class="p-2 bd-highlight">
+                            {{ $brands->links() }}
+                        </div>
                     </div>
                 </div>
             </div>

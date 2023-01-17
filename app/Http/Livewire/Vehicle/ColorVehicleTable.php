@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Vehicle;
 
 use App\Models\ColorVehicle;
 use App\Traits\DataTable;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -28,8 +29,8 @@ class ColorVehicleTable extends Component
         // sleep(0.5); //se toma 2 seg para renderizar
         return view('livewire.vehicle.color-vehicle-table',[
             'colors' => ColorVehicle::query()
-            ->when($this->filters['fromDate'] && $this->filters['toDate'],fn($q) => $q->whereBetween('created_at',[$this->filters['fromDate'].' 00:00:00',$this->filters['toDate'].' 23:59:00']))
-            ->search('name', $this->search)
+            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) => 
+                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))            ->search('name', $this->search)
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage),
             ])->extends('layouts.admin.app')->section('content');

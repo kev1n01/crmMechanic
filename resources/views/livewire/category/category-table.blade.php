@@ -1,4 +1,4 @@
-@section('title','Categorias de productos')
+@section('title', 'Categorias de productos')
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -53,13 +53,14 @@
                             </div>
                         </div>
                         @if ($showFilters)
-                            <div class="w-100 border shadow-none bg-light rounded" >
-                                <div class="m-2" wire:target="showFilter">
-                                        <x-input.input-group>
-                                            <x-input.input-label name="filters.fromDate" label="Desde" class="me-2"
-                                                type="date" />
-                                            <x-input.input-label name="filters.toDate" label="Hasta" type="date" />
-                                        </x-input.input-group>
+                            <div class="border shadow-none bg-light rounded">
+                                <div class="row m-1" >
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" />
+                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -76,7 +77,7 @@
                                 </x-table.heading>
 
                                 <x-table.heading sortable wire:click="sortBy('created_at')" :direction="$sortField == 'created_at' ? $sortDirection : null">
-                                Fecha creación
+                                    Fecha creación
                                 </x-table.heading>
 
                                 <x-table.heading>Acción</x-table.heading>
@@ -101,31 +102,21 @@
                                             <a class="action-icon" onclick="Confirm({{ $category->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
                                         </x-table.cell>
-
                                     </x-table.row>
-
                                 @empty
-
-                                    @if ($search || $filters)
-                                        <x-table.row>
-                                            <x-table.cell class="text-center" colspan="5">
-                                                No se encontró la categoría
-                                            </x-table.cell>
-                                        </x-table.row>
-                                    @else
-                                        <x-table.row>
-                                            <x-table.cell class="text-center" colspan="5">
-                                                No hay categorias registradas
-                                            </x-table.cell>
-                                        </x-table.row>
-                                    @endif
+                                    <x-table.row>
+                                        <x-table.cell class="text-center" colspan="5">
+                                            No hay categorias encontradas
+                                        </x-table.cell>
+                                    </x-table.row>
                                 @endforelse
-
                             </x-slot>
-
                         </x-table>
-
-                        {{ $categories->links() }}
+                    </div>
+                    <div class="d-flex flex-row-reverse bd-highlight">
+                        <div class="p-2 bd-highlight">
+                            {{ $categories->links() }}
+                        </div>
                     </div>
                 </div>
             </div>

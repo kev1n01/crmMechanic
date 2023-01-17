@@ -35,7 +35,7 @@
                                         class="mdi mdi-plus me-1"></i>
                                     Nuevo</button>
                                 <button type="button" class="btn btn-light mb-2 dropdown-toggle"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones  <span
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones <span
                                         class="{{ count($selected) == 0 ? 'd-none' : '' }} fs-6 badge rounded-pill bg-primary">{{ count($selected) }}</span></button>
                                 <div class="dropdown-menu">
                                     <button class="dropdown-item action-icon" wire:click="exportSelected"><i
@@ -48,25 +48,25 @@
                             </div>
                         </div>
                         @if ($showFilters)
-                            <div class="w-100 border shadow-none bg-light rounded ">
-                                <div class="m-2" wire:target="showFilter">
-                                    <div class="d-flex row justify-content-center">
-                                        <x-input.input-group>
-                                            <x-input.input-label name="filters.fromDate" label="Desde" class="me-2"
-                                                type="date" />
-                                            <x-input.input-label name="filters.toDate" label="Hasta" type="date"
-                                                class="me-2" />
-
-                                            <x-input.select name="filters.status" label="Estado" :options="$statuses"
-                                                class="me-2" />
-
-                                            <x-input.select name="filters.category" label="Categoría" :options="$categories"
-                                                class="me-2" />
-
-                                            <x-input.select name="filters.brand" label="Marca" :options="$brands"
-                                                class="me-2" />
-                                        </x-input.input-group>
-
+                            <div class="border shadow-none bg-light rounded ">
+                                <div class="row m-1">
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.status" label="Estado"
+                                            :options="$statuses" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.category" label="Categoria"
+                                            :options="$categories" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.brand" label="Marca"
+                                            :options="$brands" />
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +75,7 @@
                     <div class="table-responsive">
                         <x-table>
                             <x-slot name="head">
-                                
+
                                 <x-table.heading style="width: 20px;">
                                     <x-input.check-input name="selectedPage" />
                                 </x-table.heading>
@@ -139,31 +139,21 @@
                                             <a class="action-icon" onclick="Confirm({{ $product->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
                                         </x-table.cell>
-
                                     </x-table.row>
-
                                 @empty
-
-                                    @if ($search  || $filters)
-                                        <x-table.row>
-                                            <x-table.cell class="text-center" colspan="8">
-                                                No se encontró el producto
-                                            </x-table.cell>
-                                        </x-table.row>
-                                    @else
-                                        <x-table.row>
-                                            <x-table.cell class="text-center" colspan="8">
-                                                No hay productos registradas
-                                            </x-table.cell>
-                                        </x-table.row>
-                                    @endif
+                                    <x-table.row>
+                                        <x-table.cell class="text-center" colspan="8">
+                                            No hay productos encontradas
+                                        </x-table.cell>
+                                    </x-table.row>
                                 @endforelse
-
                             </x-slot>
-
                         </x-table>
-
-                        {{ $products->links() }}
+                    </div>
+                    <div class="d-flex flex-row-reverse bd-highlight">
+                        <div class="p-2 bd-highlight">
+                            {{ $products->links() }}
+                        </div>
                     </div>
                 </div>
             </div>

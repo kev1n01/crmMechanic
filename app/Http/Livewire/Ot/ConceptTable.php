@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Ot;
 
 use App\Models\Concept;
 use App\Traits\DataTable;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -13,37 +14,48 @@ class ConceptTable extends Component
 
     public $showFilters = false;
 
-    protected $listeners = ['delete'];  
+    protected $listeners = ['delete'];
 
-    protected $queryString = ['search'=> ['except' => '']];  
+    protected $queryString = ['search' => ['except' => '']];
 
     public $filters = ['fromDate' => null, 'toDate' => null, 'type' => ''];
 
-    public function mount(){ $this->sortField = 'id'; $this->editing = $this->makeBlankFields(); $this->types = Concept::TYPES;
-     } 
+    public function mount()
+    {
+        $this->sortField = 'id';
+        $this->editing = $this->makeBlankFields();
+        $this->types = Concept::TYPES;
+    }
 
-    public function showFilter(){ $this->showFilters = $this->showFilters ? false : true; }
+    public function showFilter()
+    {
+        $this->showFilters = $this->showFilters ? false : true;
+    }
 
     public function render()
     {
         // sleep(0.5); //se toma 2 seg para renderizar
-        return view('livewire.ot.concept-table',[
+        return view('livewire.ot.concept-table', [
             'concepts' => Concept::query()
-            ->when($this->filters['fromDate'] && $this->filters['toDate'],fn($q) => $q->whereBetween('created_at',[$this->filters['fromDate'].' 00:00:00',$this->filters['toDate'].' 23:59:00']))
-            ->when($this->filters['type'], fn ($q, $type) => $q->where('type', $type))
-            ->search('name', $this->search)
-            ->orderBy($this->sortField, $this->sortDirection)
-            ->paginate($this->perPage),
-            ])->extends('layouts.admin.app')->section('content');
+                ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
+                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
+                ->when($this->filters['type'], fn ($q, $type) => $q->where('type', $type))
+                ->search('name', $this->search)
+                ->orderBy($this->sortField, $this->sortDirection)
+                ->paginate($this->perPage),
+        ])->extends('layouts.admin.app')->section('content');
     }
-   
-    public function delete(Concept $concept){ $concept->delete(); }
+
+    public function delete(Concept $concept)
+    {
+        $concept->delete();
+    }
 
     /* FOR MODAL */
     public $idModal = 'conceptModal';
-    public $nameModal ;
+    public $nameModal;
     public Concept $editing;
-        
+
     public function rules()
     {
         return [
@@ -60,31 +72,40 @@ class ConceptTable extends Component
         'editing.type.in' => 'El valor es inválido',
         'editing.type.required' => 'El tipo es obligatorio',
     ];
-    
-    public function save(){
+
+    public function save()
+    {
         $this->validate();
-        $this->editing->save();        
-        $this->nameModal === 'Crear nuevo concepto' ? $this->emit('success_alert','Concepto creado') : $this->emit('success_alert','Concepto actualizado');
+        $this->editing->save();
+        $this->nameModal === 'Crear nuevo concepto' ? $this->emit('success_alert', 'Concepto creado') : $this->emit('success_alert', 'Concepto actualizado');
         $this->dispatchBrowserEvent('close-modal');
     }
 
-    public function makeBlankFields(){ return Concept::make(); /*para dejar vacios los inpust*/ }
-    
-    public function create(){
-        if($this->editing->getKey()) $this->editing = $this->makeBlankFields(); // para preservar cambios en los inputs
+    public function makeBlankFields()
+    {
+        return Concept::make(); /*para dejar vacios los inpust*/
+    }
+
+    public function create()
+    {
+        if ($this->editing->getKey()) $this->editing = $this->makeBlankFields(); // para preservar cambios en los inputs
         $this->nameModal = 'Crear nueva concepto';
         $this->resetErrorBag();
         $this->resetValidation();
         $this->dispatchBrowserEvent('open-modal');
     }
 
-    public function edit(Concept $concept){
+    public function edit(Concept $concept)
+    {
         $this->nameModal = 'Editar concepto';
         $this->resetErrorBag();
         $this->resetValidation();
         $this->dispatchBrowserEvent('open-modal');
-        if($this->editing->isNot($concept)) $this->editing = $concept; // para preservar cambios en los inputs
+        if ($this->editing->isNot($concept)) $this->editing = $concept; // para preservar cambios en los inputs
     }
 
-    public function closeModal(){ $this->dispatchBrowserEvent('close-modal'); }
+    public function closeModal()
+    {
+        $this->dispatchBrowserEvent('close-modal');
+    }
 }

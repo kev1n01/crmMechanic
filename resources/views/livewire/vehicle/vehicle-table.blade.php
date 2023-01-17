@@ -35,7 +35,7 @@
                                         class="mdi mdi-plus me-1"></i>
                                     Nuevo</button>
                                 <button type="button" class="btn btn-light mb-2 dropdown-toggle"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones  <span
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones <span
                                         class="{{ count($selected) == 0 ? 'd-none' : '' }} fs-6 badge rounded-pill bg-primary">{{ count($selected) }}</span></button>
                                 <div class="dropdown-menu">
                                     <button class="dropdown-item action-icon" wire:click="exportSelected"><i
@@ -48,34 +48,31 @@
                             </div>
                         </div>
                         @if ($showFilters)
-                            <div class="w-100 border shadow-none bg-light rounded ">
-                                <div class="m-2" wire:target="showFilter">
-                                    <div class="d-flex row justify-content-center">
-                                        <x-input.input-group>
-                                            <x-input.input-label name="filters.fromDate" label="Desde" class="me-2"
-                                                type="date" />
-                                            <x-input.input-label name="filters.toDate" label="Hasta" type="date"
-                                                class="me-2" />
-
-                                            <x-input.select name="filters.customer" label="Cliente" :options="$customers"
-                                                class="me-2" />
-
-                                            <x-input.select name="filters.model_year" label="Año" :options="$years"
-                                                class="me-2" />
-
-                                            <x-input.select name="filters.type" label="Tipo" :options="$types"
-                                                class="me-2" />
-
-                                            <x-input.select name="filters.brand" label="Marca" :options="$brands"
-                                                class="me-2" />
-
-                                            <x-input.select name="filters.model" label="Modelo" :options="$models"
-                                                class="me-2" />
-
-                                            <x-input.select name="filters.color" label="Color" :options="$colors"
-                                                class="me-2" />
-                                        </x-input.input-group>
-
+                            <div class="border shadow-none bg-light rounded">
+                                <div class="row m-1">
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.customer" label="Cliente" :options="$customers" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.model_year" label="Año" :options="$years" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.type" label="Tipo" :options="$types" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.brand" label="Marca" :options="$brands" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.model" label="Modelo" :options="$models" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.color" label="Color" :options="$colors" />
                                     </div>
                                 </div>
                             </div>
@@ -100,16 +97,16 @@
 
                                 <x-table.heading sortable wire:click="sortBy('brand_vehicle')" :direction="$sortField == 'brand_vehicle' ? $sortDirection : null">Marca
                                 </x-table.heading>
-                                
+
                                 <x-table.heading sortable wire:click="sortBy('model_vehicle')" :direction="$sortField == 'model_vehicle' ? $sortDirection : null">Model
                                 </x-table.heading>
 
                                 <x-table.heading sortable wire:click="sortBy('color_vehicle')" :direction="$sortField == 'color_vehicle' ? $sortDirection : null">Color
                                 </x-table.heading>
-                               
+
                                 <x-table.heading sortable wire:click="sortBy('model_year')" :direction="$sortField == 'model_year' ? $sortDirection : null">Año
                                 </x-table.heading>
-                                
+
                                 <x-table.heading sortable wire:click="sortBy('odo')" :direction="$sortField == 'odo' ? $sortDirection : null">ODO
                                 </x-table.heading>
 
@@ -142,22 +139,21 @@
                                             <a class="action-icon" onclick="Confirm({{ $vehicle->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
                                         </x-table.cell>
-
                                     </x-table.row>
-
                                 @empty
-                                        <x-table.row>
-                                            <x-table.cell class="text-center" colspan="10">
-                                                No hay vehiculos encontrados
-                                            </x-table.cell>
-                                        </x-table.row>
+                                    <x-table.row>
+                                        <x-table.cell class="text-center" colspan="10">
+                                            No hay vehiculos encontrados
+                                        </x-table.cell>
+                                    </x-table.row>
                                 @endforelse
-
                             </x-slot>
-
                         </x-table>
-
-                        {{ $vehicles->links() }}
+                    </div>
+                    <div class="d-flex flex-row-reverse bd-highlight">
+                        <div class="p-2 bd-highlight">
+                            {{ $vehicles->links() }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -171,7 +167,7 @@
                     <x-input.input-tooltip-error class="col-12" name="editing.license_plate" label="Placa de vehiculo"
                         type="text" :error="$errors->first('editing.license_plate')" :required=true />
                 </x-input.input-group>
-           
+
                 <x-input.input-group>
                     <x-input.input-tooltip-error class="col-12" name="editing.odo" label="Kilometraje"
                         type="text" :error="$errors->first('editing.odo')" :required=true />
@@ -183,23 +179,23 @@
                 </x-input.input-group>
 
                 <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.type_vehicle" label="Tipo de vehiculo" :options="$types"
-                        :error="$errors->first('editing.type_vehicle')" :required=true />
+                    <x-input.select class="col-12" name="editing.type_vehicle" label="Tipo de vehiculo"
+                        :options="$types" :error="$errors->first('editing.type_vehicle')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.brand_vehicle" label="Marca de vehiculo" :options="$brands"
-                        :error="$errors->first('editing.brand_vehicle')" :required=true />
+                    <x-input.select class="col-12" name="editing.brand_vehicle" label="Marca de vehiculo"
+                        :options="$brands" :error="$errors->first('editing.brand_vehicle')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.model_vehicle" label="Tipo de vehiculo" :options="$types"
-                        :error="$errors->first('editing.model_vehicle')" :required=true />
+                    <x-input.select class="col-12" name="editing.model_vehicle" label="Tipo de vehiculo"
+                        :options="$types" :error="$errors->first('editing.model_vehicle')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.color_vehicle" label="Color de vehiculo" :options="$colors"
-                        :error="$errors->first('editing.color_vehicle')" :required=true />
+                    <x-input.select class="col-12" name="editing.color_vehicle" label="Color de vehiculo"
+                        :options="$colors" :error="$errors->first('editing.color_vehicle')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>

@@ -35,7 +35,7 @@
                                         class="mdi mdi-plus me-1"></i>
                                     Nuevo</button>
                                 <button type="button" class="btn btn-light mb-2 dropdown-toggle"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones  <span
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones <span
                                         class="{{ count($selected) == 0 ? 'd-none' : '' }} fs-6 badge rounded-pill bg-primary">{{ count($selected) }}</span></button>
                                 <div class="dropdown-menu">
                                     <button class="dropdown-item action-icon" wire:click="exportSelected"><i
@@ -47,11 +47,17 @@
                             </div>
                         </div>
                         @if ($showFilters)
-                            <div class="wborder shadow-none bg-light rounded">
-                                <div class="m-2" wire:target="showFilter">
-                                        <x-input.input-group>
-                                            <x-input.select name="filters.status" label="Estado" :options="$statuses" />
-                                        </x-input.input-group>
+                            <div class="border shadow-none bg-light rounded">
+                                <div class="row m-1" >
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.voucher" label="Tipo de comprobante" :options="$vouchers"/>
+                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -64,19 +70,21 @@
                                     <x-input.check-input name="selectedPage" />
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('name')" :direction="$sortField == 'name' ? $sortDirection : null">Nombre
+                                <x-table.heading sortable wire:click="sortBy('description')" :direction="$sortField == 'description' ? $sortDirection : null">
+                                    Descripción
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('phone')" :direction="$sortField == 'phone' ? $sortDirection : null">Celular
+                                <x-table.heading sortable wire:click="sortBy('date')" :direction="$sortField == 'date' ? $sortDirection : null">Fecha
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('address')" :direction="$sortField == 'address' ? $sortDirection : null">Dirección
+                                <x-table.heading sortable wire:click="sortBy('time')" :direction="$sortField == 'time' ? $sortDirection : null">Hora
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('ruc')" :direction="$sortField == 'ruc' ? $sortDirection : null">Ruc
+                                <x-table.heading sortable wire:click="sortBy('total')" :direction="$sortField == 'total' ? $sortDirection : null">Total
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('status')" :direction="$sortField == 'status' ? $sortDirection : null">Estado
+                                <x-table.heading sortable wire:click="sortBy('type_voucher')" :direction="$sortField == 'type_voucher' ? $sortDirection : null">
+                                    Comprobante
                                 </x-table.heading>
 
                                 <x-table.heading>Acción</x-table.heading>
@@ -86,60 +94,52 @@
 
                             <x-slot name="body">
 
-                                @forelse ($providers as $provider)
-                                    <x-table.row wire:key="row-{{ $provider->id }}" wire:loading.class="bg-light"
+                                @forelse ($costs as $cost)
+                                    <x-table.row wire:key="row-{{ $cost->id }}" wire:loading.class="bg-light"
                                         wire:target="search">
 
                                         <x-table.cell>
-                                            <x-input.check-input name="selected" value="{{ $provider->id }}" />
+                                            <x-input.check-input name="selected" value="{{ $cost->id }}" />
                                         </x-table.cell>
 
-                                        <x-table.cell>{{ $provider->name }}</x-table.cell>
+                                        <x-table.cell>{{ $cost->description }}</x-table.cell>
 
-                                        <x-table.cell>{{ $provider->phone }}</x-table.cell>
+                                        <x-table.cell>{{ $cost->date }}</x-table.cell>
 
-                                        <x-table.cell>{{ $provider->address }}</x-table.cell>
+                                        <x-table.cell>{{ $cost->time }}</x-table.cell>
 
-                                        <x-table.cell>{{ $provider->ruc }}</x-table.cell>
+                                        <x-table.cell>{{ $cost->total }}</x-table.cell>
 
                                         <x-table.cell>
-                                            <span class="badge badge-{{ $provider->status_color }}-lighten">
-                                                {{ strtoupper($provider->status) }}
+                                            <span class="badge badge-{{ $cost->voucher_color }}-lighten">
+                                                {{ strtoupper($cost->type_voucher) }}
                                             </span>
                                         </x-table.cell>
 
                                         <x-table.cell>
 
-                                            <a class="action-icon" wire:click="edit({{ $provider->id }})">
+                                            <a class="action-icon" wire:click="edit({{ $cost->id }})">
                                                 <i class="mdi mdi-square-edit-outline"></i> </a>
-                                            <a class="action-icon" onclick="Confirm({{ $provider->id }}, 'delete')"><i
+                                            <a class="action-icon" onclick="Confirm({{ $cost->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
                                         </x-table.cell>
 
                                     </x-table.row>
 
                                 @empty
-
-                                    @if ($search || $filters)
-                                        <x-table.row>
-                                            <x-table.cell class="text-center" colspan="8">
-                                                No se encontró el proveedor
-                                            </x-table.cell>
-                                        </x-table.row>
-                                    @else
-                                        <x-table.row>
-                                            <x-table.cell class="text-center" colspan="8">
-                                                No hay proveedores registradas
-                                            </x-table.cell>
-                                        </x-table.row>
-                                    @endif
+                                    <x-table.row>
+                                        <x-table.cell class="text-center" colspan="8">
+                                            No hay gastos encontrados
+                                        </x-table.cell>
+                                    </x-table.row>
                                 @endforelse
-
                             </x-slot>
-
                         </x-table>
-
-                        {{ $providers->links() }}
+                    </div>
+                    <div class="d-flex flex-row-reverse bd-highlight">
+                        <div class="p-2 bd-highlight">
+                            {{ $costs->links() }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -149,28 +149,28 @@
         <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
             <x-slot name="body">
                 <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.name" label="Nombre de proveedor"
-                        type="text" :error="$errors->first('editing.name')" :required=true />
+                    <x-input.input-tooltip-error class="col-12" name="editing.description" label="Descripción"
+                        type="text" :error="$errors->first('editing.description')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.phone" label="Celular" type="text"
-                        :error="$errors->first('editing.phone')" :required=true />
+                    <x-input.input-tooltip-error class="col-12" name="editing.date" label="Fecha" type="date"
+                        :error="$errors->first('editing.date')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.address" label="Dirección" type="text"
-                        :error="$errors->first('editing.address')" :required=true />
+                    <x-input.input-tooltip-error class="col-12" name="editing.time" label="Hora" type="time"
+                        :error="$errors->first('editing.time')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.ruc" label="Ruc" type="text"
-                        :error="$errors->first('editing.ruc')" :required=true />
+                    <x-input.input-tooltip-error class="col-12" name="editing.total" label="Monto" type="text"
+                        :error="$errors->first('editing.total')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.status" label="Estado" :options="$statuses"
-                        :error="$errors->first('editing.status')" />
+                    <x-input.select class="col-12" name="editing.type_voucher" label="Tipo de comprobante"
+                        :options="$vouchers" :error="$errors->first('editing.type_voucher')" />
                 </x-input.input-group>
 
             </x-slot>
@@ -190,10 +190,10 @@
 @push('js')
     <script>
         window.addEventListener('close-modal', event => {
-            $('#providerModal').modal('hide');
+            $('#costModal').modal('hide');
         });
         window.addEventListener('open-modal', event => {
-            $('#providerModal').modal('show');
+            $('#costModal').modal('show');
         });
     </script>
 @endpush

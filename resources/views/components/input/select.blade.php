@@ -1,6 +1,6 @@
 @props(['error' => false, 'name' => '', 'label' => '', 'options' => [], 'required' => false])
 
-<div {{ $attributes->merge(['class'=>'position-relative']) }} >
+<div {{ $attributes->merge(['class'=>'position-relative mb-2']) }} >
     <label for="{{ $name }}" class="form-label">{{ $label }} <span
             class="text-danger">{{ $required ? '*' : '' }}</span>
     </label>
