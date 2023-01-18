@@ -29,3 +29,4 @@ Route::get('conceptos',\App\Http\Livewire\Ot\ConceptTable::class)->name('concept
 
 //Rutas para Gastos
 Route::get('gastos',\App\Http\Livewire\Cost\CostTable::class)->name('gastos');
+

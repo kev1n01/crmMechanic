@@ -190,7 +190,7 @@ class VehicleTable extends Component
 
     public function makeBlankFields()
     {
-        return Vehicle::make(['model_year' => Carbon::now()->format('Y')]); /*para dejar vacios los inpust*/
+        return Vehicle::make(); /*para dejar vacios los inpust*/
     }
 
     public function create()

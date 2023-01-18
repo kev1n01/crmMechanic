@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\User;
+use Carbon\Carbon;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -190,6 +191,7 @@ class SaleCreate extends Component
     {
         $this->validate();
         $this->editing->total = $this->total;
+        $this->editing->date_sale = Carbon::parse($this->editing->date_sale)->format('Y-m-d');
         $this->editing->user_id = 10;
         $this->editing->cash = $this->cash;
         $this->editing->change = $this->change;

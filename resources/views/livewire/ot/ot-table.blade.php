@@ -51,18 +51,22 @@
                             <div class="w-100 border shadow-none bg-light rounded ">
                                 <div class="row m-1">
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.fromDate" label="Desde" />
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.toDate" label="Hasta" />
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.status" label="Tipo de comprobante"
+                                        <x-input.select name="filters.status" label="Estado"
                                             :options="$statuses" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.customer" label="Tipo de comprobante"
+                                        <x-input.select name="filters.customer" label="Cliente"
                                             :options="$customers" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.vehicle" label="Vehiculo"
+                                            :options="$vehicles" />
                                     </div>
                                 </div>
                             </div>

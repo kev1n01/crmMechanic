@@ -8,6 +8,7 @@ use App\Models\Purchase;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use App\Models\Product;
 use App\Models\PurchaseDetail;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
 class PurchaseCreate extends Component
@@ -175,6 +176,8 @@ class PurchaseCreate extends Component
     {
         $this->validate();
         $this->editing->total = $this->total;
+        $this->editing->total = $this->total;
+        $this->editing->date_purchase = Carbon::parse($this->editing->date_purchase)->format('Y-m-d') ;
         $this->editing->user_id = 1;
         $this->editing->save();
         $cartItems = Cart::session($this->editing->provider->name)->getContent();

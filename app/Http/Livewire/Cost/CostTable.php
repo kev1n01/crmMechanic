@@ -127,6 +127,7 @@ class CostTable extends Component
     public function save()
     {
         $this->validate();
+        $this->editing->date = Carbon::parse($this->editing->date)->format('Y-m-d');
         $this->editing->save();
         $this->nameModal === 'Registrar nuevo gasto' ? $this->emit('success_alert', 'Gasto registrado') : $this->emit('success_alert', 'Gasto actualizado');
         $this->dispatchBrowserEvent('close-modal');

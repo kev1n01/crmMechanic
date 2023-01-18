@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Ot;
 
 use App\Models\User;
+use App\Models\Vehicle;
 use App\Models\WorkOrder;
 use App\Models\workOrderDetail;
 use App\Traits\DataTable;
@@ -24,6 +25,7 @@ class OtTable extends Component
         'toDate' => null,
         'status' => '',
         'customer' => '',
+        'vehicle' => '',
     ];
 
     protected $listeners = ['delete', 'deleteSelected', 'refreshList' => '$refresh'];
@@ -35,6 +37,7 @@ class OtTable extends Component
         $this->sortField = 'code';
         $this->statuses = WorkOrder::STATUSES;
         $this->customers = User::pluck('name', 'id');
+        $this->vehicles = Vehicle::pluck('license_plate', 'id');
     }
 
     public function updatedFilters()
@@ -64,7 +67,9 @@ class OtTable extends Component
             $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
             ->when($this->search, fn ($q, $search) => $q->where('code', 'like', '%' . $search . '%')
                 ->orwhere('odo', 'like', '%' . $search . '%')
-                ->withWhereHas('customer', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%')))
+                ->withWhereHas('customerUser', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%'))
+                ->withWhereHas('vehiclePlate', fn ($q2) => $q2->where('license_plate', 'like', '%' . $search . '%'))
+                )
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
             ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer', $customer))
             ->orderBy($this->sortField, $this->sortDirection)

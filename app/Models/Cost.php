@@ -10,10 +10,10 @@ class Cost extends Model
     use HasFactory;
 
     const VOUCHERS = [
-        'factura electrónica' => 'Factura Electrónica',
-        'boleta de compra electrónica' => 'Boleta de compra Electrónica',
-        'nota de crédito electrónica' => 'Nota de Crédito Electrónica',
-        'nota de débito electrónica' => 'Nota de Débito Electrónica',
+        'factura electronica' => 'Factura Electronica',
+        'boleta de compra electronica' => 'Boleta de compra Electronica',
+        'nota de crédito electronica' => 'Nota de Crédito Electronica',
+        'nota de débito electronica' => 'Nota de Débito Electronica',
     ];
     
     protected $fillable = [
@@ -26,10 +26,10 @@ class Cost extends Model
 
     public function getVoucherColorAttribute(){
         return [
-            'factura Electrónica' => 'success',
-            'boleta de compra electrónica' => 'danger',
-            'nota de crédito electrónica' => 'info',
-            'nota de débito electrónica' => 'primary',
+            'factura electronica' => 'success',
+            'boleta de compra electronica' => 'warning',
+            'nota de crédito electronica' => 'info',
+            'nota de débito electronica' => 'primary',
         ][$this->type_voucher] ?? 'secondary';
     }
 }

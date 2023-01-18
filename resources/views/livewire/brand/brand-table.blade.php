@@ -40,10 +40,10 @@
                             <div class="w-100 border shadow-none bg-light rounded">
                                 <div class="row m-1" >
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.fromDate" label="Desde" />
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.toDate" label="Hasta" />
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
                                 </div>
                             </div>

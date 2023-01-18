@@ -79,7 +79,6 @@
             <div class="d-grid mt-4">
                 <button class="btn btn-primary" id="resetBtn">Restablecer predeterminado</button>
 
-                <a href="../../product/hyper-responsive-admin-dashboard-template/index.htm" class="btn btn-danger mt-3" target="_blank"><i class="mdi mdi-basket me-1"></i> Purchase Now</a>
             </div>
         </div> <!-- end padding-->
 

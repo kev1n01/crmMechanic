@@ -4,6 +4,9 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" type="text/css">
 
 <style>
+input[type="time"]::-webkit-calendar-picker-indicator{
+    filter: invert(0.9);
+}
 
 body::-webkit-scrollbar {
   width: 10px !important;               /* width of the entire scrollbar */

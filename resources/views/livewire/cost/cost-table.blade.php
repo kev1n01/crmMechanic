@@ -48,15 +48,16 @@
                         </div>
                         @if ($showFilters)
                             <div class="border shadow-none bg-light rounded">
-                                <div class="row m-1" >
+                                <div class="row m-1">
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.fromDate" label="Desde" />
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.toDate" label="Hasta" />
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.voucher" label="Tipo de comprobante" :options="$vouchers"/>
+                                        <x-input.select name="filters.voucher" label="Tipo de comprobante"
+                                            :options="$vouchers" />
                                     </div>
                                 </div>
                             </div>
@@ -83,9 +84,7 @@
                                 <x-table.heading sortable wire:click="sortBy('total')" :direction="$sortField == 'total' ? $sortDirection : null">Total
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('type_voucher')" :direction="$sortField == 'type_voucher' ? $sortDirection : null">
-                                    Comprobante
-                                </x-table.heading>
+                                <x-table.heading>Comprobante</x-table.heading>
 
                                 <x-table.heading>Acción</x-table.heading>
 
@@ -153,10 +152,8 @@
                         type="text" :error="$errors->first('editing.description')" :required=true />
                 </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.date" label="Fecha" type="date"
-                        :error="$errors->first('editing.date')" :required=true />
-                </x-input.input-group>
+                <x-input.datepicker class="" name="editing.date" label="Fecha" id="dp3" :error="$errors->first('editing.date')"
+                    :required=true />
 
                 <x-input.input-group>
                     <x-input.input-tooltip-error class="col-12" name="editing.time" label="Hora" type="time"
@@ -170,7 +167,7 @@
 
                 <x-input.input-group>
                     <x-input.select class="col-12" name="editing.type_voucher" label="Tipo de comprobante"
-                        :options="$vouchers" :error="$errors->first('editing.type_voucher')" />
+                        :options="$vouchers" :error="$errors->first('editing.type_voucher')" :required=true />
                 </x-input.input-group>
 
             </x-slot>

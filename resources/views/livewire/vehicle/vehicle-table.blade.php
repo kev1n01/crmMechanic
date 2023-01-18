@@ -51,10 +51,10 @@
                             <div class="border shadow-none bg-light rounded">
                                 <div class="row m-1">
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.fromDate" label="Desde" />
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1"/>
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.toDate" label="Hasta" />
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
                                     <div class="col-lg-3">
                                         <x-input.select name="filters.customer" label="Cliente" :options="$customers" />
@@ -164,18 +164,18 @@
         <x-modal-dialog :id="$idModal" :title="$nameModal" :optionsModal="$modalsize">
             <x-slot name="body">
                 <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.license_plate" label="Placa de vehiculo"
+                    <x-input.input-tooltip-error class="col-xl-12" name="editing.license_plate" label="Placa de vehiculo"
                         type="text" :error="$errors->first('editing.license_plate')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.odo" label="Kilometraje"
+                    <x-input.input-tooltip-error class="col-xl-12" name="editing.odo" label="Kilometraje"
                         type="text" :error="$errors->first('editing.odo')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>
                     <x-input.select class="col-12" name="editing.customer_id" label="Cliente" :options="$customers"
-                        :error="$errors->first('editing.customer_id')" />
+                        :error="$errors->first('editing.customer_id')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>
@@ -203,15 +203,14 @@
                         :error="$errors->first('editing.model_year')" />
                 </x-input.input-group>
 
-                <x-input.textarea class="col-xl-3 " name="editing.description" label="Descripción" />
-
+                <x-input.textarea class="col-12 " name="editing.description" label="Descripción" />
 
                 <x-input.input-group>
                     <x-input.input-tooltip-error class="col-12" name="image" label="Imagen de vehiculo"
                         type="file" :error="$errors->first('image')" />
                 </x-input.input-group>
 
-                <div class="col-12 shadow-none bg-light rounded">
+                <div class="col-12 shadow-none bg-light rounded-3 mx-auto">
                     @if ($image)
                         <img src="{{ $image->temporaryURL() }}" class="img-fluid m-2">
                     @else
