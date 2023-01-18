@@ -30,3 +30,7 @@ Route::get('conceptos',\App\Http\Livewire\Ot\ConceptTable::class)->name('concept
 //Rutas para Gastos
 Route::get('gastos',\App\Http\Livewire\Cost\CostTable::class)->name('gastos');
 
+//Rutas para Reportes
+Route::get('reporte/orden-trabajo',\App\Http\Livewire\Report\OT::class)->name('reporte.ot');
+Route::get('reporte/venta',\App\Http\Livewire\Report\Sale::class)->name('reporte.venta');
+Route::get('reporte/compra',\App\Http\Livewire\Report\Purchase::class)->name('reporte.compra');

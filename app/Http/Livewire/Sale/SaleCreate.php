@@ -2,15 +2,14 @@
 
 namespace App\Http\Livewire\Sale;
 
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleDetail;
-use App\Models\User;
 use Carbon\Carbon;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
-use Termwind\Components\Dd;
 
 class SaleCreate extends Component
 {
@@ -37,8 +36,7 @@ class SaleCreate extends Component
             'editing.customer_id' => 'required',
             'editing.date_sale' => 'required',
             'editing.total' => 'nullable',
-            // 'editing.observation' => 'nullable',
-            'editing.user_id' => 'nullable',
+            'editing.observation' => 'nullable',
         ];
     }
 
@@ -78,7 +76,7 @@ class SaleCreate extends Component
         if ($this->editing->getKey()) $this->editing = $this->makeBlankFields(); // para preservar cambios en los inputs for create
         $this->editing->code_sale = $this->code_random(4);
         $this->statuses = Sale::STATUSES;
-        $this->customers = User::pluck('name', 'id');
+        $this->customers = Customer::pluck('name', 'id');
     }
 
     public function render()
@@ -192,7 +190,6 @@ class SaleCreate extends Component
         $this->validate();
         $this->editing->total = $this->total;
         $this->editing->date_sale = Carbon::parse($this->editing->date_sale)->format('Y-m-d');
-        $this->editing->user_id = 10;
         $this->editing->cash = $this->cash;
         $this->editing->change = $this->change;
         $this->editing->quantity = $this->itemsQuantity;

@@ -49,21 +49,24 @@
                         </div>
                         @if ($showFilters)
                             <div class="border shadow-none bg-light rounded ">
-                                <div class="row m-1">
+                                <div class="row m-1 mt-2">
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1"/>
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2"/>
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
                                     <div class="col-lg-3">
                                         <x-input.select name="filters.status" label="Estado" :options="$statuses" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.buyer" label="Comprador" :options="$buyers" />
-                                    </div>
-                                    <div class="col-lg-3">
                                         <x-input.select name="filters.provider" label="Proveedor" :options="$providers" />
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row-reverse bd-highlight">
+                                    <div class="p-2 bd-highlight">
+                                        <button class="btn btn-primary" wire:click.prevent="resetFilters">Borrar
+                                            filtros</button>
                                     </div>
                                 </div>
                             </div>
@@ -72,7 +75,6 @@
                     <div class="table-responsive">
                         <x-table>
                             <x-slot name="head">
-
                                 <x-table.heading style="width: 20px;">
                                     <x-input.check-input name="selectedPage" />
                                 </x-table.heading>
@@ -81,9 +83,6 @@
                                 </x-table.heading>
 
                                 <x-table.heading sortable wire:click="sortBy('provider_id')" :direction="$sortField == 'provider_id' ? $sortDirection : null">Proveedor
-                                </x-table.heading>
-
-                                <x-table.heading sortable wire:click="sortBy('user_id')" :direction="$sortField == 'user_id' ? $sortDirection : null">Comprador
                                 </x-table.heading>
 
                                 <x-table.heading sortable wire:click="sortBy('date_purchase')" :direction="$sortField == 'date_purchase' ? $sortDirection : null">Fecha
@@ -99,9 +98,7 @@
 
                             </x-slot>
 
-
                             <x-slot name="body">
-
                                 @forelse ($purchases as $purchase)
                                     <x-table.row wire:key="row-{{ $purchase->id }}" wire:loading.class="bg-light"
                                         wire:target="search">
@@ -113,8 +110,6 @@
                                         <x-table.cell>{{ $purchase->code_purchase }}</x-table.cell>
 
                                         <x-table.cell>{{ $purchase->provider->name ?? '' }}</x-table.cell>
-
-                                        <x-table.cell>{{ $purchase->buyer->name ?? '' }}</x-table.cell>
 
                                         <x-table.cell>{{ $purchase->date_purchase }}</x-table.cell>
 

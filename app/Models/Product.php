@@ -9,10 +9,10 @@ class Product extends Model
 {
     use HasFactory;
 
-    CONST STATUSES = [
+    const STATUSES = [
         'activo' => 'Activo',
         'inactivo' => 'Inactivo',
-    ];  
+    ];
 
     protected $fillable = [
         'name',
@@ -26,19 +26,31 @@ class Product extends Model
         'brand_products_id',
     ];
 
-    public function category(){ return $this->belongsTo(CategoryProduct::class,'category_products_id'); }
+    public function category()
+    {
+        return $this->belongsTo(CategoryProduct::class, 'category_products_id');
+    }
 
-    public function brand(){ return $this->belongsTo(BrandProduct::class,'brand_products_id'); }
+    public function brand()
+    {
+        return $this->belongsTo(BrandProduct::class, 'brand_products_id');
+    }
 
-    public function purchaseDetail(){ return $this->hasMany(PurchaseDetail::class); }
+    public function purchaseDetail()
+    {
+        return $this->hasMany(PurchaseDetail::class);
+    }
 
-    public function getImageProductAttribute(){ return $this->image ?? 'products-photos/default.jpg'; }
-    
-    public function getStatusColorAttribute(){
+    public function getImageProductAttribute()
+    {
+        return $this->image ?? 'products-photos/default.jpg';
+    }
+
+    public function getStatusColorAttribute()
+    {
         return [
             'activo' => 'success',
             'inactivo' => 'danger',
         ][$this->status] ?? 'secondary';
     }
-
 }

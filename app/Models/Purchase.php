@@ -18,7 +18,6 @@ class Purchase extends Model
 
     protected $fillable = [
         'provider_id',
-        'user_id',
         'total',
         'code_purchase',
         'date_purchase',
@@ -31,7 +30,7 @@ class Purchase extends Model
         return [
             'recibido' => 'success',
             'cancelado' => 'danger',
-            'pendiente' => 'danger',
+            'pendiente' => 'info',
             'retrasado' => 'warning',
         ][$this->status] ?? 'secondary';
     }
@@ -44,10 +43,6 @@ class Purchase extends Model
         return optional($this->date_purchase)->format('d/m/Y');
     }
 
-    public function buyer(){
-        return $this->belongsTo(User::class,'user_id');
-    }
-    
     public function provider(){
         return $this->belongsTo(Provider::class,'provider_id');
     }

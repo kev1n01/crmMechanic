@@ -40,7 +40,7 @@ class VehicleSeeder extends Seeder
             ],
             [
                 'license_plate' => '4ES-X5D',
-                'customer_id' => 6,
+                'customer_id' => 2,
                 'type_vehicle' => 3,
                 'brand_vehicle' => 3,
                 'model_vehicle' => 3,

@@ -37,7 +37,7 @@ class WorkOrder extends Model
 
     public function customerUser()
     {
-        return $this->belongsTo(User::class, 'customer');
+        return $this->belongsTo(Customer::class, 'customer');
     }
 
     public function workOrderDetail()

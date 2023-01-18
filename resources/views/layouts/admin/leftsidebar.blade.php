@@ -152,13 +152,13 @@
                 <div class="collapse" id="reportes">
                     <ul class="side-nav-second-level">
                         <li>
-                            <a href="#">OT</a>
+                            <a href="{{ route('reporte.ot') }}">OT</a>
                         </li>
                         <li>
-                            <a href="#">Ventas</a>
+                            <a href="{{ route('reporte.venta') }}">Ventas</a>
                         </li>
                         <li>
-                            <a href="#">Compras</a>
+                            <a href="{{ route('reporte.compra') }}">Compras</a>
                         </li>
                     </ul>
                 </div>

@@ -4,11 +4,11 @@
             <x-form method="save">
                 <div class="card">
                     <div class="card-body">
-                        <div class="row mb-4 justify-content-center ">
+                        <div class="row mb-2 justify-content-center ">
                             <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.code"
                                 label="Código" type="text" :error="$errors->first('editing.code')" :required=true />
 
-                            <x-input.select class="col-xl-2 me-1 mb-2" name="editing.customer" label="Cliente"
+                            <x-input.select class="col-xl-3 me-1 mb-2" name="editing.customer" label="Cliente"
                                 :required=true :options="$customers" :error="$errors->first('editing.customer')" />
 
                             <x-input.select class="col-xl-2 me-1 mb-2" name="editing.status" label="Estado" :required=true
@@ -20,19 +20,19 @@
                             <x-input.input-tooltip-error class="col-xl-2 me-1 mb-2" name="editing.odo"
                                 label="ODO" type="text" :error="$errors->first('editing.odo')" :required=true />
 
-                            <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.arrival_date"
-                                label="Fecha de llegada" type="date" :error="$errors->first('editing.arrival_date')" :required=true />
-                            
+                            <x-input.datepicker class="col-xl-3 me-1" name="editing.arrival_date" label="Fecha llegada"
+                                id="dp1" :error="$errors->first('editing.arrival_date')" :required=true />
+                           
                             <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.arrival_hour"
-                                label="Hora de llegada" type="time" :error="$errors->first('editing.arrival_hour')" :required=true />
+                                label="Hora llegada" type="time" :error="$errors->first('editing.arrival_hour')" :required=true />
                             
-                            <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.departure_date"
-                                label="Fecha de salida" type="date" :error="$errors->first('editing.departure_date')" />
-                            
+                            <x-input.datepicker class="col-xl-3 me-1" name="editing.departure_date" label="Fecha salida"
+                                id="dp2" :error="$errors->first('editing.departure_date')" />
+                           
                             <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.departure_hour"
-                                label="Fecha de salida" type="time" :error="$errors->first('editing.departure_hour')" />
+                                label="Fecha salida" type="time" :error="$errors->first('editing.departure_hour')" />
 
-                            <x-input.textarea class="col-xl-3 " name="editing.observation" label="Observaciones" />
+                            <x-input.textarea class="col-xl-6 " name="editing.observation" label="Observaciones" />
                         </div>
                     </div>
                 </div>

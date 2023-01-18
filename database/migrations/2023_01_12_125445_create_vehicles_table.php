@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
             $table->string('license_plate')->unique();
-            $table->foreignId('customer_id')->constrained('users')->onDelete('cascade'); //user type customer
+            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade'); //user type customer
             $table->foreignId('type_vehicle')->constrained('type_vehicles')->onDelete('cascade');
             $table->foreignId('brand_vehicle')->constrained('brand_vehicles')->onDelete('cascade');
             $table->foreignId('model_vehicle')->constrained('model_vehicles')->onDelete('cascade');

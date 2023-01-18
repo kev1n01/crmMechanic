@@ -23,7 +23,7 @@ return new class extends Migration
             $table->time('departure_hour')->nullable();
             $table->decimal('total', 10, 2)->nullable();
             $table->text('observation')->nullable();
-            $table->foreignId('customer')->constrained('users');
+            $table->foreignId('customer')->constrained('customers');
             $table->string('status');
             $table->foreignId('vehicle')->constrained('vehicles');
             $table->timestamps();

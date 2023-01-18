@@ -17,7 +17,7 @@
                             <x-input.datepicker class="col-xl-3 me-1" name="editing.date_purchase" label="Fecha"
                                 id="dp1" :error="$errors->first('editing.date_purchase')" :required=true />
 
-                            <x-input.textarea class="col-xl-4 " name="editing.observation" label="Observaciones" />
+                            <x-input.textarea class="col-xl-6 " name="editing.observation" label="Observaciones" />
                         </div>
 
                         <div class="row m-1">

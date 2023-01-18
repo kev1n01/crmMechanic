@@ -3,10 +3,11 @@
 namespace App\Http\Livewire\Ot;
 
 use App\Models\Concept;
-use App\Models\User;
+use App\Models\Customer;
 use App\Models\Vehicle;
 use App\Models\WorkOrder;
 use App\Models\workOrderDetail;
+use Carbon\Carbon;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -82,7 +83,7 @@ class OtCreate extends Component
         if ($this->editing->getKey()) $this->editing = $this->makeBlankFields(); // para preservar cambios en los inputs for create
         $this->editing->code = $this->code_random(3);
         $this->statuses = WorkOrder::STATUSES;
-        $this->customers = User::pluck('name', 'id');
+        $this->customers = Customer::pluck('name', 'id');
     }
 
     public function render()
@@ -199,7 +200,10 @@ class OtCreate extends Component
     {
         $this->validate();
         $this->editing->total = $this->total;
+        $this->editing->arrival_date = Carbon::parse($this->editing->arrival_date)->format('Y-m-d');
         $this->editing->arrival_hour = $this->editing->arrival_hour . ':00';
+        $this->editing->departure_date = Carbon::parse($this->editing->departure_date)->format('Y-m-d');
+        $this->editing->departure_hour = $this->editing->departure_hour . ':00';
         $this->editing->save();
 
         $cartItems = Cart::session($this->editing->vehicle)->getContent();

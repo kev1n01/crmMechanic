@@ -4,9 +4,9 @@ namespace App\Http\Livewire\Vehicle;
 
 use App\Models\BrandVehicle;
 use App\Models\ColorVehicle;
+use App\Models\Customer;
 use App\Models\ModelVehicle;
 use App\Models\TypeVehicle;
-use App\Models\User;
 use App\Models\Vehicle;
 use App\Traits\DataTable;
 use Carbon\Carbon;
@@ -25,7 +25,7 @@ class VehicleTable extends Component
     public $selectedPage = false;
     /* FOR MODAL */
     public $idModal = 'vehicleModal';
-    public $modalsize= 'modal-lg';
+    public $modalsize = 'modal-lg';
     public $nameModal;
     public Vehicle $editing;
     public $image;
@@ -49,7 +49,7 @@ class VehicleTable extends Component
     {
         $this->sortField = 'license_plate';
         $this->editing = $this->makeBlankFields();
-        $this->customers = User::pluck('name', 'id');
+        $this->customers = Customer::pluck('name', 'id');
         $this->years = Vehicle::YEARS;
         $this->types = TypeVehicle::pluck('name', 'id');
         $this->brands = BrandVehicle::pluck('name', 'id');
@@ -82,8 +82,9 @@ class VehicleTable extends Component
         return Vehicle::query()
             ->when($this->search, fn ($q, $search) => $q->where('license_plate', 'like', '%' . $search . '%')
                 ->orWhere('model_year', 'like', '%' . $search . '%')->orWhere('odo', 'like', '%' . $search . '%'))
-            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) => 
-                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))            ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer_id', $customer))
+            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
+                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
+            ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer_id', $customer))
             ->when($this->filters['model_year'], fn ($q, $model_year) => $q->where('model_year', $model_year))
             ->when($this->filters['type'], fn ($q, $type) => $q->where('type_vehicle', $type))
             ->when($this->filters['brand'], fn ($q, $brand) => $q->where('brand_vehicle', $brand))

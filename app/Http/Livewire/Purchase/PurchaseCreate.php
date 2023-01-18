@@ -35,8 +35,6 @@ class PurchaseCreate extends Component
             'editing.date_purchase' => 'required',
             'editing.total' => 'nullable',
             'editing.observation' => 'nullable',
-            'editing.user_id' => 'nullable',
-
         ];
     }
 
@@ -178,7 +176,6 @@ class PurchaseCreate extends Component
         $this->editing->total = $this->total;
         $this->editing->total = $this->total;
         $this->editing->date_purchase = Carbon::parse($this->editing->date_purchase)->format('Y-m-d') ;
-        $this->editing->user_id = 1;
         $this->editing->save();
         $cartItems = Cart::session($this->editing->provider->name)->getContent();
         foreach ($cartItems as $item) {

@@ -4,7 +4,7 @@
         <span class="text-danger">{{ $required ? '*' : '' }}</span>
     </label>
     <input type="text" class="form-control {{ $error ? 'is-invalid' : '' }}" wire:model="{{ $name }}"
-        data-provide="datepicker" placeholder="DD/MM/YYYY" data-date-container="#{{ $id }}" autocomplete="off"
+        data-provide="datepicker" placeholder="DD-MM-YYYY" data-date-container="#{{ $id }}" autocomplete="off"
         data-date-autoclose="true" data-date-today-highlight="true" data-date-format="dd-mm-yyyy"
         onchange="this.dispatchEvent(new InputEvent('input'))">
 

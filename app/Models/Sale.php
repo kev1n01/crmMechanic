@@ -16,7 +16,6 @@ class Sale extends Model
     ];
 
     protected $fillable = [
-        'user_id',
         'customer_id',
         'code_sale',
         'total',
@@ -24,17 +23,13 @@ class Sale extends Model
         'cash',
         'change',
         'date_sale',
+        'observation',
         'status',
     ];
 
-    public function seller()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
     public function customer()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 
     public function saleDetail()

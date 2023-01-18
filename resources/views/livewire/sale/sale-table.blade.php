@@ -49,21 +49,25 @@
                         </div>
                         @if ($showFilters)
                             <div class="border shadow-none bg-light rounded">
-                                <div class="row m-1">
+                                <div class="row m-1 mt-2">
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1"/>
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2"/>
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
                                     <div class="col-lg-3">
                                         <x-input.select name="filters.status" label="Estado" :options="$statuses" />
                                     </div>
-                                    <div class="col-lg-3">
-                                        <x-input.select name="filters.seller" label="Vendedor" :options="$sellers" />
-                                    </div>
+
                                     <div class="col-lg-3">
                                         <x-input.select name="filters.customer" label="Cliente" :options="$customers" />
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row-reverse bd-highlight">
+                                    <div class="p-2 bd-highlight">
+                                        <button class="btn btn-primary" wire:click.prevent="resetFilters">Borrar
+                                            filtros</button>
                                     </div>
                                 </div>
                             </div>
@@ -74,16 +78,13 @@
                             <x-slot name="head">
 
                                 <x-table.heading style="width: 20px;">
-                                    <x-input.check-input name="selectedPage" />
+                                    <x-input.check-input  name="selectedPage" />
                                 </x-table.heading>
 
                                 <x-table.heading sortable wire:click="sortBy('code_sale')" :direction="$sortField == 'code_sale' ? $sortDirection : null">Código
                                 </x-table.heading>
 
                                 <x-table.heading sortable wire:click="sortBy('customer_id')" :direction="$sortField == 'customer_id' ? $sortDirection : null">Cliente
-                                </x-table.heading>
-
-                                <x-table.heading sortable wire:click="sortBy('user_id')" :direction="$sortField == 'user_id' ? $sortDirection : null">Vendedor
                                 </x-table.heading>
 
                                 <x-table.heading sortable wire:click="sortBy('date_sale')" :direction="$sortField == 'date_sale' ? $sortDirection : null">Fecha
@@ -113,8 +114,6 @@
                                         <x-table.cell>{{ $sale->code_sale }}</x-table.cell>
 
                                         <x-table.cell>{{ $sale->customer->name ?? '' }}</x-table.cell>
-
-                                        <x-table.cell>{{ $sale->seller->name ?? '' }}</x-table.cell>
 
                                         <x-table.cell>{{ $sale->date_sale }}</x-table.cell>
 

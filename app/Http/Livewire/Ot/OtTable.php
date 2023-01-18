@@ -2,10 +2,9 @@
 
 namespace App\Http\Livewire\Ot;
 
-use App\Models\User;
+use App\Models\Customer;
 use App\Models\Vehicle;
 use App\Models\WorkOrder;
-use App\Models\workOrderDetail;
 use App\Traits\DataTable;
 use Carbon\Carbon;
 use PDF;
@@ -36,7 +35,7 @@ class OtTable extends Component
     {
         $this->sortField = 'code';
         $this->statuses = WorkOrder::STATUSES;
-        $this->customers = User::pluck('name', 'id');
+        $this->customers = Customer::pluck('name', 'id');
         $this->vehicles = Vehicle::pluck('license_plate', 'id');
     }
 
