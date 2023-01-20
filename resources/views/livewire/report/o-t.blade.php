@@ -141,12 +141,18 @@
                     <x-slot name="head">
                         <th class="text-left">Nombre</th>
                         <th class="text-left">Email</th>
+                        <th class="text-left">Phone</th>
+                        <th class="text-left">Dni</th>
+                        <th class="text-left">Ruc</th>
                     </x-slot>
                     <x-slot name="body">
                         @foreach ($ot_dt as $od)
                             <x-table.row>
                                 <x-table.cell>{{ $od->customerUser->name }}</x-table.cell>
-                                <x-table.cell>{{ $od->customerUser->email }}</x-table.cell>
+                                <x-table.cell>{{ $od->customerUser->user->email }}</x-table.cell>
+                                <x-table.cell>{{ $od->customerUser->phone }}</x-table.cell>
+                                <x-table.cell>{{ $od->customerUser->dni }}</x-table.cell>
+                                <x-table.cell>{{ $od->customerUser->ruc }}</x-table.cell>
                             </x-table.row>
                         @endforeach
                     </x-slot>

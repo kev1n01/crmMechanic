@@ -56,6 +56,9 @@ class OT extends Component
             'toDate.required' => 'La fecha de fin es obligatorio',
         ]);
 
+        $this->total_replacement = 0;
+        $this->total_service = 0;
+
         $fd = Carbon::parse($this->fromDate)->format('Y-m-d') . ' 00:00:00';
         $td = Carbon::parse($this->toDate)->format('Y-m-d') . ' 23:59:59';
 
@@ -83,7 +86,7 @@ class OT extends Component
             })->get();
 
         $dots_service->each(function ($ds) {
-            $this->total_service =  $ds->quantity * $ds->price;
+            $this->total_service +=  $ds->quantity * $ds->price;
         });
 
         $dots_replacement->each(function ($ds) {
