@@ -2,8 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::redirect('/', 'dashboard');
+
+//Rutas de dashboard
+Route::get('dashboard',\App\Http\Livewire\dashboard\Dashboard::class)->name('dashboard');
+
+//Rutas de cliente
+Route::get('clientes',\App\Http\Livewire\customer\CustomerTable::class)->name('clientes');
+
 //Rutas de inventario
-Route::redirect('/', 'categorias');
 Route::get('marcas',\App\Http\Livewire\Brand\BrandTable::class)->name('marcas');
 Route::get('categorias',\App\Http\Livewire\Category\CategoryTable::class)->name('categorias');
 Route::get('proveedores',\App\Http\Livewire\Provider\ProviderTable::class)->name('proveedores');
@@ -34,3 +41,8 @@ Route::get('gastos',\App\Http\Livewire\Cost\CostTable::class)->name('gastos');
 Route::get('reporte/orden-trabajo',\App\Http\Livewire\Report\OT::class)->name('reporte.ot');
 Route::get('reporte/venta',\App\Http\Livewire\Report\Sale::class)->name('reporte.venta');
 Route::get('reporte/compra',\App\Http\Livewire\Report\Purchase::class)->name('reporte.compra');
+
+//Rutas para PDF
+Route::get('pdf/preview/{id}',[\App\Http\Controllers\PDFController::class, 'preview'])->name('pdf.preview');
+Route::get('pdf/view/{id}',[\App\Http\Controllers\PDFController::class, 'view'])->name('pdf.view');
+Route::get('pdf/download/{id}',[\App\Http\Controllers\PDFController::class, 'download'])->name('pdf.download');

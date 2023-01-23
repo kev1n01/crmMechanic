@@ -48,11 +48,6 @@ class ProviderTable extends Component
         $this->selected = $value ? $this->providers->pluck('id')->map(fn ($id) => (string) $id) : [];
     }
 
-    public function resetFilters()
-    {
-        $this->reset('filters');
-    }
-
     public function showFilter()
     {
         $this->showFilters = $this->showFilters ? false : true;
@@ -76,6 +71,11 @@ class ProviderTable extends Component
         return view('livewire.provider.provider-table', [
             'providers' => $this->providers,
         ])->extends('layouts.admin.app')->section('content');
+    }
+
+    public function resetFilters()
+    {
+        $this->reset('filters');
     }
 
     public function delete(Provider $provider)
@@ -169,4 +169,12 @@ class ProviderTable extends Component
     {
         $this->dispatchBrowserEvent('close-modal');
     }
+    
+    public function changeStatus(Provider $provider)
+    {
+        $provider->status = $provider->status === 'activo' ? 'inactivo' : 'activo';
+        $provider->save();
+        $this->emit('success_alert', 'Estado actualizado');
+    }
+
 }

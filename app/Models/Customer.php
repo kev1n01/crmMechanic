@@ -16,19 +16,14 @@ class Customer extends Model
     use HasFactory;
 
     protected $fillable = [
+        'email',
         'name',
         'dni',
         'ruc',
         'address',
         'phone',
         'status',
-        'user_id',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 
     public function getStatusColorAttribute()
     {

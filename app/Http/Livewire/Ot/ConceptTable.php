@@ -46,6 +46,11 @@ class ConceptTable extends Component
         ])->extends('layouts.admin.app')->section('content');
     }
 
+    public function resetFilters()
+    {
+        $this->reset('filters');
+    }
+
     public function delete(Concept $concept)
     {
         $concept->delete();

@@ -57,16 +57,19 @@
                                         <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.status" label="Estado"
-                                            :options="$statuses" />
+                                        <x-input.select name="filters.status" label="Estado" :options="$statuses" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.category" label="Categoria"
-                                            :options="$categories" />
+                                        <x-input.select name="filters.category" label="Categoria" :options="$categories" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.brand" label="Marca"
-                                            :options="$brands" />
+                                        <x-input.select name="filters.brand" label="Marca" :options="$brands" />
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row-reverse bd-highlight">
+                                    <div class="p-2 bd-highlight">
+                                        <button class="btn btn-primary" wire:click.prevent="resetFilters">Limpiar
+                                            filtros</button>
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +107,6 @@
 
                             </x-slot>
 
-
                             <x-slot name="body">
 
                                 @forelse ($products as $product)
@@ -119,21 +121,21 @@
 
                                         <x-table.cell>{{ $product->code }}</x-table.cell>
 
-                                        <x-table.cell>{{ $product->stock }}</x-table.cell>
+                                        <x-table.cell class="text-center">{{ $product->stock }}</x-table.cell>
 
                                         <x-table.cell>
-                                            <span class="badge badge-{{ $product->status_color }}-lighten">
-                                                {{ strtoupper($product->status) }}
-                                            </span>
+                                            <button
+                                                class="btn btn-outline-{{ $product->status_color }} rounded-pill btn-sm w-100"
+                                                type="button" wire:click="changeStatus({{ $product->id }})">
+                                                {{ $product->status }}
+                                            </button>
                                         </x-table.cell>
 
                                         <x-table.cell>{{ $product->category->name }}</x-table.cell>
 
                                         <x-table.cell>{{ $product->brand->name }}</x-table.cell>
 
-
                                         <x-table.cell>
-
                                             <a class="action-icon" wire:click="edit({{ $product->id }})">
                                                 <i class="mdi mdi-square-edit-outline"></i> </a>
                                             <a class="action-icon" onclick="Confirm({{ $product->id }}, 'delete')"><i

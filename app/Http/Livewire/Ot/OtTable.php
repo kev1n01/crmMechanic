@@ -90,16 +90,16 @@ class OtTable extends Component
         $this->emit('success_alert', 'El orden de trabajo fue eliminado');
     }
 
-    public function generatePdf(WorkOrder $wo)
-    {
-        $wod = $wo->workOrderDetail()->get();
+// public function generatePdf(WorkOrder $wo)
+// {
+//     $wod = $wo->workOrderDetail()->get();
 
-        $pdf = PDF::loadView('invoice', ['wo' => $wo, 'wod' => $wod])->setPaper('a4', 'landscape')->stream();
-        return response()->streamDownload(
-            fn () => print($pdf),
-            $wo->code . ' ' . $wo->vehiclePlate->license_plate . ' ' . $wo->customerUser->name . ".pdf"
-        );
-    }
+//     $pdf = PDF::loadView('invoice', ['wo' => $wo, 'wod' => $wod])->setPaper('a4', 'landscape')->stream();
+//     return response()->streamDownload(
+//         fn () => print($pdf),
+//         $wo->code . ' ' . $wo->vehiclePlate->license_plate . ' ' . $wo->customerUser->name . ".pdf"
+//     );
+// }
 
     public function exportSelected()
     {

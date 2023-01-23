@@ -13,7 +13,6 @@ class Purchase extends Model
         'recibido' => 'Recibido',
         'cancelado' => 'Cancelado', 
         'pendiente' => 'Pendiente',
-        'retrasado' => 'Retrasado',
     ];  
 
     protected $fillable = [
@@ -31,7 +30,6 @@ class Purchase extends Model
             'recibido' => 'success',
             'cancelado' => 'danger',
             'pendiente' => 'info',
-            'retrasado' => 'warning',
         ][$this->status] ?? 'secondary';
     }
 

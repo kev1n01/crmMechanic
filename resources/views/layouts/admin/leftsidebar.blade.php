@@ -25,9 +25,16 @@
         <!--- Sidemenu -->
         <ul class="side-nav">
             <li class="side-nav-item">
-                <a class="side-nav-link">
+                <a class="side-nav-link" href="{{ route('dashboard') }}">
                     <i class=" uil-chart-line"></i>
                     <span> Dashboard </span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
+                <a class="side-nav-link" href="{{ route('clientes') }}">
+                    <i class=" uil-users-alt"></i>
+                    <span> Clientes </span>
                 </a>
             </li>
 
@@ -136,7 +143,7 @@
                             <a href="{{ route('ordenes.crear') }}">Crear OT</a>
                         </li>
                         <li>
-                            <a href="{{ route('conceptos') }}">Conceptos</a>
+                            <a href="{{ route('conceptos') }}">Servicios</a>
                         </li>
                     </ul>
                 </div>
@@ -159,22 +166,6 @@
                         </li>
                         <li>
                             <a href="{{ route('reporte.compra') }}">Compras</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-
-            <li class="side-nav-item">
-                <a data-bs-toggle="collapse" href="#facturas" aria-expanded="false" aria-controls="facturas"
-                    class="side-nav-link">
-                    <i class="uil-invoice"></i>
-                    <span> Facturas </span>
-                    <span class="menu-arrow"></span>
-                </a>
-                <div class="collapse" id="facturas">
-                    <ul class="side-nav-second-level">
-                        <li>
-                            <a href="#">Listado</a>
                         </li>
                     </ul>
                 </div>

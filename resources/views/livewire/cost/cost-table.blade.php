@@ -60,6 +60,12 @@
                                             :options="$vouchers" />
                                     </div>
                                 </div>
+                                <div class="d-flex flex-row-reverse bd-highlight">
+                                    <div class="p-2 bd-highlight">
+                                        <button class="btn btn-primary" wire:click.prevent="resetFilters">Limpiar
+                                            filtros</button>
+                                    </div>
+                                </div>
                             </div>
                         @endif
                     </div>

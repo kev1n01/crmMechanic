@@ -82,5 +82,8 @@ class Vehicle extends Model
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-
+    public function workOrder()
+    {
+        return $this->hasMany(WorkOrder::class);
+    }
 }

@@ -37,6 +37,11 @@ class ModelVehicleTable extends Component
             ])->extends('layouts.admin.app')->section('content');
     }
    
+    public function resetFilters()
+    {
+        $this->reset('filters');
+    }
+
     public function delete(ModelVehicle $modelvehicle){ $modelvehicle->delete(); }
 
     /* FOR MODAL */

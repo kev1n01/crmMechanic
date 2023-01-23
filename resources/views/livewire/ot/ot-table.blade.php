@@ -57,16 +57,19 @@
                                         <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.status" label="Estado"
-                                            :options="$statuses" />
+                                        <x-input.select name="filters.status" label="Estado" :options="$statuses" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.customer" label="Cliente"
-                                            :options="$customers" />
+                                        <x-input.select name="filters.customer" label="Cliente" :options="$customers" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.vehicle" label="Vehiculo"
-                                            :options="$vehicles" />
+                                        <x-input.select name="filters.vehicle" label="Vehiculo" :options="$vehicles" />
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row-reverse bd-highlight">
+                                    <div class="p-2 bd-highlight">
+                                        <button class="btn btn-primary" wire:click.prevent="resetFilters">Limpiar
+                                            filtros</button>
                                     </div>
                                 </div>
                             </div>
@@ -133,8 +136,10 @@
                                                 <i class="mdi mdi-square-edit-outline"></i> </a>
                                             <a class="action-icon" onclick="Confirm({{ $wo->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
-                                            <a class="action-icon" wire:click="generatePdf({{ $wo->id }})"><i
-                                                    class="mdi mdi-file-pdf-outline"></i></a>
+                                            <a class="action-icon" href="{{ route('pdf.view', $wo->id) }}"
+                                                {{-- wire:click="generatePdf({{ $wo->id }})" --}}><i class="mdi mdi-file-eye-outline"></i></a>
+                                            <a class="action-icon" href="{{ route('pdf.download', $wo->id) }}"
+                                                {{-- wire:click="generatePdf({{ $wo->id }})" --}}><i class="mdi mdi-folder-download-outline"></i></a>
                                         </x-table.cell>
 
                                     </x-table.row>

@@ -36,7 +36,12 @@ class BrandVehicleTable extends Component
             ->paginate($this->perPage),
             ])->extends('layouts.admin.app')->section('content');
     }
-   
+    
+    public function resetFilters()
+    {
+        $this->reset('filters');
+    }
+
     public function delete(BrandVehicle $brandvehicle){ $brandvehicle->delete(); }
 
     /* FOR MODAL */

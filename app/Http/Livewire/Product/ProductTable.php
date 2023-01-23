@@ -212,4 +212,11 @@ class ProductTable extends Component
     {
         $this->dispatchBrowserEvent('close-modal');
     }
+
+    public function changeStatus(Product $product)
+    {
+        $product->status = $product->status === 'activo' ? 'inactivo' : 'activo';
+        $product->save();
+        $this->emit('success_alert', 'Estado actualizado');
+    }
 }

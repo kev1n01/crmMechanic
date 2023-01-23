@@ -50,15 +50,19 @@
                             <div class="border shadow-none bg-light rounded">
                                 <div class="row m-1">
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1"/>
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2"/>
+                                        <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.status" label="Estado"
-                                            :options="$statuses" />
+                                        <x-input.select name="filters.status" label="Estado" :options="$statuses" />
                                     </div>
+                                </div>
+                                <div class="d-flex flex-row-reverse bd-highlight">
+                                    <div class="p-2 bd-highlight">
+                                        <button class="btn btn-primary" wire:click.prevent="resetFilters">Limpiar
+                                            filtros</button>
                                     </div>
                                 </div>
                             </div>
@@ -91,7 +95,6 @@
 
                             </x-slot>
 
-
                             <x-slot name="body">
 
                                 @forelse ($providers as $provider)
@@ -111,13 +114,14 @@
                                         <x-table.cell>{{ $provider->ruc }}</x-table.cell>
 
                                         <x-table.cell>
-                                            <span class="badge badge-{{ $provider->status_color }}-lighten">
-                                                {{ strtoupper($provider->status) }}
-                                            </span>
+                                            <button
+                                                class="btn btn-outline-{{ $provider->status_color }} rounded-pill btn-sm w-75"
+                                                type="button" wire:click="changeStatus({{ $provider->id }})">
+                                                {{ $provider->status }}
+                                            </button>
                                         </x-table.cell>
 
                                         <x-table.cell>
-
                                             <a class="action-icon" wire:click="edit({{ $provider->id }})">
                                                 <i class="mdi mdi-square-edit-outline"></i> </a>
                                             <a class="action-icon" onclick="Confirm({{ $provider->id }}, 'delete')"><i
@@ -157,8 +161,8 @@
                 </x-input.input-group>
 
                 <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.address" label="Dirección" type="text"
-                        :error="$errors->first('editing.address')" :required=true />
+                    <x-input.input-tooltip-error class="col-12" name="editing.address" label="Dirección"
+                        type="text" :error="$errors->first('editing.address')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>

@@ -65,7 +65,7 @@
                                 </div>
                                 <div class="d-flex flex-row-reverse bd-highlight">
                                     <div class="p-2 bd-highlight">
-                                        <button class="btn btn-primary" wire:click.prevent="resetFilters">Borrar
+                                        <button class="btn btn-primary" wire:click.prevent="resetFilters">Limpiar
                                             filtros</button>
                                     </div>
                                 </div>
@@ -116,9 +116,12 @@
                                         <x-table.cell>{{ $purchase->total }}</x-table.cell>
 
                                         <x-table.cell>
-                                            <span class="badge badge-{{ $purchase->status_color }}-lighten">
-                                                {{ strtoupper($purchase->status) }}
-                                            </span>
+                                            <button
+                                                class="btn btn-outline-{{ $purchase->status_color }} rounded-pill btn-sm w-75"
+                                                type="button" wire:click="changeStatus({{ $purchase->id }})"
+                                                {{ $purchase->status === 'recibido' || $purchase->status === 'cancelado' ? 'disabled' : '' }}>
+                                                {{ $purchase->status }}
+                                            </button>
                                         </x-table.cell>
 
                                         <x-table.cell>
