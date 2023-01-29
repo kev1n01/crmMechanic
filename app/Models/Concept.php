@@ -8,10 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Concept extends Model
 {
     use HasFactory;
-    
-    const TYPES = [
-        'repuesto' => 'Repuesto',
-        'servicio' => 'Servicio',
-    ];
-    protected $fillable = ['name', 'type'];
+    protected $fillable = ['name'];
 }

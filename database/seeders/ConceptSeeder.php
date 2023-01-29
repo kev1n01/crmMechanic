@@ -16,23 +16,31 @@ class ConceptSeeder extends Seeder
     {
         $concepts = [
             [
-                'name' => 'Abrazaderas',
-                'type' => 'repuesto',
-                'created_at' => now(),
-            ],
-            [
                 'name' => 'Alineamiento',
-                'type' => 'servicio',
                 'created_at' => now(),
             ],
             [
                 'name' => 'Calibracion',
-                'type' => 'servicio',
                 'created_at' => now(),
             ],
             [
-                'name' => 'Empaque de motor',
-                'type' => 'repuesto',
+                'name' => 'Bajada de motor',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Cambio de cremayera',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Engrase de palier',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Engrase de puntos de cardan',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Cambio de aceite de caja',
                 'created_at' => now(),
             ],
         ];

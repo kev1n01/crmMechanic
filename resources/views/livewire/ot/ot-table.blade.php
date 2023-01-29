@@ -92,7 +92,7 @@
                                 <x-table.heading sortable wire:click="sortBy('vehicle')" :direction="$sortField == 'vehicle' ? $sortDirection : null">Vehiculo
                                 </x-table.heading>
 
-                                <x-table.heading>F/H llegada</x-table.heading>
+                                <x-table.heading>F|H llegada</x-table.heading>
 
                                 <x-table.heading sortable wire:click="sortBy('total')" :direction="$sortField == 'total' ? $sortDirection : null">Total
                                 </x-table.heading>
@@ -120,26 +120,37 @@
 
                                         <x-table.cell>{{ $wo->vehiclePlate->license_plate }}</x-table.cell>
 
-                                        <x-table.cell>{{ $wo->arrival_date . '/' . $wo->arrival_hour }}</x-table.cell>
+                                        <x-table.cell>
+                                            {{ \Carbon\Carbon::parse($wo->arrival_date)->format('d-m-Y') .
+                                                ' | ' .
+                                                \Carbon\Carbon::parse($wo->arrival_hour)->format('H:m ') }}
+                                        </x-table.cell>
 
                                         <x-table.cell>{{ $wo->total }}</x-table.cell>
 
 
                                         <x-table.cell>
-                                            <span class="badge badge-{{ $wo->status_color }}-lighten">
+                                            <button
+                                                class="btn btn-outline-{{ $wo->status_color }} rounded-pill btn-sm w-55"
+                                                type="button" wire:click="changeStatus({{ $wo->id }})">
                                                 {{ strtoupper($wo->status) }}
-                                            </span>
+                                                @if (date('Y-m-d H:i:s') > $wo->departure_date . ' ' . $wo->departure_hour)
+                                                    <span wire:init="updateStatusToDelayed({{ $wo->id }})"></span>
+                                                @endif
+                                            </button>
                                         </x-table.cell>
+
 
                                         <x-table.cell>
                                             <a class="action-icon" wire:click="edit({{ $wo->id }})">
                                                 <i class="mdi mdi-square-edit-outline"></i> </a>
                                             <a class="action-icon" onclick="Confirm({{ $wo->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
-                                            <a class="action-icon" href="{{ route('pdf.view', $wo->id) }}"
-                                                {{-- wire:click="generatePdf({{ $wo->id }})" --}}><i class="mdi mdi-file-eye-outline"></i></a>
+                                            <a class="action-icon" href="{{ route('pdf.view', $wo->id) }}">
+                                                <i class="mdi mdi-file-eye-outline"></i></a>
                                             <a class="action-icon" href="{{ route('pdf.download', $wo->id) }}"
-                                                {{-- wire:click="generatePdf({{ $wo->id }})" --}}><i class="mdi mdi-folder-download-outline"></i></a>
+                                                {{-- wire:click="generatePdf({{ $wo->id }})" --}}><i
+                                                    class="mdi mdi-folder-download-outline"></i></a>
                                         </x-table.cell>
 
                                     </x-table.row>

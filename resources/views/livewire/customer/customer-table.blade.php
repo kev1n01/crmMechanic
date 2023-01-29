@@ -116,11 +116,11 @@
 
                                         <x-table.cell>{{ $customer->phone }}</x-table.cell>
 
-                                        <x-table.cell>{{ $customer->address }}</x-table.cell>
+                                        <x-table.cell>{{ $customer->address ?? 'N/D' }}</x-table.cell>
 
                                         <x-table.cell>{{ $customer->dni }}</x-table.cell>
 
-                                        <x-table.cell>{{ $customer->ruc }}</x-table.cell>
+                                        <x-table.cell>{{ $customer->ruc ?? 'N/D' }}</x-table.cell>
 
                                         <x-table.cell>
                                             <button
@@ -176,7 +176,7 @@
 
                 <x-input.input-group>
                     <x-input.input-tooltip-error class="col-12" name="editing.address" label="Dirección"
-                        type="text" :error="$errors->first('editing.address')" :required=true />
+                        type="text" :error="$errors->first('editing.address')" />
                 </x-input.input-group>
 
                 <x-input.input-group>
@@ -186,7 +186,7 @@
 
                 <x-input.input-group>
                     <x-input.input-tooltip-error class="col-12" name="editing.ruc" label="Ruc" type="text"
-                        :error="$errors->first('editing.ruc')" :required=true />
+                        :error="$errors->first('editing.ruc')" />
                 </x-input.input-group>
 
                 <x-input.input-group>

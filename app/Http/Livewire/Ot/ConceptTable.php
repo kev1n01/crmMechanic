@@ -18,13 +18,12 @@ class ConceptTable extends Component
 
     protected $queryString = ['search' => ['except' => '']];
 
-    public $filters = ['fromDate' => null, 'toDate' => null, 'type' => ''];
+    public $filters = ['fromDate' => null, 'toDate' => null];
 
     public function mount()
     {
         $this->sortField = 'id';
         $this->editing = $this->makeBlankFields();
-        $this->types = Concept::TYPES;
     }
 
     public function showFilter()
@@ -39,7 +38,6 @@ class ConceptTable extends Component
             'concepts' => Concept::query()
                 ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
                 $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
-                ->when($this->filters['type'], fn ($q, $type) => $q->where('type', $type))
                 ->search('name', $this->search)
                 ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate($this->perPage),
@@ -65,7 +63,6 @@ class ConceptTable extends Component
     {
         return [
             'editing.name' => ['required', 'min:5', 'max:50', Rule::unique('concepts', 'name')->ignore($this->editing)],
-            'editing.type' => 'required|in:' . collect(Concept::TYPES)->keys()->implode(','),
 
         ];
     }
@@ -73,16 +70,14 @@ class ConceptTable extends Component
         'editing.name.required' => 'El nombre es obligatorio',
         'editing.name.min' => 'El nombre debe tener al menos 5 caracteres',
         'editing.name.max' => 'El nombre no debe tener más de 50 caracteres',
-        'editing.name.unique' => 'El concepto ya fue registrado',
-        'editing.type.in' => 'El valor es inválido',
-        'editing.type.required' => 'El tipo es obligatorio',
+        'editing.name.unique' => 'El servicio ya fue registrado',
     ];
 
     public function save()
     {
         $this->validate();
         $this->editing->save();
-        $this->nameModal === 'Crear nuevo concepto' ? $this->emit('success_alert', 'Concepto creado') : $this->emit('success_alert', 'Concepto actualizado');
+        $this->nameModal === 'Crear nuevo servicio' ? $this->emit('success_alert', 'Servicio creado') : $this->emit('success_alert', 'Servicio actualizado');
         $this->dispatchBrowserEvent('close-modal');
     }
 
@@ -94,7 +89,7 @@ class ConceptTable extends Component
     public function create()
     {
         if ($this->editing->getKey()) $this->editing = $this->makeBlankFields(); // para preservar cambios en los inputs
-        $this->nameModal = 'Crear nueva concepto';
+        $this->nameModal = 'Crear nuevo servicio';
         $this->resetErrorBag();
         $this->resetValidation();
         $this->dispatchBrowserEvent('open-modal');
@@ -102,7 +97,7 @@ class ConceptTable extends Component
 
     public function edit(Concept $concept)
     {
-        $this->nameModal = 'Editar concepto';
+        $this->nameModal = 'Editar servicio';
         $this->resetErrorBag();
         $this->resetValidation();
         $this->dispatchBrowserEvent('open-modal');

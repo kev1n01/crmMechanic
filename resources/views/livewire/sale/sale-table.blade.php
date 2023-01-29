@@ -115,14 +115,16 @@
 
                                         <x-table.cell>{{ $sale->customer->name ?? '' }}</x-table.cell>
 
-                                        <x-table.cell>{{ $sale->date_sale }}</x-table.cell>
+                                        <x-table.cell>{{ \Carbon\Carbon::parse($sale->date_sale)->format('d-m-Y') }}</x-table.cell>
 
                                         <x-table.cell>{{ $sale->total }}</x-table.cell>
 
                                         <x-table.cell>
-                                            <span class="badge badge-{{ $sale->status_color }}-lighten">
+                                            <button
+                                                class="btn btn-outline-{{ $sale->status_color }} rounded-pill btn-sm w-75"
+                                                type="button" wire:click="changeStatus({{ $sale->id }})">
                                                 {{ strtoupper($sale->status) }}
-                                            </span>
+                                            </button>
                                         </x-table.cell>
 
                                         <x-table.cell>

@@ -111,7 +111,7 @@
 
                                         <x-table.cell>{{ $purchase->provider->name ?? '' }}</x-table.cell>
 
-                                        <x-table.cell>{{ $purchase->date_purchase }}</x-table.cell>
+                                        <x-table.cell>{{ \Carbon\Carbon::parse($purchase->date_purchase)->format('d-m-Y') }}</x-table.cell>
 
                                         <x-table.cell>{{ $purchase->total }}</x-table.cell>
 
@@ -119,8 +119,8 @@
                                             <button
                                                 class="btn btn-outline-{{ $purchase->status_color }} rounded-pill btn-sm w-75"
                                                 type="button" wire:click="changeStatus({{ $purchase->id }})"
-                                                {{ $purchase->status === 'recibido' || $purchase->status === 'cancelado' ? 'disabled' : '' }}>
-                                                {{ $purchase->status }}
+                                                >
+                                                {{ strtoupper($purchase->status) }}
                                             </button>
                                         </x-table.cell>
 

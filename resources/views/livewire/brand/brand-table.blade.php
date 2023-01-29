@@ -80,7 +80,7 @@
 
                                         <x-table.cell>{{ $brand->name }}</x-table.cell>
 
-                                        <x-table.cell>{{ $brand->created_at }}</x-table.cell>
+                                        <x-table.cell>{{ \Carbon\Carbon::parse($brand->created_at)->format('d-m-Y') }}</x-table.cell>
 
                                         <x-table.cell>
 

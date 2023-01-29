@@ -26,6 +26,7 @@ return new class extends Migration
             $table->foreignId('customer')->constrained('customers');
             $table->string('status');
             $table->foreignId('vehicle')->constrained('vehicles');
+            $table->integer('sale')->nullable();
             $table->timestamps();
         });
     }

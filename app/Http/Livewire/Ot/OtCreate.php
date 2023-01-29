@@ -4,6 +4,9 @@ namespace App\Http\Livewire\Ot;
 
 use App\Models\Concept;
 use App\Models\Customer;
+use App\Models\Product;
+use App\Models\Sale as ModelsSale;
+use App\Models\SaleDetail;
 use App\Models\Vehicle;
 use App\Models\WorkOrder;
 use App\Models\workOrderDetail;
@@ -11,7 +14,6 @@ use Carbon\Carbon;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
-
 
 class OtCreate extends Component
 {
@@ -22,6 +24,8 @@ class OtCreate extends Component
     public $statuses = [];
     public $customers = [];
     public $vehicles = [];
+    public $sales = [];
+    public $wo_sid = [];
 
     public $subtotal;
     public $total;
@@ -41,6 +45,7 @@ class OtCreate extends Component
             'editing.customer' => 'required',
             'editing.status' => 'required|in:' . collect(WorkOrder::STATUSES)->keys()->implode(','),
             'editing.vehicle' => 'required',
+            'editing.sale' => 'nullable',
         ];
     }
 
@@ -82,6 +87,7 @@ class OtCreate extends Component
         $this->editing = $this->makeBlankFields();
         if ($this->editing->getKey()) $this->editing = $this->makeBlankFields(); // para preservar cambios en los inputs for create
         $this->editing->code = $this->code_random(3);
+        $this->editing->odo = '0';
         $this->statuses = WorkOrder::STATUSES;
         $this->customers = Customer::pluck('name', 'id');
     }
@@ -92,7 +98,7 @@ class OtCreate extends Component
             $this->concepts = Concept::query()->when(
                 $this->searchConcept,
                 fn ($q, $searchConcept) =>
-                $q->where('name', 'like', '%' . $searchConcept . '%')->orWhere('type', $searchConcept)
+                $q->where('name', 'like', '%' . $searchConcept . '%')
             )->get();
         } else {
             $this->concepts = [];
@@ -108,18 +114,33 @@ class OtCreate extends Component
         if ($this->editing->customer) {
             $this->vehicles = Vehicle::where('customer_id', $this->editing->customer)
                 ->pluck('license_plate', 'id');
+
+            $ots = WorkOrder::where('customer', $this->editing->customer)->get();
+            $ots->each(function ($sl) {
+                array_push($this->wo_sid, $sl->sale);
+            });
+            $this->sales = ModelsSale::whereNotIn('id', $this->wo_sid)
+                ->where('customer_id', $this->editing->customer)
+                ->pluck('code_sale', 'id');
         } else {
             $this->vehicles = [];
+            $this->sales = [];
         }
 
         return view('livewire.ot.ot-create', ['cart' => $cart])
             ->extends('layouts.admin.app')->section('content');
     }
 
+    public function updatedEditingCustomer()
+    {
+        $this->editing->odo = '0';
+        $this->editing->sale = 0;
+        $this->editing->vehicle = '';
+    }
     public function updatedEditingVehicle()
     {
         $vf = Vehicle::find($this->editing->vehicle);
-        $this->editing->odo = $vf->odo;
+        $this->editing->odo = $vf ? $vf->odo : 0;
     }
 
     public function updateCartOptions()
@@ -139,13 +160,13 @@ class OtCreate extends Component
         Cart::session($this->editing->vehicle)->add($concept->id, $concept->name, 0, 1);
         $this->searchConcept = '';
         $this->updateCartOptions();
-        $this->emit('success_alert', 'Concepto agregado al OT');
+        $this->emit('success_alert', 'Servicio agregado al OT');
     }
 
-    public function updateQuantityCart(Concept $concept, $cant)
+    public function updateQuantityCart($code_id, $cant)
     {
+        $concept = Concept::find($code_id);
         $itemprice = Cart::session($this->editing->vehicle)->get($concept->id);
-        // dd($itemprice);
         if ($cant > 0) {
             $this->removeItem($concept->id);
             Cart::session($this->editing->vehicle)->add($concept->id, $concept->name, $itemprice->price, $cant);
@@ -199,19 +220,22 @@ class OtCreate extends Component
     public function saveLogic()
     {
         $this->validate();
-        $this->editing->total = $this->total;
+
+        $sale = ModelsSale::find($this->editing->sale);
+        $this->editing->total = $this->total + $sale->total;
         $this->editing->arrival_date = Carbon::parse($this->editing->arrival_date)->format('Y-m-d');
         $this->editing->arrival_hour = $this->editing->arrival_hour . ':00';
-        $this->editing->departure_date = Carbon::parse($this->editing->departure_date)->format('Y-m-d');
-        $this->editing->departure_hour = $this->editing->departure_hour . ':00';
         $this->editing->save();
 
-        $cartItems = Cart::session($this->editing->vehicle)->getContent();
+        $cartItems = Cart::session($this->editing->vehicle)->getContent()->filter(function ($item) {
+            return strlen($item->id) != 5;
+        });
+
         foreach ($cartItems as $item) {
             workOrderDetail::create([
                 'price' => $item->price,
                 'quantity' => $item->quantity,
-                'concept_id' => $item->id,
+                'item' => $item->id,
                 'work_order_id' => $this->editing->id,
             ]);
         }

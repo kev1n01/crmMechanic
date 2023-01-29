@@ -63,12 +63,14 @@ class OtTable extends Component
     {
         return WorkOrder::query()
             ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
-            $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
-            ->when($this->search, fn ($q, $search) => $q->where('code', 'like', '%' . $search . '%')
-                ->orwhere('odo', 'like', '%' . $search . '%')
-                ->withWhereHas('customerUser', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%'))
-                ->withWhereHas('vehiclePlate', fn ($q2) => $q2->where('license_plate', 'like', '%' . $search . '%'))
-                )
+            $q->whereBetween('arrival_date', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d'), Carbon::parse($this->filters['toDate'])->format('Y-m-d')]))
+            ->when(
+                $this->search,
+                fn ($q, $search) => $q->where('code', 'like', '%' . $search . '%')
+                    ->orwhere('odo', 'like', '%' . $search . '%')
+                    ->withWhereHas('customerUser', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%'))
+                    ->withWhereHas('vehiclePlate', fn ($q2) => $q2->where('license_plate', 'like', '%' . $search . '%'))
+            )
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
             ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer', $customer))
             ->orderBy($this->sortField, $this->sortDirection)
@@ -90,17 +92,6 @@ class OtTable extends Component
         $this->emit('success_alert', 'El orden de trabajo fue eliminado');
     }
 
-// public function generatePdf(WorkOrder $wo)
-// {
-//     $wod = $wo->workOrderDetail()->get();
-
-//     $pdf = PDF::loadView('invoice', ['wo' => $wo, 'wod' => $wod])->setPaper('a4', 'landscape')->stream();
-//     return response()->streamDownload(
-//         fn () => print($pdf),
-//         $wo->code . ' ' . $wo->vehiclePlate->license_plate . ' ' . $wo->customerUser->name . ".pdf"
-//     );
-// }
-
     public function exportSelected()
     {
         return response()->streamDownload(function () {
@@ -118,5 +109,18 @@ class OtTable extends Component
         }
         $wo->delete();
         $this->emit('success_alert', count($this->selected) . ' registros eliminados');
+    }
+    public function changeStatus(WorkOrder $wo)
+    {
+        $wo->status = $wo->status === 'finalizado' ? 'en progreso' : ($wo->status === 'en progreso' ? 'retrasado' : 'finalizado');
+        $wo->save();
+        $this->emit('success_alert', 'Estado actualizado');
+    }
+
+    public function updateStatusToDelayed(WorkOrder $wo)
+    {
+        $wo->status = 'retrasado';
+        $wo->save();
+        $this->emit('refreshList');
     }
 }

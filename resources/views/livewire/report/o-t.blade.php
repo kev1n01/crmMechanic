@@ -2,7 +2,7 @@
     <div class="row mt-3">
         <div class="col-12">
             <div class="row">
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                     <div class="card">
                         <div class="card-body">
                             <x-input.select class="col-xl-12" name="vehicle_plate" label="Placa" :required=true
@@ -47,11 +47,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-9">
+                <div class="col-lg-8">
                     <div class="card">
                         <div class="card-body pt-2">
 
-                            <div class="border-white rounded mb-2 mt-1">
+                            {{-- <div class="border border-secondary rounded mb-2 mt-1">
                                 <div class="d-flex flex-row-reverse bd-highlight">
                                     <div class="p-1 bd-highlight">
                                         <button class="btn btn-danger">Exportar en pdf</button>
@@ -60,7 +60,7 @@
                                         <button class="btn btn-success">Exportar en csv</button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="table-responsive">
                                 <x-table class="table-striped table-centered">
@@ -149,7 +149,7 @@
                         @foreach ($ot_dt as $od)
                             <x-table.row>
                                 <x-table.cell>{{ $od->customerUser->name }}</x-table.cell>
-                                <x-table.cell>{{ $od->customerUser->user->email }}</x-table.cell>
+                                <x-table.cell>{{ $od->customerUser->email }}</x-table.cell>
                                 <x-table.cell>{{ $od->customerUser->phone }}</x-table.cell>
                                 <x-table.cell>{{ $od->customerUser->dni }}</x-table.cell>
                                 <x-table.cell>{{ $od->customerUser->ruc }}</x-table.cell>
@@ -159,24 +159,22 @@
                 </x-table>
             </div>
 
-            <h3 class="fs-4 text-center">Lista de servicios y repuesto</h3>
+            <h3 class="fs-4 text-center">Lista de servicios</h3>
             <div class="table-responsive">
                 <x-table footer class="table-bordered table-striped table-centered">
                     <x-slot name="head">
-                        <th class="text-left">Concepto</th>
-                        <th class="text-center">Tipo</th>
+                        <th class="text-left">Descripcion</th>
                         <th class="text-center">Cantidad</th>
                         <th class="text-center">Precio U.</th>
                         <th class="text-center">Importe</th>
                     </x-slot>
 
                     <x-slot name="body">
-                        @foreach ($details as $d)
+                        @foreach ($wod_service as $d)
                             <x-table.row>
                                 <x-table.cell>{{ $d->concept->name }}</x-table.cell>
-                                <x-table.cell class="text-center">{{ $d->concept->type }}</x-table.cell>
                                 <x-table.cell class="text-center">{{ $d->quantity }}</x-table.cell>
-                                <x-table.cell class="text-center">S/ {{ number_format($d->price, 2) }}</x-table.cell>
+                                <x-table.cell class="text-center">{{ number_format($d->price, 2) }}</x-table.cell>
                                 <x-table.cell class="text-center">S/ {{ number_format($d->quantity * $d->price, 2) }}</x-table.cell>
                             </x-table.row>
                         @endforeach
@@ -185,15 +183,57 @@
                         <td class="text-right">
                             <h6 class="text-primary fs-5">TOTALES: </h6>
                         </td>
-                        <td></td>
                         <td class="text-center">
-                            @if ($details)
-                                <h6 class="text-primary fs-5">{{ $details->sum('quantity') }}</h6>
+                            @if ($wod_service)
+                                <h6 class="text-primary fs-5">{{ $wod_service->sum('quantity') }}</h6>
                             @endif
                         </td>
-                        @if ($details)
+                        @if ($wod_service)
                             @php $mytotal = 0; @endphp
-                            @foreach ($details as $d)
+                            @foreach ($wod_service as $d)
+                                @php $mytotal += $d->quantity * $d->price; @endphp
+                            @endforeach
+                            <td></td>
+                            <td class="text-center">
+                                <h6 class="text-primary fs-5">S/ {{ number_format($mytotal, 2) }}</h6>
+                            </td>
+                        @endif
+                    </x-slot>
+                </x-table>
+            </div>
+
+            <h3 class="fs-4 text-center">Lista de repuestos</h3>
+            <div class="table-responsive">
+                <x-table footer class="table-bordered table-striped table-centered">
+                    <x-slot name="head">
+                        <th class="text-left">Descripcion</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-center">Precio U.</th>
+                        <th class="text-center">Importe</th>
+                    </x-slot>
+
+                    <x-slot name="body">
+                        @foreach ($wod_replacement as $d)
+                            <x-table.row>
+                                <x-table.cell>{{ $d->product->name }}</x-table.cell>
+                                <x-table.cell class="text-center">{{ $d->quantity }}</x-table.cell>
+                                <x-table.cell class="text-center">{{ number_format($d->price, 2) }}</x-table.cell>
+                                <x-table.cell class="text-center">S/ {{ number_format($d->quantity * $d->price, 2) }}</x-table.cell>
+                            </x-table.row>
+                        @endforeach
+                    </x-slot>
+                    <x-slot name="foot">
+                        <td class="text-right">
+                            <h6 class="text-primary fs-5">TOTALES: </h6>
+                        </td>
+                        <td class="text-center">
+                            @if ($wod_replacement)
+                                <h6 class="text-primary fs-5">{{ $wod_replacement->sum('quantity') }}</h6>
+                            @endif
+                        </td>
+                        @if ($wod_replacement)
+                            @php $mytotal = 0; @endphp
+                            @foreach ($wod_replacement as $d)
                                 @php $mytotal += $d->quantity * $d->price; @endphp
                             @endforeach
                             <td></td>

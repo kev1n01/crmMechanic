@@ -43,7 +43,7 @@
                     <div class="card">
                         <div class="card-body pt-2">
 
-                            <div class="border-white rounded mb-2 mt-1">
+                            {{-- <div class="border-white rounded mb-2 mt-1">
                                 <div class="d-flex flex-row-reverse bd-highlight">
                                     <div class="p-1 bd-highlight">
                                         <button class="btn btn-danger">Exportar en pdf</button>
@@ -52,7 +52,7 @@
                                         <button class="btn btn-success">Exportar en csv</button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="table-responsive">
                                 <x-table class="table-striped table-centered">

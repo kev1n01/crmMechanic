@@ -11,7 +11,7 @@ class workOrderDetail extends Model
 
     protected $fillable = [
         'work_order_id',
-        'concept_id',
+        'item',
         'quantity',
         'price'
     ];
@@ -23,6 +23,8 @@ class workOrderDetail extends Model
 
     public function concept()
     {
-        return $this->belongsTo(Concept::class,'concept_id');
+        return $this->belongsTo(Concept::class,'item');
     }
+
+
 }

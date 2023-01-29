@@ -11,7 +11,7 @@ class Sale extends Model
     
     const STATUSES = [
         'pagado' => 'Pagado',
-        'pendiente' => 'Pendiente',
+        'no pagado' => 'No pagado',
         'cancelado' => 'Cancelado',
     ];
 
@@ -41,7 +41,7 @@ class Sale extends Model
     {
         return [
             'pagado' => 'success',
-            'pendiente' => 'info',
+            'no pagado' => 'info',
             'cancelado' => 'danger',
         ][$this->status] ?? 'secondary';
     }

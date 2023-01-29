@@ -50,11 +50,11 @@ class Purchase extends Component
             'toDate.required' => 'La fecha de fin es obligatorio',
         ]);
 
-        $fd = Carbon::parse($this->fromDate)->format('Y-m-d') . ' 00:00:00';
-        $td = Carbon::parse($this->toDate)->format('Y-m-d') . ' 23:59:59';
+        $fd = Carbon::parse($this->fromDate)->format('Y-m-d');
+        $td = Carbon::parse($this->toDate)->format('Y-m-d');
 
         $this->purchases = ModelsPurchase::with('purchaseDetail')
-            ->whereBetween('created_at', [$fd, $td])
+            ->whereBetween('date_purchase', [$fd, $td])
             ->where('provider_id', $this->provider_id)
             ->get();
 

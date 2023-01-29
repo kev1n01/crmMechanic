@@ -34,7 +34,6 @@
                                 <button type="button" wire:click="create" class="btn btn-dark mb-2 me-2"><i
                                         class="mdi mdi-plus me-1"></i>
                                     Nuevo</button>
-                                <button type="button" class="btn btn-light mb-2">Export</button>
                             </div>
                         </div>
                         @if ($showFilters)
@@ -82,7 +81,7 @@
 
                                         <x-table.cell>{{ $brand->name }}</x-table.cell>
 
-                                        <x-table.cell>{{ $brand->created_at }}</x-table.cell>
+                                        <x-table.cell>{{ \Carbon\Carbon::parse($brand->created_at)->format('d-m-Y') }}</x-table.cell>
 
                                         <x-table.cell>
 

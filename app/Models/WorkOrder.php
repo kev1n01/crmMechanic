@@ -11,10 +11,10 @@ class WorkOrder extends Model
 
     const STATUSES = [
         'finalizado' => 'Finalizado',
-        'cancelado' => 'Cancelado',
+        'retrasado' => 'Retrasado',
         'en progreso' => 'En progreso',
     ];
-    
+
 
     protected $fillable = [
         'code',
@@ -28,6 +28,7 @@ class WorkOrder extends Model
         'customer',
         'status',
         'vehicle',
+        'sale'
     ];
 
     public function vehiclePlate()
@@ -49,7 +50,7 @@ class WorkOrder extends Model
     {
         return [
             'finalizado' => 'success',
-            'cancelado' => 'danger',
+            'retrasado' => 'danger',
             'en progreso' => 'info',
         ][$this->status] ?? 'default';
     }

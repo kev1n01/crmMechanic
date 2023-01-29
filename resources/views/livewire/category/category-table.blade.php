@@ -98,7 +98,7 @@
 
                                         <x-table.cell>{{ $category->name }}</x-table.cell>
 
-                                        <x-table.cell>{{ $category->created_at }}</x-table.cell>
+                                        <x-table.cell>{{ \Carbon\Carbon::parse($category->created_at)->format('d-m-Y') }}</x-table.cell>
 
                                         <x-table.cell>
 

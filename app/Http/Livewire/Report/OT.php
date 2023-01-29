@@ -2,11 +2,14 @@
 
 namespace App\Http\Livewire\Report;
 
+use App\Models\Product;
+use App\Models\SaleDetail;
 use App\Models\Vehicle;
 use App\Models\WorkOrder;
 use App\Models\workOrderDetail;
 use Carbon\Carbon;
 use Livewire\Component;
+use Termwind\Components\Dd;
 
 class OT extends Component
 {
@@ -17,9 +20,11 @@ class OT extends Component
         $total_replacement,
         $total_service,
         $ots,
-        $details,
+        $wod_service,
+        $wod_replacement,
         $ot_dt,
         $wo_ids,
+        $wo_sid,
         $idModal = "detailOtModal",
         $nameModal,
         $modalsize = "modal-lg";
@@ -32,9 +37,11 @@ class OT extends Component
         $this->total_replacement = 0;
         $this->total_service = 0;
         $this->ots = [];
-        $this->details = [];
         $this->ot_dt = [];
         $this->wo_ids = [];
+        $this->wo_sid = [];
+        $this->wod_service = [];
+        $this->wod_replacement = [];
         $this->plates = Vehicle::pluck('license_plate', 'id');
     }
 
@@ -59,31 +66,29 @@ class OT extends Component
         $this->total_replacement = 0;
         $this->total_service = 0;
 
-        $fd = Carbon::parse($this->fromDate)->format('Y-m-d') . ' 00:00:00';
-        $td = Carbon::parse($this->toDate)->format('Y-m-d') . ' 23:59:59';
+        $fd = Carbon::parse($this->fromDate)->format('Y-m-d');
+        $td = Carbon::parse($this->toDate)->format('Y-m-d');
 
         $this->ots = WorkOrder::with('workOrderDetail')
-            ->whereBetween('created_at', [$fd, $td])
+            ->whereBetween('arrival_date', [$fd, $td])
             ->where('vehicle', $this->vehicle_plate)
             ->get();
 
-        // dd($this->ots);
 
         $this->total = $this->ots ?  $this->ots->sum('total') : 0;
 
         $this->ots->each(function ($ids) {
             array_push($this->wo_ids, $ids->id);
+            array_push($this->wo_sid, $ids->sale);
         });
 
         $dots_service = workOrderDetail::whereIn('work_order_id', $this->wo_ids)
-            ->withWhereHas('concept', function ($query) {
-                $query->where('type', 'servicio');
-            })->get();
+            ->get();
 
-        $dots_replacement = workOrderDetail::whereIn('work_order_id', $this->wo_ids)
-            ->withWhereHas('concept', function ($query) {
-                $query->where('type', 'repuesto');
-            })->get();
+        $dots_replacement = SaleDetail::whereIn('sale_id',$this->wo_sid )
+            ->get();
+
+        // dd($dots_replacement);
 
         $dots_service->each(function ($ds) {
             $this->total_service +=  $ds->quantity * $ds->price;
@@ -101,7 +106,8 @@ class OT extends Component
     public function viewDetails(WorkOrder $wo)
     {
         $this->nameModal = "Detalle del orden de trabajo " . $wo->code;
-        $this->details = workOrderDetail::where('work_order_id', $wo->id)->get();
+        $this->wod_service = $wo->workOrderDetail()->get();
+        $this->wod_replacement = SaleDetail::where('sale_id',$wo->sale )->get();
         $this->ot_dt = WorkOrder::where('id', $wo->id)->get();
         $this->dispatchBrowserEvent('open-modal');
     }

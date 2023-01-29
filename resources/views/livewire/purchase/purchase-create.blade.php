@@ -104,7 +104,7 @@
 
                         <div class="mt-2">
                             <button type="button" class="btn border border-danger me-2 ms-2" wire:click="cancel"
-                                {{ !$editing->customer_id ? 'disabled' : '' }}>Cancelar</button>
+                                {{ !$editing->provider_id ? 'disabled' : '' }}>Cancelar</button>
 
                             <button type="submit" class="btn border border-primary me-2">
                                 <span wire:loading.delay wire:target="save"

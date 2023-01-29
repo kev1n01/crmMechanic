@@ -46,9 +46,6 @@
                                     <div class="col-lg-3">
                                         <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
-                                    <div class="col-lg-3">
-                                        <x-input.select name="filters.type" label="Tipo" :options="$types"/>
-                                    </div>
                                 </div>
                                 <div class="d-flex flex-row-reverse bd-highlight">
                                     <div class="p-2 bd-highlight">
@@ -69,9 +66,6 @@
                                 <x-table.heading sortable wire:click="sortBy('name')" :direction="$sortField == 'name' ? $sortDirection : null">Nombre
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('type')" :direction="$sortField == 'type' ? $sortDirection : null">Tipo
-                                </x-table.heading>
-
                                 <x-table.heading sortable wire:click="sortBy('created_at')" :direction="$sortField == 'created_at' ? $sortDirection : null">Fecha
                                     creación</x-table.heading>
 
@@ -88,12 +82,9 @@
 
                                         <x-table.cell>{{ $concept->name }}</x-table.cell>
 
-                                        <x-table.cell>{{ $concept->type}}</x-table.cell>
-
-                                        <x-table.cell>{{ $concept->created_at }}</x-table.cell>
+                                        <x-table.cell>{{ \Carbon\Carbon::parse($concept->created_at)->format('d-m-Y') }}</x-table.cell>
 
                                         <x-table.cell>
-
                                             <a class="action-icon" wire:click="edit({{ $concept->id }})">
                                                 <i class="mdi mdi-square-edit-outline"></i> </a>
                                             <a class="action-icon" onclick="Confirm({{ $concept->id }}, 'delete')"><i
@@ -130,11 +121,6 @@
                         <x-input.input-tooltip-error class="col-12" name="editing.name" label="Nombre del concepto"
                             type="text" :error="$errors->first('editing.name')" :required=true />
                     </x-input.input-group>
-                </x-input.input-group>
-
-                <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.type" label="Tipo " :options="$types"
-                        :error="$errors->first('editing.type')" :required=true />
                 </x-input.input-group>
 
             </x-slot>

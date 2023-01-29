@@ -43,7 +43,7 @@
                     <div class="card">
                         <div class="card-body pt-2">
 
-                            <div class="border-white rounded mb-2 mt-1">
+                            {{-- <div class="border-white rounded mb-2 mt-1">
                                 <div class="d-flex flex-row-reverse bd-highlight">
                                     <div class="p-1 bd-highlight">
                                         <button class="btn btn-danger">Exportar en pdf</button>
@@ -52,7 +52,7 @@
                                         <button class="btn btn-success">Exportar en csv</button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="table-responsive">
                                 <x-table class="table-striped table-centered">
@@ -141,19 +141,19 @@
                         @foreach ($sale_dt as $sdt)
                             <x-table.row>
                                 <x-table.cell>{{ $sdt->customer->name }}</x-table.cell>
-                                <x-table.cell>{{ $sdt->customer->ruc }}</x-table.cell>
+                                <x-table.cell>{{ $sdt->customer->ruc ?? 'N/D'}}</x-table.cell>
                                 <x-table.cell>{{ $sdt->customer->dni }}</x-table.cell>
                                 <x-table.cell>{{ $sdt->customer->address }}</x-table.cell>
                                 <x-table.cell>{{ $sdt->customer->phone }}</x-table.cell>
                                 <x-table.cell>{{ $sdt->customer->status }}</x-table.cell>
-                                <x-table.cell>{{ $sdt->customer->user->email }}</x-table.cell>
+                                <x-table.cell>{{ $sdt->customer->email }}</x-table.cell>
                             </x-table.row>
                         @endforeach
                     </x-slot>
                 </x-table>
             </div>
 
-            <h3 class="fs-4 text-center">Lista de servicios y repuesto</h3>
+            <h3 class="fs-4 text-center">Lista productos</h3>
             <div class="table-responsive">
                 <x-table footer class="table-bordered table-striped table-centered">
                     <x-slot name="head">

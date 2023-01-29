@@ -50,7 +50,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-8">
+                            <div class="col-lg-9">
                                 <div class="table-responsive">
                                     <x-table class="table-striped table-centered">
                                         <x-slot name="head">
@@ -108,7 +108,7 @@
                             </div>
                             <!-- end col -->
 
-                            <div class="col-lg-4">
+                            <div class="col-lg-3">
                                 <div class="border p-3 mt-4 mt-lg-0 rounded shadow-none bg-light">
                                     <h4 class="header-title mb-3 text-center">INGRESO DE PAGO</h4>
 
@@ -124,7 +124,7 @@
                                                     <td>
                                                         <div class="input-group ">
                                                             <input wire:model="cash"
-                                                                {{ count($cart) == 0 || !$editing->status == 'pagado' ? 'disabled' : '' }}
+                                                                {{ !$editing->customer_id || $editing->status != 'pagado' || count($cart) == 0 ? 'disabled' : '' }}
                                                                 type="text" class="form-control form-control-light">
                                                         </div>
                                                     </td>

@@ -60,7 +60,8 @@ class PurchaseTable extends Component
     {
         return Purchase::query()
             ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
-            $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))->when($this->search, fn ($q, $search) => $q->where('code_purchase', 'like', '%' . $search . '%'))
+            $q->whereBetween('date_purchase', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d'), Carbon::parse($this->filters['toDate'])->format('Y-m-d')]))
+            ->when($this->search, fn ($q, $search) => $q->where('code_purchase', 'like', '%' . $search . '%'))
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
             ->when($this->filters['provider'], fn ($q, $provider) => $q->where('provider_id', $provider))
             ->orderBy($this->sortField, $this->sortDirection)
@@ -103,7 +104,7 @@ class PurchaseTable extends Component
 
     public function changeStatus(Purchase $purchase)
     {
-        $purchase->status = $purchase->status === 'pendiente' ? 'recibido' : '';
+        $purchase->status = $purchase->status === 'pendiente' ? 'recibido' : ($purchase->status === 'recibido' ? 'cancelado' : 'pendiente');
         $purchase->save();
         $this->emit('success_alert', 'Estado actualizado');
     }

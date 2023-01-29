@@ -5,227 +5,177 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{{ public_path('assets/css/pdf.css') }}">
-    <title>Orden</title>
+    <title>PROFORMA MECANICA FLOPAC</title>
+    <link href="{{ public_path('assets/css/pdf.css') }}" rel="stylesheet" type="text/css">
 </head>
 
 <body>
-    <!--HEADER-->
-    <table class="div-1Header">
-        <tr>
-            <td class="logotd">
-                <img src="{{ public_path('assets/images/newlogo.png') }}" width="140px">
+    <div class="border-line">
+        <div>
+            <div style="float: left; width: 20%; height: 14%; margin-right: 4mm; margin-bottom: 4mm;">
+                <img src="{{ public_path('assets/images/newlogo.png') }}" class="logo_img">
+            </div>
+            <div style="float: left; width: 50%; height: 14%; text-align: center   ">
+                <p class="fw-b m-0">MECANICA AUTOMOTRIZ FLOPAC</p>
+                <p class="fw-sb m-0">Sector Las Lomas - Chunapampa - Huanuco</p>
+                <p class="fw-sb m-0">Cel: 957235173 / 978610524 / 933865935</p>
+                <p class="fw-sb m-0">BBVA: 12312312324123</p>
+                <p class="fw-sb m-0">BCP: 1231231312323</p>
+                <p class="fw-sb m-0">INTERBANK: 1241241232312412</p>
+            </div>
+            <div style="float: left; width: 30%; height: 14%; text-align: center">
 
-            </td>
-            <td class="datos-grales-td">
-                <table class="table_h_factura">
-                    <thead>
-                        <th class="headerDatosh titulos">Remision: <span class="titulos">51</span></th>
-                    </thead>
+            </div>
+        </div>
+
+        <p class="fs-2 fw-b">Proforma de mantenimiento preventivo y correctivo</p>
+
+        <p class="fs-3 fw-sb">Detalle del orden de trabajo</p>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td class="border-td border-th fw-sb">Fecha/Hora de llegada</td>
+                    <td class="border-td fw-sb" style="width: 26%;">
+                        {{ \Carbon\Carbon::parse($wo->arrival_date)->format('d-m-Y') .
+                            ' | ' .
+                            \Carbon\Carbon::parse($wo->arrival_hour)->format('H:i') }}
+                    </td>
+                    <td class="border-td border-th fw-sb">Estado</td>
+                    <td class="border-td fw-sb">{{ $wo->status }}</td>
+
+                </tr>
+                <tr>
+                    <td class="border-td border-th ps-2 fw-sb">Fecha/Hora de salida</td>
+                    <td class="border-td fw-sb">
+                        {{ 
+                            
+                            $wo->departure_date != null ?
+                            \Carbon\Carbon::parse($wo->departure_date)->format('d-m-Y') .
+                            ' | ' .
+                            \Carbon\Carbon::parse($wo->departure_hour)->format('H:i ') : 'Sigue en taller' }}
+                    </td>
+                    <td class="border-td border-th ps-2 fw-sb">Código</td>
+                    <td class="border-td fw-sb">{{ $wo->code }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th ps-2 fw-sb">Observaciones</td>
+                    <td class="border-td fw-sb" colspan="3">{{ $wo->observation ?? 'Ninguno' }}</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <p class="fs-3 fw-sb">Informacion del cliente</p>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td class="border-td border-th fw-sb">Señor(a)</td>
+                    <td class="border-td fw-sb" style="width: 50%;">{{ $wo->customerUser->name }}</td>
+
+                    <td class="border-td border-th ps-2 fw-sb">Dni</td>
+                    <td class="border-td fw-sb">{{ $wo->customerUser->dni }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th fw-sb">Estado</td>
+                    <td class="border-td fw-sb">{{ $wo->customerUser->status }}</td>
+
+                    <td class="border-td border-th ps-2 fw-sb">Ruc</td>
+                    <td class="border-td fw-sb">{{ $wo->customerUser->ruc }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th fw-sb">Dirección</td>
+                    <td class="border-td fw-sb">{{ $wo->customerUser->address }}</td>
+
+                    <td class="border-td border-th ps-2 fw-sb">Telófono</td>
+                    <td class="border-td fw-sb">{{ $wo->customerUser->phone }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p class="fs-3 fw-sb">Informacion del vehiculo {{ $wo->vehiclePlate->license_plate }}</p>
+
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td class="border-td border-th fw-sb" style="width: 15%;">Marca</td>
+                    <td class="border-td fw-sb" style="width: 20%;">{{ $wo->vehiclePlate->brand->name }}</td>
+
+                    <td class="border-td border-th ps-2 fw-sb">Color</td>
+                    <td class="border-td fw-sb">{{ $wo->vehiclePlate->color->name }}</td>
+
+                    <td class="border-td border-th ps-2 fw-sb">Tipo</td>
+                    <td class="border-td fw-sb">{{ $wo->vehiclePlate->type->name }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th ps-1 fw-sb" style="width: 15%;">Modelo</td>
+                    <td class="border-td fw-sb" style="width: 20%;">{{ $wo->vehiclePlate->model->name }}</td>
+
+                    <td class="border-td border-th ps-2 fw-sb">Año</td>
+                    <td class="border-td fw-sb">{{ $wo->vehiclePlate->model_year }}</td>
+
+                    <td class="border-td border-th ps-2 fw-sb">Kilometraje</td>
+                    <td class="border-td fw-sb">{{ $wo->odo }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p class="fs-3 fw-sb">Lista de servicios y repuestoss</p>
+
+        <table class="table-list">
+            <thead>
+                <tr>
+                    <th colspan="4" class="fw-b">Repuestos</th>
+                </tr>
+                <tr>
+                    <th>Descripcion</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Importe</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($wod_replacement as $k)
                     <tr>
-                        <td class="titulos">
-                            <p class="titulos">nombre de tu empresa</p>
-                        </td>
+                        <td class="fs-3 fw-sb">{{ $k->product->name }}</td>
+                        <td class="fs-3 fw-sb">{{ $k->price }}</td>
+                        <td class="fs-3 fw-sb">{{ $k->quantity }}</td>
+                        <td class="fs-3 fw-sb">S/. {{ $k->price * $k->quantity }}</td>
                     </tr>
+                @endforeach
+            </tbody>
+
+        </table>
+        <table class="table-list">
+            <thead>
+                <tr>
+                    <th colspan="4" class="fw-b">Servicios</th>
+                </tr>
+                <tr>
+                    <th>Descripcion</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Importe</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($wod_service as $w)
                     <tr>
-                        <td>
-                            <p>
-                                RFC: <span>BHUTMHTFP8</span>
-                            </p>
-                        </td>
+                        <td class="fs-3 fw-sb">{{ $w->concept->name }}</td>
+                        <td class="fs-3 fw-sb">{{ $w->price }}</td>
+                        <td class="fs-3 fw-sb">{{ $w->quantity }}</td>
+                        <td class="fs-3 fw-sb">S/. {{ $w->price * $w->quantity }}</td>
                     </tr>
-                    <tr>
-                        <td>
-                            <p>TELEFONO: <span>5897485106</span> </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>E-MAIL: <span>contacto@tuempresa.com</span> </p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-    <!--DATOS-->
-    <table class="div-1Datos">
-        <tr>
-            <td class="receptor">
-                <table class="table_receptor">
-                    <tr>
-                        <td class="titulos">
-                            <p class="titulos tituloRec">receptor</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Consequat</span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>RFC: <span>5897485106</span> </p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-            <td class="datosGral">
-                <table class="table_datos">
-                    <tr>
-                        <td>
-                            <p>
-                                FECHA DE CREACIÓN:
-                            </p>
-                        </td>
-                        <td>
-                            <p>
-                                25-08-2022
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>
-                                FECHA DE VENCIMIENTO:
-                            </p>
-                        </td>
-                        <td>
-                            <p>
-                                31-12-2022
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>
-                                SUCURSAL:
-                            </p>
-                        </td>
-                        <td>
-                            <p>
-                                CDMX
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>
-                                ALMACÉN:
-                            </p>
-                        </td>
-                        <td>
-                            <p>
-                                8
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-    <!--MATERIAL/PRODUCTO-->
-    <table class="table_materiales">
-        <thead>
-            <tr>
-                <td>Código</td>
-                <td>Cantidad</td>
-                <td>Unidad</td>
-                <td>Descripción</td>
-                <td>Precio unitario</td>
-                <td>Importe</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>005</td>
-                <td>3.00</td>
-                <td>Pieza</td>
-                <td>Lorem, ipsum dolor sit amet consectetur adipisicing elit. asperiores illum dolore aliquid dicta rem
-                    tenetur hic.</td>
-                <td>550.00</td>
-                <td>1650.00</td>
-            </tr>
-        </tbody>
-    </table>
-    <!--DATOS FINALES-->
-    <table class="div-1Datos">
-        <tr>
-            <td class="">
-                <table class="table_datosFtxt">
-                    <tr>
-                        <td>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum maxime eos minus illum
-                                dignissimos voluptas? Expedita optio eligendi hic pariatur quisquam ratione, ipsam ipsa
-                                temporibus perspiciatis, alias iure sequi sit.</p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-            <td class="datosFinales">
-                <table class="table_datosfinales">
-                    <tr>
-                        <td>
-                            <p>
-                                Subtotal:
-                            </p>
-                        </td>
-                        <td>
-                            <p>
-                                $1650.00
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>
-                                Descuento:
-                            </p>
-                        </td>
-                        <td>
-                            <p>
-                                $0.00
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>
-                                IVA:
-                            </p>
-                        </td>
-                        <td>
-                            <p>
-                                $264.00
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>
-                                Total:
-                            </p>
-                        </td>
-                        <td>
-                            <p>
-                                $1914.00
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-    <!--FIRMA-->
-    <div class="firma">
-        Firma del cliente
+                @endforeach
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2"></td>
+                    <th class="total">Total</th>
+                    <th class="">S/.{{ $wo->total }}</th>
+                </tr>
+            </tfoot>
+        </table>
     </div>
-    <!--FOOTER-->
-    <footer>
-        <p>Obten tu factura en: https://tuempresa.com/facturacion | Empresa: 558525 | Referencia: 55a885dvs </p>
-    </footer>
 </body>
 
 </html>

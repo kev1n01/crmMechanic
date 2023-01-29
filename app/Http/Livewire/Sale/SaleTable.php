@@ -59,7 +59,8 @@ class SaleTable extends Component
     {
         return Sale::query()
             ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) => 
-                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))            ->when($this->search, fn ($q, $search) => $q->where('code_sale', 'like', '%' . $search . '%'))
+                $q->whereBetween('date_sale', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d'), Carbon::parse($this->filters['toDate'])->format('Y-m-d')]))            
+            ->when($this->search, fn ($q, $search) => $q->where('code_sale', 'like', '%' . $search . '%'))
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
             ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer_id', $customer))
             ->orderBy($this->sortField, $this->sortDirection)
@@ -98,5 +99,12 @@ class SaleTable extends Component
         }
         $sale->delete();
         $this->emit('success_alert', count($this->selected) . ' registros eliminados');
+    }
+
+    public function changeStatus(Sale $sale)
+    {
+        $sale->status = $sale->status === 'no pagado' ? 'pagado' : ($sale->status === 'pagado' ? 'cancelado' : 'no pagado');
+        $sale->save();
+        $this->emit('success_alert', 'Estado actualizado');
     }
 }

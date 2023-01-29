@@ -107,8 +107,8 @@ class CustomerTable extends Component
         return [
             'editing.name' => ['required', 'min:5', 'max:50', Rule::unique('customers', 'name')->ignore($this->editing)],
             'editing.dni' => ['required', 'min:8', 'max:8', Rule::unique('customers', 'dni')->ignore($this->editing)],
-            'editing.ruc' => ['required', 'min:11', 'max:11', Rule::unique('customers', 'ruc')->ignore($this->editing)],
-            'editing.address' => ['min:5', 'max:50', Rule::unique('customers', 'address')->ignore($this->editing)],
+            'editing.ruc' => ['nullable', 'min:11', 'max:11', Rule::unique('customers', 'ruc')->ignore($this->editing)],
+            'editing.address' => ['nullable','min:5', 'max:50', Rule::unique('customers', 'address')->ignore($this->editing)],
             'editing.phone' => ['required', 'min:9', 'max:9', Rule::unique('customers', 'phone')->ignore($this->editing)],
             'editing.email' => ['required', 'email', Rule::unique('customers', 'email')->ignore($this->editing)],
             'editing.status' => 'nullable|in:' . collect(Customer::STATUSES)->keys()->implode(','),
@@ -126,7 +126,6 @@ class CustomerTable extends Component
         'editing.dni.max' => 'El dni no debe tener más de 8 caracteres',
         'editing.dni.unique' => 'Este dni ya fue registrado',
 
-        'editing.ruc.required' => 'El ruc es obligatorio',
         'editing.ruc.min' => 'El ruc debe tener al menos 11 caracteres',
         'editing.ruc.max' => 'El ruc no debe tener más de 11 caracteres',
         'editing.ruc.unique' => 'El ruc ya fue registrado',

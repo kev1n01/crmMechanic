@@ -112,7 +112,7 @@ class SaleCreate extends Component
     
     public function makeBlankFields()
     {
-        return Sale::make(['status' => 'pendiente']);
+        return Sale::make(['status' => 'no pagado']);
     } /*para dejar vacios los inpust*/
 
     public function addProduct(Product $product, $cant = 1)

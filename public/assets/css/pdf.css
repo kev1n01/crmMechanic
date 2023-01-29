@@ -1,146 +1,117 @@
-/*ESTILOS GRALES*/
-* {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 12px;
+html {
+    margin: 0;
 }
 
-.titulos {
-    font-size: 15px;
-    text-transform: uppercase;
+body {
+    font-family: sans-serif;
+    margin: 5mm 5mm 5mm 5mm;
 }
 
-/*HEADER*/
-.div-1Header,
-.div-1Datos {
-    width: 100%;
+@page {
+    margin: 0;
 }
 
-.logotd {
-    width: 50%;
+.border-line {
     height: auto;
+    padding: 3mm;
+    /* border: 0.2mm solid rgb(44, 44, 44); */
 }
 
-.datos-grales-td,
-.receptor {
+
+.logo_img {
+    width: 30mm;
+    padding: 1mm;
+}
+
+.info-mechanic {
     width: 50%;
-}
-
-.table_h_factura {
-    width: 50%;
-    height: 150px;
-    background-color: #FFF;
-    width: 100%;
-    margin: 0px;
-    padding: 0px;
-}
-
-.headerDatosh {
-    text-align: right;
-    color: #FFF;
-    padding: 5px;
-    background-color: rgb(24, 140, 207);
-}
-
-.table_h_factura tr td p {
-    margin: 0px;
-    padding: 2px;
-    text-align: right;
-    padding-right: 5px;
-}
-
-/*DATOS*/
-.table_receptor,
-.table_datos {
-    width: 42%;
-    height: 100px;
-    background-color: rgba(243, 243, 243, 0.521);
-    width: 100%;
-    margin: 0px;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.table_receptor tr td p {
-    margin: 0px;
-    padding: 2px;
-    text-align: left;
-}
-
-.tituloRec {
-    color: rgb(24, 140, 207);
-}
-
-.table_datos tr td p {
-    margin: 0px;
-    padding: 2px;
-    text-align: left;
-}
-
-/*MATERIALES*/
-.table_materiales {
-    width: 100%;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.table_materiales thead tr {
-    background-color: rgb(24, 140, 207);
-    color: #FFF;
-}
-
-.table_materiales thead tr td {
-    padding: 5px;
+    margin-left: auto;
+    margin-right: auto;
     text-align: center;
-    font-size: 14px;
 }
 
-.table_materiales tr td {
+.date {
     text-align: center;
-    padding: 5px;
-    border-bottom: 1px solid rgba(20, 20, 20, 0.096);
+    width: 20%;
+    padding-top: 30mm;
 }
 
-/*DATOS FINALES*/
-.table_datosFtxt {
-    width: 70%;
-    height: 100px;
+.date p {
+    padding-bottom: 5mm;
+}
+
+.border-date,
+.border-time {
+    border: 0.2mm solid rgb(39, 39, 39);
+    padding: 0.7mm 4mm 0.7mm 4mm;
+    margin-left: 2mm;
+}
+
+.border {
+    border-width: 0.2mm solid rgb(39, 39, 39);
+}
+
+.fw-sb {
+    font-weight: 55mm;
+    font-size: 4mm;
+}
+
+.fw-b {
+    font-weight: bold;
+    font-size: 4mm;
+}
+
+
+.table-list {
     width: 100%;
-    margin: 0px;
+    border-collapse: collapse;
 }
 
-.datosFinales {
-    width: 30%;
-}
-
-.datosFinales .table_datosfinales {
-    width: 42%;
-    height: 100px;
+.table {
     width: 100%;
-    margin: 0px;
-    padding: 10px;
-    border: 1px solid rgba(20, 20, 20, 0.096);
+    border-collapse: collapse;
 }
 
-.datosFinales .table_datosfinales tr td p {
-    margin: 0px;
-    padding: 2px;
-    text-align: left;
+.table .border-td,
+.table .border-th {
+    padding: 1mm 3mm 1mm 3mm;
+    border: 0.2mm solid rgb(48, 48, 48);
 }
 
-/*FIRMA*/
-.firma {
-    border-top: 1px solid rgba(20, 20, 20, 0.5);
+.table .border-th {
+    background: rgb(57, 97, 156); 
+    color: white;
+}
+
+.table-list td,
+.table-list th {
+    padding: 1mm;
+    border: 0.2mm solid rgb(48, 48, 48);
     text-align: center;
-    width: 30%;
-    margin-left: 70%;
-    margin-top: 80px;
-    padding-top: 5px;
 }
 
-/*FOOTER*/
-footer {
-    width: 100%;
-    text-align: center;
-    position: absolute;
-    bottom: 0px;
+.table-list thead {
+    background: rgb(57, 97, 156); 
+    text-transform: uppercase;
+    color: white;
+    font-size: 3mm;
+}
+
+.total {
+    text-transform: uppercase;
+    background: rgb(57, 97, 156); 
+    color: white;
+    font-size: 3mm;
+}
+
+.ps-2 {
+    padding-left: 15mm;
+}
+
+.ps-1 {
+    padding-left: 5mm;
+}
+
+.m-0{
+    margin: 0mm 0mm 0mm 0mm !important;
 }
