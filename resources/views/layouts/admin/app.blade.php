@@ -7,7 +7,7 @@
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- App favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/images/logo_mechanic_sm.png') }}" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/images/newlogo.ico') }}" />
     <!-- App css -->
     @include('layouts.admin.styles')
     @stack('styles')

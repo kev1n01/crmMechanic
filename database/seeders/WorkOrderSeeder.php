@@ -56,7 +56,7 @@ class WorkOrderSeeder extends Seeder
                 'created_at' => now(),
             ],
         ];
-        
+
         DB::table('work_orders')->insert($workOrders);
 
         $workOrderDetails = [
@@ -97,8 +97,7 @@ class WorkOrderSeeder extends Seeder
                 'price' => 440,
             ],
         ];
-        
-        DB::table('work_order_details')->insert($workOrderDetails);
 
+        DB::table('work_order_details')->insert($workOrderDetails);
     }
 }

@@ -17,19 +17,27 @@ class BrandProductSeeder extends Seeder
     {
         $brands = [
             [
-                'name' => 'VISTONY',
+                'name' => 'Vistony',
                 'created_at' => now(),
             ],
             [
-                'name' => 'MOPAL',
+                'name' => 'Tokico',
                 'created_at' => now(),
             ],
             [
-                'name' => 'MOTORSA4',
+                'name' => 'Bosch',
                 'created_at' => now(),
             ],
             [
-                'name' => 'XTREMEMOTOR',
+                'name' => 'Kamura',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Toyota',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Koyo',
                 'created_at' => now(),
             ],
         ];

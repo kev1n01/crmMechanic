@@ -40,6 +40,30 @@ class BrandVehicleSeeder extends Seeder
                 'name' => 'HONDA',
                 'created_at' => now(),
             ],
+            [
+                'name' => 'AUDI',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'DAEWOO',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'HYUNDAI',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'KIA',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'MAZDA',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'SUZUKI',
+                'created_at' => now(),
+            ],
         ];
 
         DB::table('brand_vehicles')->insert($brands);

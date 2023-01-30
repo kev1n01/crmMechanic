@@ -36,6 +36,38 @@ class ModelVehicleSeeder extends Seeder
                 'name' => 'Across',
                 'created_at' => now(),
             ],
+            [
+                'name' => 'Avensis',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Yaris',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Runner',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Escudo',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Aerio',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Besta',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Bongo',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Carens',
+                'created_at' => now(),
+            ],
         ];
 
         DB::table('model_vehicles')->insert($models);

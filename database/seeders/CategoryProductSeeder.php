@@ -31,6 +31,22 @@ class CategoryProductSeeder extends Seeder
                 'name' => 'Grasas',
                 'created_at' => now(),
             ],
+            [
+                'name' =>'Filtros',
+                'created_at' => now(),
+            ],
+            [
+                'name' =>'Zapatas',
+                'created_at' => now(),
+            ],
+            [
+                'name' =>'Bobinas',
+                'created_at' => now(),
+            ],
+            [
+                'name' =>'Faros',
+                'created_at' => now(),
+            ],
         ];
 
         DB::table('category_products')->insert($categories);
