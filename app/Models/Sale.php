@@ -19,7 +19,6 @@ class Sale extends Model
         'customer_id',
         'code_sale',
         'total',
-        'quantity',
         'cash',
         'change',
         'date_sale',

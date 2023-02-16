@@ -127,11 +127,31 @@
                     </ul>
                 </div>
             </li>
+
+            <li class="side-nav-item">
+                <a data-bs-toggle="collapse" href="#formpro" aria-expanded="false" aria-controls="formpro"
+                    class="side-nav-link">
+                    <i class="uil-clipboard-notes"></i>
+                    <span>Proformas</span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <div class="collapse" id="formpro">
+                    <ul class="side-nav-second-level">
+                        <li>
+                            <a href="{{ route('proformas') }}">Listado</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('proforma.orden.crear') }}">Crear Proforma</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#ot" aria-expanded="false" aria-controls="ot"
                     class="side-nav-link">
                     <i class=" uil-suitcase-alt"></i>
-                    <span> Orden de trabajo </span>
+                    <span> Ordenes de trabajo </span>
                     <span class="menu-arrow"></span>
                 </a>
                 <div class="collapse" id="ot">
@@ -140,14 +160,18 @@
                             <a href="{{ route('ordenes') }}">Listado</a>
                         </li>
                         <li>
-                            <a href="{{ route('ordenes.crear') }}">Crear OT</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('conceptos') }}">Servicios</a>
+                            <a href="{{ route('servicios') }}">Servicios</a>
                         </li>
                     </ul>
                 </div>
             </li>
+
+            {{-- <li class="side-nav-item">
+                <a href="#" class="side-nav-link">
+                    <i class="uil-invoice"></i>
+                    <span>Facturas</span>
+                </a>
+            </li> --}}
 
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#reportes" aria-expanded="false" aria-controls="reportes"
@@ -171,6 +195,12 @@
                 </div>
             </li>
 
+            <li class="side-nav-item">
+                <a href="{{ route('deudas') }}" class="side-nav-link">
+                    <i class="uil-money-withdrawal"></i>
+                    <span>Deudas por cobrar</span>
+                </a>
+            </li>
             <li class="side-nav-item">
                 <a href="{{ route('gastos') }}" class="side-nav-link">
                     <i class="uil-usd-circle"></i>

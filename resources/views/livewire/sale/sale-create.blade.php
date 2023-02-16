@@ -7,7 +7,7 @@
 
                         <div class="row mb-4 justify-content-center ">
                             <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.code_sale" label="Código"
-                                type="text" :error="$errors->first('editing.code_sale')" :required=true />
+                                type="text" :error="$errors->first('editing.code_sale')" :required=true :disabled=true />
 
                             <x-input.select class="col-xl-3 me-1" name="editing.customer_id" label="Cliente"
                                 :required=true :options="$customers" :error="$errors->first('editing.customer_id')" />
@@ -29,16 +29,16 @@
                                         {{ !$editing->customer_id ? 'disabled' : '' }}>
                                     <span class="mdi mdi-magnify search-icon"></span>
                                     <button type="button" wire:click="clearCart" class="btn btn-secondary"
-                                        {{ !$editing->customer_id ? 'disabled' : '' }}><i
+                                        {{ !$editing->customer_id || count($cart) == 0 ? 'disabled' : '' }}><i
                                             class="mdi mdi-reload"></i></button>
                                 </div>
 
-                                <div
-                                    class="dropdown-menu dropdown-menu-animated dropdown-lg w-75 {{ $products ? 'd-block' : '' }}">
+                                <div id="scroll-products"
+                                    class="dropdown-menu dropdown-menu-animated dropdown-lg {{ $products ? 'd-block' : '' }}">
                                     @forelse ($products as $p)
                                         <span class="dropdown-item notify-item"
                                             wire:click.prevent="addProduct({{ $p->id }})">
-                                            <span>{{ $p->name }}</span>
+                                            <span>📦 {{ $p->name.' - '. $p->code.' - '. $p->stock .' - '. $p->status}}</span>
                                         </span>
                                     @empty
                                         <a class="dropdown-item notify-item">
@@ -52,11 +52,12 @@
                         <div class="row">
                             <div class="col-lg-9">
                                 <div class="table-responsive">
-                                    <x-table class="table-striped table-centered">
+                                    <x-table footer class="table-striped table-centered">
                                         <x-slot name="head">
                                             <th width="40%">Producto</th>
                                             <th width="25%">Precio U.</th>
                                             <th width="15%">Cantidad</th>
+                                            <th width="15%">Descuento</th>
                                             <th width="20%">Subtotal</th>
                                             <th width="10%">Acción</th>
                                         </x-slot>
@@ -71,17 +72,22 @@
                                                     </x-table.cell>
                                                     <x-table.cell>
                                                         <input type="text" class="form-control w-auto"
-                                                            value="S/ {{ number_format($c->price, 2) }}">
+                                                            value="S/ {{ number_format($c->price, 2) }}" disabled>
                                                     </x-table.cell>
                                                     <x-table.cell>
-                                                        <input type="text" id="r{{ $c->id }}" min="1"
-                                                            wire:change="updateQuantityCart({{ $c->id }}, $('#r' + {{ $c->id }}).val())"
-                                                            class="form-control text-center"
-                                                            value="{{ $c->quantity }}">
+                                                        <input type="number" id="r{{ $c->id }}" min="1"
+                                                            wire:change="updateQuantityCart({{ $c->id }}, $('#r' + {{ $c->id }}).val(), $('#d'+{{ $c->id }}).val())"
+                                                            class="form-control" value="{{ $c->quantity }}">
+                                                    </x-table.cell>
+                                                    <x-table.cell>
+                                                        <input type="number" id="d{{ $c->id }}"
+                                                            wire:change="updateDiscountCart({{ $c->id }}, $('#d'+{{ $c->id }}).val())"
+                                                            class="form-control"
+                                                            value="{{ $c->attributes['discount'] }}" min="0">
                                                     </x-table.cell>
                                                     <x-table.cell>
                                                         <input type="text" class="form-control w-auto"
-                                                            value="S/ {{ number_format($c->quantity * $c->price, 2) }}"
+                                                            value="S/ {{ number_format($c->price * $c->quantity - $c->price * $c->quantity * ($c->attributes['discount'] / 100), 2) }}"
                                                             disabled>
                                                     </x-table.cell>
 
@@ -93,12 +99,42 @@
                                                 </x-table.row>
                                             @empty
                                                 <x-table.row>
-                                                    <x-table.cell class="text-center" colspan="5">
+                                                    <x-table.cell class="text-center" colspan="6">
                                                         No hay productos agregados a la venta
                                                     </x-table.cell>
                                                 </x-table.row>
                                             @endif
 
+                                        </x-slot>
+                                        <x-slot name="foot">
+                                            @php
+                                                $totalDiscount = 0;
+                                                $totalOG = 0;
+                                                foreach ($cart as $c) {
+                                                    $totalDiscount += $c->price * $c->quantity - $c->quantity * $c->price * ($c->attributes['discount'] / 100);
+                                                }
+                                                $totalOG = $totalDiscount / 1.18;
+                                            @endphp
+                                            <tr>
+                                                <td colspan="2"></td>
+                                                <td colspan="2">Total Ope. Gravadas</td>
+                                                <td>S/ {{ number_format($totalOG, 2) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2"></td>
+                                                <td colspan="2">Total Descuentos</td>
+                                                <td>S/ {{ number_format($total - $totalDiscount, 2) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2"></td>
+                                                <td colspan="2">Total IGV 18%</td>
+                                                <td>S/ {{ number_format($totalDiscount - $totalOG, 2) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2"></td>
+                                                <td colspan="2">TOTAL</td>
+                                                <td>S/ {{ number_format($totalDiscount, 2) }}</td>
+                                            </tr>
                                         </x-slot>
                                     </x-table>
 
@@ -109,15 +145,15 @@
                             <!-- end col -->
 
                             <div class="col-lg-3">
-                                <div class="border p-3 mt-4 mt-lg-0 rounded shadow-none bg-light">
+                                <div class="border p-1 mt-4 mt-lg-0 rounded shadow-none bg-light">
                                     <h4 class="header-title mb-3 text-center">INGRESO DE PAGO</h4>
 
                                     <div class="table-responsive">
-                                        <table class="table mb-0">
+                                        <table class="table m-0 p-0">
                                             <tbody>
                                                 <tr>
                                                     <td>Total:</td>
-                                                    <td>S/ {{ number_format($total, 2) }}</td>
+                                                    <td>S/ {{ number_format($totalDiscount, 2) }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Pago: </td>
@@ -125,7 +161,7 @@
                                                         <div class="input-group ">
                                                             <input wire:model="cash"
                                                                 {{ !$editing->customer_id || $editing->status != 'pagado' || count($cart) == 0 ? 'disabled' : '' }}
-                                                                type="text" class="form-control form-control-light">
+                                                                type="number" class="form-control form-control-light">
                                                         </div>
                                                     </td>
                                                 </tr>

@@ -14,13 +14,14 @@ class SaleDetail extends Model
     protected $fillable = [
         'sale_id',
         'product_id',
+        'discount',
         'quantity',
         'price',
     ];
 
     public function sale()
     {
-        return $this->belongsTo(Purchase::class,'sale_id');
+        return $this->belongsTo(Sale::class,'sale_id');
     }
 
     public function product()

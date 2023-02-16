@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Livewire\Brand;
+namespace App\Http\Livewire\DuePay;
 
-use App\Models\BrandProduct;
+use App\Models\DuePay;
+use App\Models\Sale;
 use App\Traits\DataTable;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
-class BrandTable extends Component
+class DuePaytable extends Component
 {
     use DataTable;
 
@@ -24,7 +25,7 @@ class BrandTable extends Component
 
     public function mount()
     {
-        $this->sortField = 'id';
+        $this->sortField = 'description';
         $this->editing = $this->makeBlankFields();
     }
 
@@ -33,12 +34,12 @@ class BrandTable extends Component
         $this->showFilters = $this->showFilters ? false : true;
     }
 
-    public function getBrandsProperty()
+    public function getDuesProperty()
     {
-        return BrandProduct::query()
+        return DuePay::query()
             ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
             $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
-            ->search('name', $this->search)
+            ->search('description', $this->search)
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
     }
@@ -46,8 +47,8 @@ class BrandTable extends Component
     public function render()
     {
         // sleep(0.5); //se toma 2 seg para renderizar
-        return view('livewire.brand.brand-table', [
-            'brands' => $this->brands,
+        return view('livewire.due-pay.due-paytable', [
+            'dues' => $this->dues,
         ])->extends('layouts.admin.app')->section('content');
     }
 
@@ -56,48 +57,55 @@ class BrandTable extends Component
         $this->reset('filters');
     }
 
-    public function delete(BrandProduct $brandProduct)
+    public function delete(DuePay $due)
     {
-        $brandProduct->delete();
+        $due->delete();
     }
 
     public function updatedSelectedPage($value)
     {
-        $this->selected = $value ? $this->brands->pluck('id')->map(fn ($id) => (string) $id) : [];
+        $this->selected = $value ? $this->dues->pluck('id')->map(fn ($id) => (string) $id) : [];
     }
 
     public function exportSelected()
     {
         return response()->streamDownload(function () {
-            echo BrandProduct::whereKey($this->selected)->toCsv();
-        }, 'marcas_productos.csv');
+            echo DuePay::whereKey($this->selected)->toCsv();
+        }, 'deudas_por_cobrar.csv');
         $this->selected = [];
         $this->emit('success_alert', 'Se exportaron los registros seleccionados');
     }
 
     public function deleteSelected()
     {
-        $brands = BrandProduct::whereKey($this->selected);
-        $brands->delete();
+        $dues = DuePay::whereKey($this->selected);
+        $dues->delete();
         $this->selected = [];
         $this->emit('success_alert', count($this->selected) . ' registros eliminados');
     }
     /* FOR MODAL */
-    public $idModal = 'brandModal';
+    public $idModal = 'dueModal';
     public $nameModal;
-    public BrandProduct $editing;
+    public DuePay $editing;
 
     public function rules()
     {
         return [
-            'editing.name' => ['required', 'min:3', 'max:30', Rule::unique('brand_products', 'name')->ignore($this->editing)],
+            'editing.description' => ['required', Rule::unique('due_pays', 'description')->ignore($this->editing)],
+            'editing.person_owed' => ['required'],
+            'editing.amount_owed' => ['required'],
+            'editing.amount_paid' => ['required'],
+            'editing.reason' => 'required',
         ];
     }
+
     protected $messages = [
-        'editing.name.required' => 'El nombre es obligatorio',
-        'editing.name.min' => 'El nombre debe tener al menos 3 caracteres',
-        'editing.name.max' => 'El nombre no debe tener más de 30 caracteres',
-        'editing.name.unique' => 'La marca ya fue registrado',
+        'editing.description.required' => 'La descripcion es obligatorio',
+        'editing.description.unique' => 'La descripcion ya fue registrado ',
+        'editing.person_owed.required' => 'El nombre del deudor es obligatorio',
+        'editing.amount_owed.required' => 'El monto adeudado es obligatorio',
+        'editing.amount_paid.required' => 'El monto pagado es obligatorio',
+        'editing.reason.required' => 'La razon es obligatorio',
     ];
 
     public function save()
@@ -113,28 +121,28 @@ class BrandTable extends Component
     {
         $this->validateOnly($label, $this->rules(), $this->messages);
     }
-    
+
     public function makeBlankFields()
     {
-        return BrandProduct::make(); /*para dejar vacios los inpust*/
+        return DuePay::make(['amount_owed' => 0, 'amount_paid' => 0]); /*para dejar vacios los inpust*/
     }
 
     public function create()
     {
         if ($this->editing->getKey()) $this->editing = $this->makeBlankFields(); // para preservar cambios en los inputs
-        $this->nameModal = 'Crear nueva marca';
+        $this->nameModal = 'Crear nueva deuda por cobrar';
         $this->resetErrorBag();
         $this->resetValidation();
         $this->dispatchBrowserEvent('open-modal');
     }
 
-    public function edit(BrandProduct $brandProduct)
+    public function edit(DuePay $due)
     {
-        $this->nameModal = 'Editar marca';
+        $this->nameModal = 'Editar deuda por cobrar';
         $this->resetErrorBag();
         $this->resetValidation();
         $this->dispatchBrowserEvent('open-modal');
-        if ($this->editing->isNot($brandProduct)) $this->editing = $brandProduct; // para preservar cambios en los inputs
+        if ($this->editing->isNot($due)) $this->editing = $due; // para preservar cambios en los inputs
     }
 
     public function closeModal()

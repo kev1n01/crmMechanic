@@ -14,9 +14,7 @@
         
     @else
         <tfoot>
-            <tr>
-                {{ $foot }}
-            </tr>
+            {{ $foot }}
         </tfoot>
     @endif
 </table>

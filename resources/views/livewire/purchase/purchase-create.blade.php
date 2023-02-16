@@ -6,7 +6,7 @@
                     <x-form method="save">
                         <div class="row mb-4 justify-content-center ">
                             <x-input.input-tooltip-error class="col-xl-2 me-1" name="editing.code_purchase" label="Código"
-                                type="text" :error="$errors->first('editing.code_purchase')" :required=true />
+                                type="text" :error="$errors->first('editing.code_purchase')" :required=true :disabled=true />
 
                             <x-input.select class="col-xl-3 me-1" name="editing.provider_id" label="Proveedor"
                                 :required=true :options="$providers" :error="$errors->first('editing.provider_id')" />
@@ -37,7 +37,7 @@
                                     @forelse ($products as $p)
                                         <span class="dropdown-item notify-item"
                                             wire:click.prevent="addProduct({{ $p->id }})">
-                                            <span>{{ $p->name }}</span>
+                                            <span>📦 {{ $p->name }}</span>
                                         </span>
                                     @empty
                                         <a class="dropdown-item notify-item">
@@ -49,12 +49,13 @@
                         </div>
 
                         <div class="table-responsive">
-                            <x-table footer class="table-striped">
+                            <x-table footer class="table-striped table-bordered">
                                 <x-slot name="head">
                                     <th width="40%">Producto</th>
                                     <th width="20%">Precio U.</th>
                                     <th width="15%">Cantidad</th>
-                                    <th width="20%">Subtotal</th>
+                                    <th width="15%">Descuento</th>
+                                    <th width="10%">Subtotal</th>
                                     <th width="10%">Acción</th>
                                 </x-slot>
 
@@ -64,20 +65,23 @@
                                             <x-table.cell>{{ $c->name }}</x-table.cell>
                                             <x-table.cell>
                                                 <input type="text" class="form-control w-auto"
-                                                    value="S/ {{ number_format($c->price, 2) }}">
+                                                    value="S/ {{ number_format($c->price, 2) }}" disabled>
                                             </x-table.cell>
                                             <x-table.cell>
-                                                <input type="text" id="r{{ $c->id }}"
-                                                    wire:change="updateQuantityCart({{ $c->id }}, $('#r' + {{ $c->id }}).val())"
+                                                <input type="number" id="r{{ $c->id }}" min="1"
+                                                    wire:change="updateQuantityCart({{ $c->id }}, $('#r' + {{ $c->id }}).val(), $('#d'+{{ $c->id }}).val())"
                                                     style="font-size: 1rem !important;" class="form-control text-center"
                                                     value="{{ $c->quantity }}">
                                             </x-table.cell>
                                             <x-table.cell>
-                                                <input type="text" class="form-control w-auto"
-                                                    value="S/ {{ number_format($c->quantity * $c->price, 2) }}"
-                                                    disabled>
+                                                <input type="number" id="d{{ $c->id }}" 
+                                                    wire:change="updateDiscountCart({{ $c->id }}, $('#d'+{{ $c->id }}).val())"
+                                                    class="form-control" value="{{ $c->attributes['discount'] }}" min="0">
                                             </x-table.cell>
-
+                                            <x-table.cell>
+                                                <input type="text" class="form-control w-auto"
+                                                value="S/ {{ number_format(($c->price * $c->quantity)-(($c->price * $c->quantity)*($c->attributes['discount']/100)), 2) }}" disabled>
+                                            </x-table.cell>
                                             <x-table.cell>
                                                 <a class="action-icon"
                                                     wire:click.prevent="removeItem({{ $c->id }})"><i
@@ -86,17 +90,41 @@
                                         </x-table.row>
                                     @empty
                                         <x-table.row>
-                                            <x-table.cell class="text-center" colspan="5">
+                                            <x-table.cell class="text-center" colspan="6">
                                                 No hay productos agregados a la compra
                                             </x-table.cell>
                                         </x-table.row>
                                     @endif
-
                                 </x-slot>
                                 <x-slot name="foot">
-                                    <td colspan="2"></td>
-                                    <td>TOTAL</td>
-                                    <td>S/ {{ number_format($total, 2) }}</td>
+                                    @php
+                                        $totalDiscount = 0;
+                                        $totalOG= 0;
+                                        foreach ($cart as $c) {
+                                            $totalDiscount += ($c->price * $c->quantity)-(($c->quantity * $c->price)*($c->attributes['discount']/100));
+                                        }
+                                        $totalOG = $totalDiscount/1.18
+                                    @endphp
+                                    <tr>
+                                        <td colspan="2"></td>
+                                        <td colspan="2">Total Ope. Gravadas</td>
+                                        <td>S/ {{ number_format($totalOG, 2) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                        <td colspan="2">Total Descuentos</td>
+                                        <td>S/ {{ number_format($total - $totalDiscount, 2) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                        <td colspan="2">Total IGV 18%</td>
+                                        <td>S/ {{ number_format($totalDiscount - $totalOG, 2) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                        <td colspan="2">TOTAL</td>
+                                        <td>S/ {{ number_format($totalDiscount, 2) }}</td>
+                                    </tr>
                                 </x-slot>
                             </x-table>
 

@@ -13,6 +13,7 @@ class workOrderDetail extends Model
         'work_order_id',
         'item',
         'quantity',
+        'discount',
         'price'
     ];
 
@@ -20,11 +21,4 @@ class workOrderDetail extends Model
     {
         return $this->belongsTo(WorkOrder::class,'work_order_id');
     }
-
-    public function concept()
-    {
-        return $this->belongsTo(Concept::class,'item');
-    }
-
-
 }

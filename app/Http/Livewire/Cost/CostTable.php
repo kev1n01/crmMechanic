@@ -134,6 +134,11 @@ class CostTable extends Component
         $this->emit('refreshList');
     }
 
+    public function updated($label)
+    {
+        $this->validateOnly($label, $this->rules(), $this->messages);
+    }
+    
     public function makeBlankFields()
     {
         return Cost::make(['type_voucher' => '1']); /*para dejar vacios los inpust*/

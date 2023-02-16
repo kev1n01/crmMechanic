@@ -103,7 +103,23 @@ class SaleTable extends Component
 
     public function changeStatus(Sale $sale)
     {
-        $sale->status = $sale->status === 'no pagado' ? 'pagado' : ($sale->status === 'pagado' ? 'cancelado' : 'no pagado');
+        if ($sale->status === 'no pagado') {
+            $sale->status = 'pagado';
+        }else if ($sale->status === 'pagado') {
+            $sale->status = 'cancelado';
+            $sales = $sale->saleDetail()->get();
+            foreach ($sales as $p) {
+                $p->product->stock += $p->quantity;
+                $p->product->save();
+            }
+        }else{
+            $sale->status = 'no pagado';
+            $sales = $sale->saleDetail()->get();
+            foreach ($sales as $p) {
+                $p->product->stock -= $p->quantity;
+                $p->product->save();
+            }
+        }
         $sale->save();
         $this->emit('success_alert', 'Estado actualizado');
     }

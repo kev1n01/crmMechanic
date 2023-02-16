@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('concepts', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('code')->unique();
+            $table->string('name')->unique();
             $table->timestamps();
         });
     }

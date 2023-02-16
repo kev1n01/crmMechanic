@@ -104,7 +104,24 @@ class PurchaseTable extends Component
 
     public function changeStatus(Purchase $purchase)
     {
-        $purchase->status = $purchase->status === 'pendiente' ? 'recibido' : ($purchase->status === 'recibido' ? 'cancelado' : 'pendiente');
+        if ($purchase->status === 'pendiente') {
+            $purchase->status = 'recibido';
+            $purchases = $purchase->purchaseDetail()->get();
+            foreach ($purchases as $p) {
+                $p->product->stock += $p->quantity;
+                $p->product->save();
+            }
+        } else if ($purchase->status === 'recibido') {
+            $purchase->status = 'cancelado';
+            $purchases = $purchase->purchaseDetail()->get();
+            foreach ($purchases as $p) {
+                $p->product->stock -= $p->quantity;
+                $p->product->save();
+            }
+        } else {
+            $purchase->status = 'pendiente';
+        }
+
         $purchase->save();
         $this->emit('success_alert', 'Estado actualizado');
     }

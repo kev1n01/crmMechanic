@@ -1,5 +1,5 @@
 @props(['name' => '', 'label' => '', 'required' => false, 'id' => '', 'error' => false])
-<div {{ $attributes->merge(['class' => 'position-relative mb-2']) }} id="{{ $id }}">
+<div {{ $attributes->merge(['class' => 'position-relative mb-0']) }} id="{{ $id }}">
     <label class="form-label">{{ $label }}
         <span class="text-danger">{{ $required ? '*' : '' }}</span>
     </label>
@@ -8,7 +8,7 @@
         data-date-autoclose="true" data-date-today-highlight="true" data-date-format="dd-mm-yyyy"
         onchange="this.dispatchEvent(new InputEvent('input'))">
 
-    <div class="invalid-tooltip">
+    <p class="text-danger mb-0">
         {{ $error }}
-    </div>
+    </p>
 </div>

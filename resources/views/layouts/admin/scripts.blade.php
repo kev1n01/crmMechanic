@@ -19,6 +19,14 @@
         }
     });
 
+    const Toast2 = Swal.mixin({
+        toast: true,
+        position: 'bottom-end',
+        showConfirmButton: false,
+        timer: 1000,
+        background: '#eef2f7',
+    });
+
     function ToastSuccessAlert(msg) {
         Toast.fire({
             icon: 'success',
@@ -34,7 +42,7 @@
     }
 
     function ToastInfoAlert(msg) {
-        Toast.fire({
+        Toast2.fire({
             icon: 'info',
             title: msg,
         })

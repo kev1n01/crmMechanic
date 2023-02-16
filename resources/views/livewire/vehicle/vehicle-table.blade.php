@@ -51,7 +51,7 @@
                             <div class="border shadow-none bg-light rounded">
                                 <div class="row m-1">
                                     <div class="col-lg-3">
-                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1"/>
+                                        <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1" />
                                     </div>
                                     <div class="col-lg-3">
                                         <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
@@ -169,59 +169,44 @@
     <x-form method="save">
         <x-modal-dialog :id="$idModal" :title="$nameModal" :optionsModal="$modalsize">
             <x-slot name="body">
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-xl-12" name="editing.license_plate" label="Placa de vehiculo"
-                        type="text" :error="$errors->first('editing.license_plate')" :required=true />
-                </x-input.input-group>
+                <div class="row g-2">
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.license_plate"
+                        label="Placa de vehiculo" type="text" :error="$errors->first('editing.license_plate')" :required=true />
 
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-xl-12" name="editing.odo" label="Kilometraje"
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.odo" label="Kilometraje"
                         type="text" :error="$errors->first('editing.odo')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.customer_id" label="Cliente" :options="$customers"
+                    <x-input.select class="col-xl-6" name="editing.customer_id" label="Cliente" :options="$customers"
                         :error="$errors->first('editing.customer_id')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.type_vehicle" label="Tipo de vehiculo"
+                    <x-input.select class="col-xl-6" name="editing.type_vehicle" label="Tipo de vehiculo"
                         :options="$types" :error="$errors->first('editing.type_vehicle')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.brand_vehicle" label="Marca de vehiculo"
+                    <x-input.select class="col-xl-6" name="editing.brand_vehicle" label="Marca de vehiculo"
                         :options="$brands" :error="$errors->first('editing.brand_vehicle')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.model_vehicle" label="Tipo de vehiculo"
+                    <x-input.select class="col-xl-6" name="editing.model_vehicle" label="Tipo de vehiculo"
                         :options="$types" :error="$errors->first('editing.model_vehicle')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.color_vehicle" label="Color de vehiculo"
+                    <x-input.select class="col-xl-6" name="editing.color_vehicle" label="Color de vehiculo"
                         :options="$colors" :error="$errors->first('editing.color_vehicle')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.model_year" label="Año" :options="$years"
+                    <x-input.select class="col-xl-6" name="editing.model_year" label="Año" :options="$years"
                         :error="$errors->first('editing.model_year')" />
-                </x-input.input-group>
 
-                <x-input.textarea class="col-12 " name="editing.description" label="Descripción" />
-
-                <x-input.input-group>
+                    <x-input.textarea class="col-xl-12" name="editing.description" label="Descripción" />
+                    
                     <x-input.input-tooltip-error class="col-12" name="image" label="Imagen de vehiculo"
                         type="file" :error="$errors->first('image')" />
-                </x-input.input-group>
+                </div>
 
-                <div class="col-12 shadow-none bg-light rounded-3 mx-auto">
+                <div class="col-12 shadow-none bg-secondary rounded text-center mt-2">
+                    <span wire:loading wire:target="image" class="spinner-border text-primary m-2"></span>
                     @if ($image)
-                        <img src="{{ $image->temporaryURL() }}" class="img-fluid m-2">
+                        <img src="{{ $image->temporaryURL() }}" class="img-fluid m-2 w-50 h-50" wire:loading.remove/>
                     @else
                         @if ($editing->image)
-                            <img src="{{ asset('storage/' . $editing->image_product) }}" class="img-fluid m-2">
+                            <img src="{{ asset('storage/' . $editing->image) }}" class="img-fluid m-2 w-50 h-50" wire:loading.remove/>
                         @endif
                     @endif
                 </div>

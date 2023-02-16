@@ -60,7 +60,7 @@
                     <div class="table-responsive">
                         <x-table>
                             <x-slot name="head">
-                                <x-table.heading sortable wire:click="sortBy('id')" :direction="$sortField == 'id' ? $sortDirection : null">#
+                                <x-table.heading sortable wire:click="sortBy('code')" :direction="$sortField == 'code' ? $sortDirection : null">Codigo
                                 </x-table.heading>
 
                                 <x-table.heading sortable wire:click="sortBy('name')" :direction="$sortField == 'name' ? $sortDirection : null">Nombre
@@ -78,7 +78,7 @@
                                 @forelse ($concepts as $concept)
                                     <x-table.row wire:loading.class="bg-light" wire:target="search">
 
-                                        <x-table.cell>{{ $concept->id }}</x-table.cell>
+                                        <x-table.cell>{{ $concept->code }}</x-table.cell>
 
                                         <x-table.cell>{{ $concept->name }}</x-table.cell>
 
@@ -117,12 +117,15 @@
             <x-slot name="body">
 
                 <x-input.input-group>
-                    <x-input.input-group>
-                        <x-input.input-tooltip-error class="col-12" name="editing.name" label="Nombre del concepto"
-                            type="text" :error="$errors->first('editing.name')" :required=true />
-                    </x-input.input-group>
+                    <x-input.input-tooltip-error class="col-12 mb-2" name="editing.code" label="Codigo"
+                        type="text" :error="$errors->first('editing.code')" :required=true :disabled=true/>
                 </x-input.input-group>
-
+                
+                <x-input.input-group>
+                    <x-input.input-tooltip-error class="col-12" name="editing.name" label="Nombre del concepto"
+                        type="text" :error="$errors->first('editing.name')" :required=true />
+                </x-input.input-group>
+                
             </x-slot>
 
             <x-slot name="footer">

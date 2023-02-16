@@ -20,10 +20,18 @@ class ConceptTable extends Component
 
     public $filters = ['fromDate' => null, 'toDate' => null];
 
+    public function code_random($lenght, $letter = '')
+    {
+        $cc = Concept::count();
+        $code = str_pad($cc + 1, $lenght, "0", STR_PAD_LEFT);
+        return $letter . '' . $code;
+    }
+
     public function mount()
     {
-        $this->sortField = 'id';
+        $this->sortField = 'code';
         $this->editing = $this->makeBlankFields();
+        $this->editing->code = $this->code_random(3);
     }
 
     public function showFilter()
@@ -62,6 +70,7 @@ class ConceptTable extends Component
     public function rules()
     {
         return [
+            'editing.code' => ['required', 'min:6', 'max:6', Rule::unique('concepts', 'code')->ignore($this->editing)],
             'editing.name' => ['required', 'min:5', 'max:50', Rule::unique('concepts', 'name')->ignore($this->editing)],
 
         ];
@@ -71,6 +80,10 @@ class ConceptTable extends Component
         'editing.name.min' => 'El nombre debe tener al menos 5 caracteres',
         'editing.name.max' => 'El nombre no debe tener más de 50 caracteres',
         'editing.name.unique' => 'El servicio ya fue registrado',
+        'editing.code.required' => 'El codigo es obligatorio',
+        'editing.code.min' => 'El codigo debe tener al menos 6 caracteres',
+        'editing.code.max' => 'El codigo no debe tener más de 6 caracteres',
+        'editing.code.unique' => 'El codigo ya fue registrado',
     ];
 
     public function save()

@@ -11,6 +11,7 @@ use App\Models\Vehicle;
 use App\Traits\DataTable;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\TemporaryUploadedFile;
@@ -83,7 +84,7 @@ class VehicleTable extends Component
             ->when($this->search, fn ($q, $search) => $q->where('license_plate', 'like', '%' . $search . '%')
                 ->orWhere('model_year', 'like', '%' . $search . '%')->orWhere('odo', 'like', '%' . $search . '%'))
             ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
-                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
+            $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
             ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer_id', $customer))
             ->when($this->filters['model_year'], fn ($q, $model_year) => $q->where('model_year', $model_year))
             ->when($this->filters['type'], fn ($q, $type) => $q->where('type_vehicle', $type))
@@ -157,6 +158,23 @@ class VehicleTable extends Component
         'editing.model_year.in' => 'El valor es inválido',
         'editing.odo.required' => 'EL kilometraje es obligatorio',
     ];
+
+    public function updatingImage($value)
+    {
+        Validator::make(
+            ['image' => $value],
+            ['image' => 'mimes:jpg,jpeg,png|max:1024'],
+            [
+                'image.mimes' => 'Solo se permite imagenes de tipo jpg, jpeg, png',
+                'image.max' => 'El tamaño máximo de la imagen es 1MB',
+            ]
+        )->validate();
+    }
+
+    public function updated($label)
+    {
+        $this->validateOnly($label, $this->rules(), $this->messages);
+    }
 
     public function save()
     {

@@ -15,6 +15,17 @@ class WorkOrder extends Model
         'en progreso' => 'En progreso',
     ];
 
+    const IS_CONFIRMED = [
+        0 => 'No confirmado',
+        1 => 'Confirmado',
+    ];
+
+    const TYPES = [
+        'preventivo' => 'Preventivo',
+        'correctivo' => 'Correctivo',
+        'predictivo' => 'Predictivo',
+        'planchado y pintura' => 'Planchado y pintura',
+    ];
 
     protected $fillable = [
         'code',
@@ -27,8 +38,9 @@ class WorkOrder extends Model
         'observation',
         'customer',
         'status',
+        'is_confirmed',
+        'type_atention',
         'vehicle',
-        'sale'
     ];
 
     public function vehiclePlate()
@@ -45,7 +57,7 @@ class WorkOrder extends Model
     {
         return $this->hasMany(WorkOrderDetail::class);
     }
-
+    
     public function getStatusColorAttribute()
     {
         return [
@@ -53,5 +65,21 @@ class WorkOrder extends Model
             'retrasado' => 'danger',
             'en progreso' => 'info',
         ][$this->status] ?? 'default';
+    }
+
+    public function getConfirmationColorAttribute()
+    {
+        return [
+            0 => 'info',
+            1 => 'success',
+        ][$this->is_confirmed] ?? 'default';
+    }
+
+    public function getConfirmationNameAttribute()
+    {
+        return [
+            0 => 'No confirmado',
+            1 => 'Confirmado',
+        ][$this->is_confirmed] ?? 'N/A';
     }
 }

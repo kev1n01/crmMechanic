@@ -1,6 +1,6 @@
 @props(['error' => false, 'name' => '', 'label' => '', 'options' => [], 'required' => false])
 
-<div {{ $attributes->merge(['class'=>'position-relative mb-2']) }} >
+<div {{ $attributes->merge(['class'=>'mb-0']) }} >
     <label for="{{ $name }}" class="form-label">{{ $label }} <span
             class="text-danger">{{ $required ? '*' : '' }}</span>
     </label>
@@ -11,7 +11,7 @@
             <option value="{{ $value }}">{{ $label }}</option>
         @endforeach
     </select>
-    <div class="invalid-tooltip">
+    <p class="text-danger mb-0">
         {{ $error }}
-    </div>
+    </p>
 </div>

@@ -92,16 +92,11 @@
                                 <x-table.heading sortable wire:click="sortBy('stock')" :direction="$sortField == 'stock' ? $sortDirection : null">Stock
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('status')" :direction="$sortField == 'status' ? $sortDirection : null">Estado
-                                </x-table.heading>
+                                <x-table.heading>Estado</x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('category_products_id')" :direction="$sortField == 'category_products_id' ? $sortDirection : null">
-                                    Categoría
-                                </x-table.heading>
+                                <x-table.heading>Categoría</x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('brand_products_id')" :direction="$sortField == 'brand_products_id' ? $sortDirection : null">
-                                    Marca
-                                </x-table.heading>
+                                <x-table.heading>Marca</x-table.heading>
 
                                 <x-table.heading>Acción</x-table.heading>
 
@@ -117,7 +112,7 @@
                                             <x-input.check-input name="selected" value="{{ $product->id }}" />
                                         </x-table.cell>
 
-                                        <x-table.cell>{{ $product->name }}</x-table.cell>
+                                        <x-table.cell class="text-wrap w-25">{{ $product->name }}</x-table.cell>
 
                                         <x-table.cell>{{ $product->code }}</x-table.cell>
 
@@ -165,56 +160,44 @@
     <x-form method="save">
         <x-modal-dialog :id="$idModal" :title="$nameModal">
             <x-slot name="body">
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.name" label="Nombre de producto"
+                <div class="row g-2">
+                    <x-input.input-tooltip-error class="col-xl-12" name="editing.name" label="Nombre de producto"
                         type="text" :error="$errors->first('editing.name')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.code" label="Código de producto"
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.code" label="Código de producto"
                         type="text" :error="$errors->first('editing.code')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.stock" label="Stock" type="number"
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.stock" label="Stock" type="number"
                         :error="$errors->first('editing.stock')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.status" label="Estado" :options="$statuses"
+                    <x-input.select class="col-xl-6" name="editing.status" label="Estado" :options="$statuses"
                         :error="$errors->first('editing.status')" />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.category_products_id" label="Categorías"
+                    <x-input.select class="col-xl-6" name="editing.category_products_id" label="Categorías"
                         :options="$categories" :error="$errors->first('editing.category_products_id')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.brand_products_id" label="Marcas" :options="$brands"
+                    <x-input.select class="col-xl-6" name="editing.brand_products_id" label="Marcas" :options="$brands"
                         :error="$errors->first('editing.brand_products_id')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.sale_price" label="Precio venta"
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.sale_price" label="Precio venta"
                         type="text" :error="$errors->first('editing.sale_price')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.purchase_price" label="Precio compra"
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.purchase_price" label="Precio compra"
                         type="text" :error="$errors->first('editing.purchase_price')" :required=true />
-                </x-input.input-group>
-                <x-input.input-group>
+
                     <x-input.input-tooltip-error class="col-12" name="image" label="Imagen de producto"
                         type="file" :error="$errors->first('image')" />
-                </x-input.input-group>
+                </div>
 
-                <div class="col-12 shadow-none bg-light rounded">
+                <div class="col-12 shadow-none bg-secondary rounded text-center mt-2">
+                    <span wire:loading wire:target="image" class="spinner-border text-primary m-2"></span>
                     @if ($image)
-                        <img src="{{ $image->temporaryURL() }}" class="img-fluid m-2">
+                        <img src="{{ $image->temporaryURL() }}" class="img-fluid m-2 w-50 h-50"
+                            wire:loading.remove />
                     @else
                         @if ($editing->image)
-                            <img src="{{ asset('storage/' . $editing->image_product) }}" class="img-fluid m-2">
+                            <img src="{{ asset('storage/' . $editing->image) }}" class="img-fluid m-2 w-50 h-50"
+                                wire:loading.remove />
                         @endif
                     @endif
                 </div>

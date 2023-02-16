@@ -7,7 +7,6 @@ use App\Models\Vehicle;
 use App\Models\WorkOrder;
 use App\Traits\DataTable;
 use Carbon\Carbon;
-use PDF;
 use Livewire\Component;
 
 class OtTable extends Component
@@ -62,6 +61,7 @@ class OtTable extends Component
     public function getWorksProperty()
     {
         return WorkOrder::query()
+            ->where('is_confirmed', 1)
             ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
             $q->whereBetween('arrival_date', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d'), Carbon::parse($this->filters['toDate'])->format('Y-m-d')]))
             ->when(

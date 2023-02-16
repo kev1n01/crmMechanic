@@ -43,7 +43,7 @@ class Product extends Model
 
     public function getImageProductAttribute()
     {
-        return $this->image ?? 'products-photos/default.jpg';
+        return $this->image ?? 'productos/default.jpg';
     }
 
     public function getStatusColorAttribute()

@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Models\SaleDetail;
 use App\Models\WorkOrder;
-use Illuminate\Http\Request;
 use PDF;
 
 class PDFController extends Controller
@@ -19,8 +17,7 @@ class PDFController extends Controller
     {
         $workOrder = WorkOrder::where('id', $id)->first();
         $wod_service = $workOrder->workOrderDetail()->get();
-        $wod_replacement = SaleDetail::where('sale_id', $workOrder->sale)->get();;
-
+        $wod_replacement = SaleDetail::where('sale_id', $workOrder->sale)->get();
         $pdf = PDF::loadView('invoice', [
             'wo' => $workOrder, 'wod_service' => $wod_service,
             'wod_replacement' => $wod_replacement
@@ -33,7 +30,7 @@ class PDFController extends Controller
     {
         $workOrder = WorkOrder::where('id', $id)->first();
         $wod_service = $workOrder->workOrderDetail()->get();
-        $wod_replacement = SaleDetail::where('sale_id', $workOrder->sale)->get();;
+        $wod_replacement = SaleDetail::where('sale_id', $workOrder->sale)->get();
 
         $pdf = PDF::loadView('invoice', [
             'wo' => $workOrder, 'wod_service' => $wod_service,

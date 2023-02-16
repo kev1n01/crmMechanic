@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Livewire\Category;
+namespace App\Http\Livewire\Brand;
 
 use App\Helpers\Csv;
-use App\Models\CategoryProduct;
-use Livewire\Component;
+use App\Models\BrandProduct;
 use Illuminate\Support\Facades\Validator;
+use Livewire\Component;
 use Livewire\WithFileUploads;
 
 class Import extends Component
@@ -51,6 +51,7 @@ class Import extends Component
             'name' => '',
         ];
     }
+    
     public function import()
     {
         $this->validate();
@@ -58,7 +59,7 @@ class Import extends Component
             $importCount = 0;
             Csv::from($this->upload)
                 ->eachRow(function ($row) use (&$importCount) {
-                    CategoryProduct::create(
+                    BrandProduct::create(
                         $this->extractFieldsFromRow($row)
                     );
 
@@ -66,13 +67,13 @@ class Import extends Component
                 });
             $this->emit('refreshList');
             $this->upload = null;
-            $this->emit('success_alert', $importCount . 'categorias fueron importados');
+            $this->emit('success_alert', $importCount . 'marcas fueron importados');
         } catch (\Exception $e) {
-            $this->emit('error_alert', 'Error al importar categorías, por favor verifique lo siguiente:&nbsp;
-                                            - que el nombre de las categorías no estén repetidos&nbsp;
-                                            - que el nombre de las categorías tengan como minimo 3 caracteres&nbsp;
-                                            - que el nombre de las categorías tengan como maximo 30 caracteres&nbsp;
-                                            - que el nombre de las categorías no este vacias
+            $this->emit('error_alert', 'Error al importar marcas, por favor verifique lo siguiente:&nbsp;
+                                            - que el nombre de las marcas no estén repetidos&nbsp;
+                                            - que el nombre de las marcas tengan como minimo 3 caracteres&nbsp;
+                                            - que el nombre de las marcas tengan como maximo 30 caracteres&nbsp;
+                                            - que el nombre de las marcas no este vacias
                                             ');
         }
     }
@@ -104,6 +105,6 @@ class Import extends Component
 
     public function render()
     {
-        return view('livewire.category.import');
+        return view('livewire.brand.import');
     }
 }

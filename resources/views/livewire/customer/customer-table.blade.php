@@ -83,19 +83,15 @@
                                 <x-table.heading sortable wire:click="sortBy('name')" :direction="$sortField == 'name' ? $sortDirection : null">Nombre
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('phone')" :direction="$sortField == 'phone' ? $sortDirection : null">Celular
-                                </x-table.heading>
+                                <x-table.heading>Celular</x-table.heading>
 
                                 <x-table.heading sortable wire:click="sortBy('address')" :direction="$sortField == 'address' ? $sortDirection : null">Dirección
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('dni')" :direction="$sortField == 'dni' ? $sortDirection : null">Dni
+                                <x-table.heading>Dni| Ruc
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('ruc')" :direction="$sortField == 'ruc' ? $sortDirection : null">Ruc
-                                </x-table.heading>
-
-                                <x-table.heading sortable wire:click="sortBy('status')" :direction="$sortField == 'status' ? $sortDirection : null">Estado
+                                <x-table.heading>Estado
                                 </x-table.heading>
 
                                 <x-table.heading>Acción</x-table.heading>
@@ -116,11 +112,10 @@
 
                                         <x-table.cell>{{ $customer->phone }}</x-table.cell>
 
-                                        <x-table.cell>{{ $customer->address ?? 'N/D' }}</x-table.cell>
+                                        <x-table.cell class="text-wrap">{{ $customer->address ?? 'N/D' }}</x-table.cell>
 
-                                        <x-table.cell>{{ $customer->dni }}</x-table.cell>
-
-                                        <x-table.cell>{{ $customer->ruc ?? 'N/D' }}</x-table.cell>
+                                        <x-table.cell>{{ $customer->dni ?? 'N/D' }} | {{ $customer->ruc ?? 'N/D' }}
+                                        </x-table.cell>
 
                                         <x-table.cell>
                                             <button
@@ -161,7 +156,7 @@
             <x-slot name="body">
                 <x-input.input-group>
                     <x-input.input-tooltip-error class="col-12" name="editing.email" label="Correo" type="email"
-                        :error="$errors->first('editing.email')" :required=true />
+                        :error="$errors->first('editing.email')" />
                 </x-input.input-group>
 
                 <x-input.input-group>
@@ -181,17 +176,17 @@
 
                 <x-input.input-group>
                     <x-input.input-tooltip-error class="col-12" name="editing.dni" label="DNI" type="text"
-                        :error="$errors->first('editing.dni')" :required=true />
+                        :error="$errors->first('editing.dni')" />
                 </x-input.input-group>
 
                 <x-input.input-group>
                     <x-input.input-tooltip-error class="col-12" name="editing.ruc" label="Ruc" type="text"
-                        :error="$errors->first('editing.ruc')" />
+                        :error="$errors->first('editing.ruc')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>
                     <x-input.select class="col-12" name="editing.status" label="Estado" :options="$statuses"
-                        :error="$errors->first('editing.status')" />
+                        :error="$errors->first('editing.status')" :required=true />
                 </x-input.input-group>
 
             </x-slot>

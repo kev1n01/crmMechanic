@@ -91,8 +91,7 @@
                                 <x-table.heading sortable wire:click="sortBy('total')" :direction="$sortField == 'total' ? $sortDirection : null">Total
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('status')" :direction="$sortField == 'status' ? $sortDirection : null">Estado
-                                </x-table.heading>
+                                <x-table.heading class="text-center">Estado</x-table.heading>
 
                                 <x-table.heading>Acción</x-table.heading>
 
@@ -115,10 +114,10 @@
 
                                         <x-table.cell>{{ $purchase->total }}</x-table.cell>
 
-                                        <x-table.cell>
+                                        <x-table.cell class="text-center">
                                             <button
-                                                class="btn btn-outline-{{ $purchase->status_color }} rounded-pill btn-sm w-75"
-                                                type="button" wire:click="changeStatus({{ $purchase->id }})"
+                                                class="btn btn-outline-{{ $purchase->status_color }} rounded-pill btn-sm w-100"
+                                                type="button" wire:click="changeStatus({{ $purchase->id }})" 
                                                 >
                                                 {{ strtoupper($purchase->status) }}
                                             </button>

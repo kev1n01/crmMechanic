@@ -31,14 +31,15 @@
                         </div>
                         <div class="row col-xl-4">
                             <div class="text-xl-end mt-xl-0 mt-2">
-                                <a type="button" href="{{ route('ordenes.crear') }}" class="btn btn-dark mb-2 me-2"><i
-                                        class="mdi mdi-plus me-1"></i>
+                                <a type="button" href="{{ route('proforma.orden.crear') }}"
+                                    class="btn btn-dark mb-2 me-2"><i class="mdi mdi-plus me-1"></i>
                                     Nuevo</a>
                                 <button type="button" class="btn btn-light mb-2 dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones <span
                                         class="{{ count($selected) == 0 ? 'd-none' : '' }} fs-6 badge rounded-pill bg-primary">{{ count($selected) }}</span></button>
                                 <div class="dropdown-menu">
-                                    <button class="dropdown-item action-icon" wire:click="exportSelected"><i
+                                    <button class="dropdown-item action-icon"
+                                        @if ($selected != []) wire:click="exportSelected" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
                                             class="mdi mdi-download"></i> Exportar</button>
                                     <button class="dropdown-item action-icon"
                                         @if ($selected != []) onclick="Confirm(null,'deleteSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
@@ -116,14 +117,14 @@
 
                                         <x-table.cell>{{ $wo->code }}</x-table.cell>
 
-                                        <x-table.cell>{{ $wo->customerUser->name }}</x-table.cell>
+                                        <x-table.cell>{{ $wo->vehiclePlate->customer->name }}</x-table.cell>
 
                                         <x-table.cell>{{ $wo->vehiclePlate->license_plate }}</x-table.cell>
 
                                         <x-table.cell>
                                             {{ \Carbon\Carbon::parse($wo->arrival_date)->format('d-m-Y') .
                                                 ' | ' .
-                                                \Carbon\Carbon::parse($wo->arrival_hour)->format('H:m ') }}
+                                                \Carbon\Carbon::parse($wo->arrival_hour)->format('H:i ') }}
                                         </x-table.cell>
 
                                         <x-table.cell>{{ $wo->total }}</x-table.cell>
@@ -134,8 +135,11 @@
                                                 class="btn btn-outline-{{ $wo->status_color }} rounded-pill btn-sm w-55"
                                                 type="button" wire:click="changeStatus({{ $wo->id }})">
                                                 {{ strtoupper($wo->status) }}
-                                                @if (date('Y-m-d H:i:s') > $wo->departure_date . ' ' . $wo->departure_hour)
-                                                    <span wire:init="updateStatusToDelayed({{ $wo->id }})"></span>
+                                                @if ($wo->departure_date != null && $wo->departure_hour != null)
+                                                    @if (date('Y-m-d H:i:s') > $wo->departure_date . ' ' . $wo->departure_hour)
+                                                        <span
+                                                            wire:init="updateStatusToDelayed({{ $wo->id }})"></span>
+                                                    @endif
                                                 @endif
                                             </button>
                                         </x-table.cell>
@@ -144,13 +148,6 @@
                                         <x-table.cell>
                                             <a class="action-icon" wire:click="edit({{ $wo->id }})">
                                                 <i class="mdi mdi-square-edit-outline"></i> </a>
-                                            <a class="action-icon" onclick="Confirm({{ $wo->id }}, 'delete')"><i
-                                                    class="mdi mdi-delete"></i></a>
-                                            <a class="action-icon" href="{{ route('pdf.view', $wo->id) }}">
-                                                <i class="mdi mdi-file-eye-outline"></i></a>
-                                            <a class="action-icon" href="{{ route('pdf.download', $wo->id) }}"
-                                                {{-- wire:click="generatePdf({{ $wo->id }})" --}}><i
-                                                    class="mdi mdi-folder-download-outline"></i></a>
                                         </x-table.cell>
 
                                     </x-table.row>

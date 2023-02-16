@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Traits\DataTable;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Illuminate\Validation\Rule;
 use Livewire\TemporaryUploadedFile;
@@ -71,8 +72,8 @@ class ProductTable extends Component
     public function getProductsProperty()
     {
         return Product::query()
-            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) => 
-                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
+            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
+            $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
             ->when($this->search, fn ($q, $search) => $q->where('name', 'like', '%' . $search . '%')
                 ->orWhere('code', 'like', '%' . $search . '%')->orWhere('stock', 'like', '%' . $search . '%'))
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
@@ -101,6 +102,7 @@ class ProductTable extends Component
         return response()->streamDownload(function () {
             echo Product::whereKey($this->selected)->toCsv();
         }, 'productos.csv');
+        $this->selected = [];
         $this->emit('success_alert', 'Se exportaron los registros seleccionados');
     }
 
@@ -112,6 +114,7 @@ class ProductTable extends Component
             $this->removeImage($pf['image']);
         }
         $product->delete();
+        $this->selected = [];
         $this->emit('success_alert', count($this->selected) . ' registros eliminados');
     }
 
@@ -119,26 +122,26 @@ class ProductTable extends Component
     public function rules()
     {
         return [
-            'editing.name' => ['required', 'min:5', 'max:30', Rule::unique('products', 'name')->ignore($this->editing)],
-            'editing.code' => ['required', 'min:5', 'max:5', Rule::unique('products', 'code')->ignore($this->editing)],
+            'editing.name' => ['required', 'min:4', 'max:50', Rule::unique('products', 'name')->ignore($this->editing)],
+            'editing.code' => ['required', 'min:2', 'max:15', Rule::unique('products', 'code')->ignore($this->editing)],
             'editing.stock' => 'nullable|integer',
             'editing.sale_price' => 'nullable|numeric|regex:/^-?[0-9]+(?:\.[0-9]{1,2})?$/',
             'editing.purchase_price' => 'nullable|numeric|regex:/^-?[0-9]+(?:\.[0-9]{1,2})?$/',
             'editing.category_products_id' => ['required'],
             'editing.brand_products_id' => ['required',],
-            'editing.image' => 'nullable',
-            'editing.status' => 'in:' . collect(Product::STATUSES)->keys()->implode(','),
+            'editing.image' => ['nullable'],
+            'editing.status' => 'required|in:' . collect(Product::STATUSES)->keys()->implode(','),
         ];
     }
 
     protected $messages = [
-        'editing.name.min' => 'El nombre no debe tener menos de 5 caracteres',
-        'editing.name.max' => 'El nombre no debe tener más de 30 caracteres',
+        'editing.name.min' => 'El nombre no debe tener menos de 4 caracteres',
+        'editing.name.max' => 'El nombre no debe tener más de 50 caracteres',
         'editing.name.required' => 'El nombre es obligatorio',
         'editing.name.unique' => 'Ya existe un producto con el mismo nombre',
         'editing.stock.integer' => 'El stock tiene que ser un número entero',
-        'editing.code.min' => 'El código no debe tener menos de 5 caracteres',
-        'editing.code.max' => 'El código no debe tener más de 5 caracteres',
+        'editing.code.min' => 'El código no debe tener menos de 2 caracteres',
+        'editing.code.max' => 'El código no debe tener más de 15 caracteres',
         'editing.code.required' => 'El código es obligatorio',
         'editing.code.unique' => 'Ya existe un producto con este código',
         'editing.sale_price.numeric' => 'El precio venta tiene que ser entero o decimal',
@@ -147,10 +150,19 @@ class ProductTable extends Component
         'editing.purchase_price.numeric' => 'El precio compra tiene que ser entero o decimal',
         'editing.category_products_id.required' => 'La categoria es obligatorio',
         'editing.brand_products_id.required' => 'La marca es obligatorio',
+        'editing.status.required' => 'El estado es obligatorio',
         'editing.status.in' => 'El valor es inválido',
-        // 'editing.image.mimes' => 'Solo se permite jpg, jpge, png',
-
     ];
+
+    public function updatingImage($value)
+    {
+        Validator::make(
+            ['image' => $value],
+            ['image' => 'mimes:jpg,jpeg,png|max:1024'],
+            ['image.mimes' => 'Solo se permite imagenes de tipo jpg, jpeg, png',
+                'image.max' => 'El tamaño máximo de la imagen es 1MB',]
+        )->validate();
+    }
 
     public function save()
     {
@@ -170,6 +182,11 @@ class ProductTable extends Component
         $this->emit('refreshList');
     }
 
+    public function updated($label)
+    {
+        $this->validateOnly($label, $this->rules(), $this->messages);
+    }
+    
     public function loadImage(TemporaryUploadedFile $image)
     {
         return Storage::disk('public')->put('productos', $image);
@@ -204,8 +221,9 @@ class ProductTable extends Component
         $this->resetValidation();
         $this->image = '';
         $this->nameModal = 'Editar producto';
-        if ($this->editing->isNot($produc)) $this->editing = $produc; // para preservar cambios en los inputs
         $this->dispatchBrowserEvent('open-modal');
+        if ($this->editing->isNot($produc)) $this->editing = $produc; // para preservar cambios en los inputs
+        $this->emit('refreshList');
     }
 
     public function closeModal()

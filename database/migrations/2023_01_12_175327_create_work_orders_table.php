@@ -24,9 +24,10 @@ return new class extends Migration
             $table->decimal('total', 10, 2)->nullable();
             $table->text('observation')->nullable();
             $table->foreignId('customer')->constrained('customers');
-            $table->string('status');
+            $table->string('status')->nullable();
+            $table->integer('is_confirmed'); // 0 = no, 1 = yes
+            $table->string('type_atention')->nullable();
             $table->foreignId('vehicle')->constrained('vehicles');
-            $table->integer('sale')->nullable();
             $table->timestamps();
         });
     }

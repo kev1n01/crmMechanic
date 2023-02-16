@@ -29,7 +29,7 @@ class PurchaseCreate extends Component
     public function rules()
     {
         return [
-            'editing.code_purchase' => ['required', 'min:5', 'max:5', Rule::unique('purchases', 'code_purchase')->ignore($this->editing)],
+            'editing.code_purchase' => ['required', 'min:6', 'max:6', Rule::unique('purchases', 'code_purchase')->ignore($this->editing)],
             'editing.status' => 'required|in:' . collect(Purchase::STATUSES)->keys()->implode(','),
             'editing.provider_id' => 'required',
             'editing.date_purchase' => 'required',
@@ -39,8 +39,8 @@ class PurchaseCreate extends Component
     }
 
     protected $messages = [
-        'editing.code_purchase.min' => 'El código no debe tener menos de 5 chares',
-        'editing.code_purchase.max' => 'El código no debe tener más de 5 caracteres',
+        'editing.code_purchase.min' => 'El código no debe tener menos de 6 chares',
+        'editing.code_purchase.max' => 'El código no debe tener más de 6 caracteres',
         'editing.code_purchase.required' => 'El código es obligatorio',
         'editing.code_purchase.unique' => 'Ya existe una compra con este código',
         'editing.status.required' => 'El estado es obligatorio',
@@ -51,20 +51,8 @@ class PurchaseCreate extends Component
 
     public function code_random($lenght)
     {
-        $code = "";
-        $char = true;
-        for ($i = 1; $i <= $lenght; $i++) {
-            if ($char) {
-                $string_random = chr(rand(ord("a"), ord("z")));
-                $string_random = strtoupper($string_random);
-                $code .= $string_random;
-                $char = false;
-            } else {
-                $number_random = rand(0, 9);
-                $code .= $number_random;
-                $char = true;
-            }
-        }
+        $countPurchase = Purchase::count();
+        $code = str_pad($countPurchase + 1, $lenght, "0", STR_PAD_LEFT);
         return 'C' . $code;
     }
 
@@ -72,7 +60,7 @@ class PurchaseCreate extends Component
     {
         $this->editing = $this->makeBlankFields();
         if ($this->editing->getKey()) $this->editing = $this->makeBlankFields(); // para preservar cambios en los inputs for create
-        $this->editing->code_purchase = $this->code_random(4);
+        $this->editing->code_purchase = $this->code_random(5);
         $this->statuses = Purchase::STATUSES;
         $this->providers = Provider::pluck('name', 'id');
     }
@@ -89,11 +77,10 @@ class PurchaseCreate extends Component
             $this->products = [];
         }
 
-        if($this->editing->provider_id > 0){
+        if ($this->editing->provider_id > 0) {
             $cart = Cart::session($this->editing->provider->name)->getContent()->sortBy('name');
-            // dd($this->editing->provider->name);
             $this->updateCartOptions();
-        }else{
+        } else {
             $cart = [];
         }
 
@@ -103,44 +90,61 @@ class PurchaseCreate extends Component
 
     public function updateCartOptions()
     {
-        $this->subtotal = Cart::session($this->editing->provider->name)->getSubTotal();
         $this->total = Cart::session($this->editing->provider->name)->getTotal();
         $this->itemsQuantity = Cart::session($this->editing->provider->name)->getTotalQuantity();
     }
-    
+
     public function makeBlankFields()
     {
         return Purchase::make(['status' => 'pendiente']);
     } /*para dejar vacios los inpust*/
 
-    public function addProduct(Product $product, $cant = 1)
+    public function addProduct(Product $product, $cant = 1, $discount = 0)
     {
         if ($product->status == 'inactivo') {
             $this->emit('error_alert', 'Este producto está inactivo');
             return;
         }
+        if ($product->stock <= 0) {
+            $this->emit('error_alert', 'Este producto no tiene suficiento stock');
+            return;
+        }
 
-        Cart::session($this->editing->provider->name)->add($product->id, $product->name, $product->purchase_price, $cant);
+        Cart::session($this->editing->provider->name)->add($product->id, $product->name, $product->purchase_price, $cant, array('discount' => $discount));
         $this->searchProduct = '';
         $this->updateCartOptions();
         $this->emit('success_alert', 'Producto agregado a la compra');
     }
 
-    public function updateQuantityCart(Product $product, $cant)
+    public function updateQuantityCart(Product $product, $cant, $discount = 0)
     {
+        if ($product->stock < $cant) {
+            $this->emit('info_alert', 'Este producto no tiene suficiento stock');
+            return;
+        }
         if ($cant > 0) {
             $this->removeItem($product->id);
-            Cart::session($this->editing->provider->name)->add($product->id, $product->name, $product->purchase_price, $cant);
+            Cart::session($this->editing->provider->name)->add($product->id, $product->name, $product->purchase_price, $cant, array('discount' => $discount));
             $this->updateCartOptions();
         } else {
             $this->removeItem($product->id);
         }
     }
 
+    public function updateDiscountCart(Product $product, $discount)
+    {
+        if ($discount > 0) {
+            Cart::session($this->editing->provider->name)->update($product->id, array('attributes' => array('discount' => $discount)));
+        } else {
+            Cart::session($this->editing->provider->name)->update($product->id, array('attributes' => array('discount' => 0)));
+        }
+        $this->updateCartOptions();
+    }
+
     public function removeItem($productId)
     {
         Cart::session($this->editing->provider->name)->remove($productId);
-        $this->updateCartOptions();   
+        $this->updateCartOptions();
     }
 
     public function clearCart()
@@ -157,39 +161,51 @@ class PurchaseCreate extends Component
         return redirect()->route('compras');
     }
 
-    public function changeAnother(){
+    public function changeAnother()
+    {
         $this->another = true;
     }
+
     public function save()
     {
         $this->saveLogic();
-        if($this->another){
+        if ($this->another) {
             return redirect()->route('compras.crear');
-        }else{
+        } else {
             return redirect()->route('compras');
         }
+    }
+    
+    public function updated($label)
+    {
+        $this->validateOnly($label, $this->rules(), $this->messages);
     }
 
     public function saveLogic()
     {
         $this->validate();
-        $this->editing->total = $this->total;
-        $this->editing->total = $this->total;
-        $this->editing->date_purchase = Carbon::parse($this->editing->date_purchase)->format('Y-m-d') ;
-        $this->editing->save();
         $cartItems = Cart::session($this->editing->provider->name)->getContent();
+        $totalDiscount = 0;
+        foreach ($cartItems as $c) {
+            $totalDiscount += ($c->price * $c->quantity) - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
+        }
+        $this->editing->total = $totalDiscount;
+        $this->editing->date_purchase = Carbon::parse($this->editing->date_purchase)->format('Y-m-d');
+        $this->editing->save();
         foreach ($cartItems as $item) {
             PurchaseDetail::create([
                 'price' => $item->price,
                 'quantity' => $item->quantity,
+                'discount' => $item->attributes['discount'],
                 'product_id' => $item->id,
                 'purchase_id' => $this->editing->id,
             ]);
 
-            //update stock of product purchased
-            $product = Product::find($item->id);
-            $product->stock += $item->quantity;
-            $product->save();
+            if ($this->editing->status == 'recibido') {
+                $product = Product::find($item->id);
+                $product->stock += $item->quantity;
+                $product->save();
+            }
         }
         Cart::session($this->editing->provider->name)->clear();
         $this->updateCartOptions();

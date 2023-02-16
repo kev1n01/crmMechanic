@@ -5,17 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>PROFORMA MECANICA FLOPAC</title>
+    <title>OT MECANICA FLOPAC</title>
     <link href="{{ public_path('assets/css/pdf.css') }}" rel="stylesheet" type="text/css">
 </head>
 
 <body>
     <div class="border-line">
-        <div>
+        <div class="infoHeader">
             <div style="float: left; width: 20%; height: 14%; margin-right: 4mm; margin-bottom: 4mm;">
                 <img src="{{ public_path('assets/images/newlogo.png') }}" class="logo_img">
             </div>
-            <div style="float: left; width: 50%; height: 14%; text-align: center   ">
+            <div style="float: left; width: 50%; height: 14%; text-align: center;">
                 <p class="fw-b m-0">MECANICA AUTOMOTRIZ FLOPAC</p>
                 <p class="fw-sb m-0">Sector Las Lomas - Chunapampa - Huanuco</p>
                 <p class="fw-sb m-0">Cel: 957235173 / 978610524 / 933865935</p>
@@ -23,12 +23,12 @@
                 <p class="fw-sb m-0">BCP: 1231231312323</p>
                 <p class="fw-sb m-0">INTERBANK: 1241241232312412</p>
             </div>
-            <div style="float: left; width: 30%; height: 14%; text-align: center">
+            <div style="float: left; width: 30%; height: 14%; text-align: center;">
 
             </div>
         </div>
 
-        <p class="fs-2 fw-b">Proforma de mantenimiento preventivo y correctivo</p>
+        <p class="fs-2 fw-b text-form">Proforma de mantenimiento preventivo y correctivo</p>
 
         <p class="fs-3 fw-sb">Detalle del orden de trabajo</p>
         <table class="table">
@@ -47,12 +47,11 @@
                 <tr>
                     <td class="border-td border-th ps-2 fw-sb">Fecha/Hora de salida</td>
                     <td class="border-td fw-sb">
-                        {{ 
-                            
-                            $wo->departure_date != null ?
-                            \Carbon\Carbon::parse($wo->departure_date)->format('d-m-Y') .
-                            ' | ' .
-                            \Carbon\Carbon::parse($wo->departure_hour)->format('H:i ') : 'Sigue en taller' }}
+                        {{ $wo->departure_date != null
+                            ? \Carbon\Carbon::parse($wo->departure_date)->format('d-m-Y') .
+                                ' | ' .
+                                \Carbon\Carbon::parse($wo->departure_hour)->format('H:i ')
+                            : 'No especificado' }}
                     </td>
                     <td class="border-td border-th ps-2 fw-sb">Código</td>
                     <td class="border-td fw-sb">{{ $wo->code }}</td>
@@ -92,7 +91,7 @@
             </tbody>
         </table>
 
-        <p class="fs-3 fw-sb">Informacion del vehiculo {{ $wo->vehiclePlate->license_plate }}</p>
+        <p class="fs-3 fw-sb">Informacion del vehiculo con placa <span class="fw-b">{{ $wo->vehiclePlate->license_plate }}</span></p>
 
         <table class="table">
             <tbody>
@@ -119,63 +118,145 @@
             </tbody>
         </table>
 
-        <p class="fs-3 fw-sb">Lista de servicios y repuestoss</p>
+        <p class="fs-3 fw-sb">Lista de servicios y repuestos</p>
 
         <table class="table-list">
             <thead>
                 <tr>
-                    <th colspan="4" class="fw-b">Repuestos</th>
+                    <th colspan="5" class="fw-b">Repuestos</th>
                 </tr>
                 <tr>
                     <th>Descripcion</th>
-                    <th>Precio</th>
-                    <th>Cantidad</th>
+                    <th>P. unitario</th>
+                    <th>Cant</th>
+                    <th>Dto.</th>
                     <th>Importe</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($wod_replacement as $k)
+                @forelse ($wod_replacement as $k)
                     <tr>
-                        <td class="fs-3 fw-sb">{{ $k->product->name }}</td>
+                        <td class="fs-3 fw-sb text-wrap w-45">{{ $k->product->name }}</td>
                         <td class="fs-3 fw-sb">{{ $k->price }}</td>
                         <td class="fs-3 fw-sb">{{ $k->quantity }}</td>
-                        <td class="fs-3 fw-sb">S/. {{ $k->price * $k->quantity }}</td>
+                        <td class="fs-3 fw-sb">{{ $k->discount ?? 0 }} %</td>
+                        <td class="fs-3 fw-sb">{{ $k->price * $k->quantity - $k->price * $k->quantity * ($k->discount / 100) }}</td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td class="text-center" colspan="5">
+                            No hay repuestos agregados
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
+            <tfoot>
+                @php
+                    $totalNoDiscountReplacement = 0;
+                    $totalOGReplacement = 0;
+                    $totalDiscountReplacement = 0;
+                    foreach ($wod_replacement as $c) {
+                        $totalNoDiscountReplacement += $c->price * $c->quantity;
+                        $totalDiscountReplacement += $c->price * $c->quantity - $c->price * $c->quantity * ($c->discount / 100);
+                    }
+                    $totalOGReplacement =  $totalDiscountReplacement / 1.18;
+                @endphp
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="fw-sb" colspan="2">Total Ope. Gravadas</td>
+                    <td class="fw-sb">S/ {{ number_format($totalOGReplacement, 2) }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="fw-sb" colspan="2">Total Descuentos</td>
+                    <td class="fw-sb">S/ {{ number_format($totalNoDiscountReplacement - $totalDiscountReplacement, 2) }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="fw-sb" colspan="2">Total IGV 18%</td>
+                    <td class="fw-sb">S/ {{ number_format($totalDiscountReplacement  - $totalOGReplacement, 2) }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="text-black fw-sb" colspan="2">TOTAL</td>
+                    <td class="fw-sb">S/ {{ number_format($totalDiscountReplacement , 2) }}</td>
+                </tr>
+            </tfoot>
 
-        </table>
+        </table><br>
         <table class="table-list">
             <thead>
                 <tr>
-                    <th colspan="4" class="fw-b">Servicios</th>
+                    <th colspan="5" class="fw-b">Servicios</th>
                 </tr>
                 <tr>
                     <th>Descripcion</th>
-                    <th>Precio</th>
-                    <th>Cantidad</th>
+                    <th>P. unitario</th>
+                    <th>Cant</th>
+                    <th>Dto.</th>
                     <th>Importe</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($wod_service as $w)
+                @forelse ($wod_service as $w)
                     <tr>
-                        <td class="fs-3 fw-sb">{{ $w->concept->name }}</td>
+                        <td class="fs-3 fw-sb text-wrap w-45">{{ $w->concept->name }}</td>
                         <td class="fs-3 fw-sb">{{ $w->price }}</td>
                         <td class="fs-3 fw-sb">{{ $w->quantity }}</td>
-                        <td class="fs-3 fw-sb">S/. {{ $w->price * $w->quantity }}</td>
+                        <td class="fs-3 fw-sb">{{ $w->discount }} %</td>
+                        <td class="fs-3 fw-sb">{{ $w->price * $w->quantity - $w->quantity * $w->price * ($w->discount / 100) }}</td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td class="text-center" colspan="5">
+                            No hay servicios agregados
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
             <tfoot>
+                @php
+                    $totalNoDiscount = 0;
+                    $totalOG = 0;
+                    foreach ($wod_service as $c) {
+                        $totalNoDiscount += $c->price * $c->quantity;
+                    }
+                    $totalOG = $wo->total / 1.18;
+                @endphp
                 <tr>
                     <td colspan="2"></td>
-                    <th class="total">Total</th>
-                    <th class="">S/.{{ $wo->total }}</th>
+                    <td class="fw-sb" colspan="2">Total Ope. Gravadas</td>
+                    <td class="fw-sb">S/ {{ number_format($totalOG, 2) }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="fw-sb" colspan="2">Total Descuentos</td>
+                    <td class="fw-sb">S/ {{ number_format($wo->total - $totalNoDiscount, 2) }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="fw-sb" colspan="2">Total IGV 18%</td>
+                    <td class="fw-sb">S/ {{ number_format($wo->total - $totalOG, 2) }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="text-black fw-sb"colspan="2">TOTAL</td>
+                    <td class="fw-sb">S/ {{ number_format($wo->total, 2) }}</td>
                 </tr>
             </tfoot>
         </table>
     </div>
+    <div id="footer">
+        <p class="text-footer">
+            En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad a 
+            todos nuestros clientes
+        </p>
+        <p class="text-footer">
+            <span class="fw-b">ATENCION:</span> Todo trabajo se realizará con un 50% de adelanto al costo de proforma,
+            y tendrá 7 días hábiles a recoger su vehículo, luego de esto se sumarán costos de una cochera
+        </p>
+    </div>
+
 </body>
 
 </html>

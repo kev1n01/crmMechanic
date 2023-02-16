@@ -29,10 +29,16 @@ Route::get('modelos-vehiculo', \App\Http\Livewire\Vehicle\ModelVehicleTable::cla
 Route::get('colors-vehiculo', \App\Http\Livewire\Vehicle\ColorVehicleTable::class)->name('colors.vehiculo');
 Route::get('vehiculos', \App\Http\Livewire\Vehicle\VehicleTable::class)->name('vehiculos');
 
+//Rutas para proforma
+Route::get('proformas', \App\Http\Livewire\InvoiceForm\IFTable::class)->name('proformas');
+Route::get('proforma-crear', \App\Http\Livewire\Ot\OtCreate::class)->name('proforma.orden.crear');
+
 //Rutas para Orden de trabajo
-Route::get('ordenes', \App\Http\Livewire\Ot\OtTable::class)->name('ordenes');
-Route::get('ordenes-crear', \App\Http\Livewire\Ot\OtCreate::class)->name('ordenes.crear');
-Route::get('conceptos', \App\Http\Livewire\Ot\ConceptTable::class)->name('conceptos');
+Route::get('ordenes-trabajo', \App\Http\Livewire\Ot\OtTable::class)->name('ordenes');
+Route::get('servicios', \App\Http\Livewire\Ot\ConceptTable::class)->name('servicios');
+
+//Rutas para deudas
+Route::get('deudas', \App\Http\Livewire\DuePay\DuePaytable::class)->name('deudas');
 
 //Rutas para Gastos
 Route::get('gastos', \App\Http\Livewire\Cost\CostTable::class)->name('gastos');
@@ -42,7 +48,11 @@ Route::get('reporte/orden-trabajo', \App\Http\Livewire\Report\OT::class)->name('
 Route::get('reporte/venta', \App\Http\Livewire\Report\Sale::class)->name('reporte.venta');
 Route::get('reporte/compra', \App\Http\Livewire\Report\Purchase::class)->name('reporte.compra');
 
-//Rutas para PDF
-Route::get('pdf/preview/{id}', [\App\Http\Controllers\PDFController::class, 'preview'])->name('pdf.preview');
-Route::get('pdf/view/{id}', [\App\Http\Controllers\PDFController::class, 'view'])->name('pdf.view');
-Route::get('pdf/download/{id}', [\App\Http\Controllers\PDFController::class, 'download'])->name('pdf.download');
+//Rutas para PDF de proforma
+Route::get('proforma/preview/{id}', [\App\Http\Controllers\PDFController::class, 'preview'])->name('proforma.pdf.preview');
+Route::get('proforma/view/{id}', [\App\Http\Controllers\PDFController::class, 'view'])->name('proforma.pdf.view');
+Route::get('proforma/download/{id}', [\App\Http\Controllers\PDFController::class, 'download'])->name('proforma.pdf.download');
+
+//Rutas para PDF de ventas
+
+//Rutas para PDF de compras
