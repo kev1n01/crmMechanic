@@ -88,7 +88,7 @@
                                 <x-table.heading sortable wire:click="sortBy('address')" :direction="$sortField == 'address' ? $sortDirection : null">Dirección
                                 </x-table.heading>
 
-                                <x-table.heading>Dni| Ruc
+                                <x-table.heading>Dni | Ruc
                                 </x-table.heading>
 
                                 <x-table.heading>Estado
@@ -106,7 +106,7 @@
                                             <x-input.check-input name="selected" value="{{ $customer->id }}" />
                                         </x-table.cell>
 
-                                        <x-table.cell>{{ $customer->email }}</x-table.cell>
+                                        <x-table.cell>{{ $customer->email ?? 'N/D' }}</x-table.cell>
 
                                         <x-table.cell>{{ $customer->name }}</x-table.cell>
 
@@ -114,8 +114,7 @@
 
                                         <x-table.cell class="text-wrap">{{ $customer->address ?? 'N/D' }}</x-table.cell>
 
-                                        <x-table.cell>{{ $customer->dni ?? 'N/D' }} | {{ $customer->ruc ?? 'N/D' }}
-                                        </x-table.cell>
+                                        <x-table.cell>{{ $customer->dni ?? 'N/D' }} | {{ $customer->ruc ?? 'N/D' }}</x-table.cell>
 
                                         <x-table.cell>
                                             <button
@@ -155,6 +154,15 @@
         <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
             <x-slot name="body">
                 <x-input.input-group>
+                    <x-input.input-tooltip-error class="col-12" name="editing.dni" label="DNI" type="text"
+                        :error="$errors->first('editing.dni')" />
+                </x-input.input-group>
+
+                <x-input.input-group>
+                    <x-input.input-tooltip-error class="col-12" name="editing.ruc" label="Ruc" type="text"
+                        :error="$errors->first('editing.ruc')" />
+                </x-input.input-group>
+                <x-input.input-group>
                     <x-input.input-tooltip-error class="col-12" name="editing.email" label="Correo" type="email"
                         :error="$errors->first('editing.email')" />
                 </x-input.input-group>
@@ -172,16 +180,6 @@
                 <x-input.input-group>
                     <x-input.input-tooltip-error class="col-12" name="editing.address" label="Dirección"
                         type="text" :error="$errors->first('editing.address')" />
-                </x-input.input-group>
-
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.dni" label="DNI" type="text"
-                        :error="$errors->first('editing.dni')" />
-                </x-input.input-group>
-
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.ruc" label="Ruc" type="text"
-                        :error="$errors->first('editing.ruc')" :required=true />
                 </x-input.input-group>
 
                 <x-input.input-group>

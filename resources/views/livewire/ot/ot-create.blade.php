@@ -5,14 +5,14 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row mb-2 g-2">
-                            <x-input.input-tooltip-error class="col-xl-2" name="editing.code" label="Código"
-                                type="text" :error="$errors->first('editing.code')" :required=true :disabled=true />
+                            <x-input.input-tooltip-error class="col-xl-2" name="editing.code" label="Código" type="text"
+                                :error="$errors->first('editing.code')" :required=true :disabled=true />
 
-                            <x-input.select class="col-xl-4 mb-2" name="editing.customer" label="Cliente"
-                                :required=true :options="$customers" :error="$errors->first('editing.customer')" />
+                            <x-input.select class="col-xl-4 mb-2" name="editing.customer" label="Cliente" :required=true
+                                :options="$customers" :error="$errors->first('editing.customer')" />
 
-                            <x-input.select class="col-xl-3 mb-2" name="editing.vehicle" label="Vehiculo"
-                                :required=true :options="$vehicles" :error="$errors->first('editing.vehicle')" />
+                            <x-input.select class="col-xl-3 mb-2" name="editing.vehicle" label="Vehiculo" :required=true
+                                :options="$vehicles" :error="$errors->first('editing.vehicle')" />
 
                             <x-input.input-tooltip-error class="col-xl-3 mb-2" name="editing.odo" label="ODO"
                                 type="number" :error="$errors->first('editing.odo')" :required=true />
@@ -30,7 +30,7 @@
                                 label="Hora salida" type="time" :error="$errors->first('editing.departure_hour')" />
 
                             <x-input.select class="col-xl-4 mb-2" name="editing.type_atention" label="Tipo de atención"
-                                :options="$types" :error="$errors->first('editing.type_atention')" :required=true/>
+                                :options="$types" :error="$errors->first('editing.type_atention')" :required=true />
 
                             <x-input.textarea class="col-xl-8 " name="editing.observation" label="Observaciones" />
                         </div>
@@ -56,7 +56,7 @@
                                     @forelse ($concepts as $c)
                                         <span class="dropdown-item notify-item"
                                             wire:click.prevent="addConcept({{ $c->id }})">
-                                            <span>⚒️ {{ $c->name . ' - '. $c->code}}</span>
+                                            <span>⚒️ {{ $c->name . ' - ' . $c->code }}</span>
                                         </span>
                                     @empty
                                         <a class="dropdown-item notify-item">
@@ -68,7 +68,8 @@
                                     @forelse ($products as $p)
                                         <span class="dropdown-item notify-item"
                                             wire:click.prevent="addProduct({{ $p->id }})">
-                                            <span>📦 {{ $p->name.' - '. $p->code.' - '. $p->stock .' - '. $p->status}}</span>
+                                            <span>📦
+                                                {{ $p->name . ' - ' . $p->code . ' - ' . $p->stock . ' - ' . $p->status }}</span>
                                         </span>
                                     @empty
                                         <a class="dropdown-item notify-item">
@@ -92,21 +93,21 @@
 
                                 <x-slot name="body">
                                     @forelse($cart as $c)
-                                        <x-table.row>
+                                        <x-table.row wire:key="row-{{ $c->name }}">
                                             <x-table.cell>{{ $c->name }}</x-table.cell>
                                             <x-table.cell>
-                                                <input type="text" id="p{{ $c->id }}"
+                                                <input type="number" id="p{{ $c->id }}"
                                                     class="form-control w-auto"
                                                     wire:change="updatePriceCart({{ $c->id }}, $('#p' + {{ $c->id }}).val())"
                                                     value="{{ $c->price }}"
-                                                    {{ strlen($c->id) != 1  ? 'disabled' : '' }}>
+                                                    {{ strlen($c->id) != 1 ? 'disabled' : '' }}>
                                             </x-table.cell>
                                             <x-table.cell>
                                                 <input type="number" id="r{{ $c->id }}" min="1"
                                                     wire:change="updateQuantityCart({{ $c->id }}, $('#r' + {{ $c->id }}).val(), $('#d'+{{ $c->id }}).val())"
                                                     style="font-size: 1rem !important;" class="form-control text-center"
                                                     value="{{ $c->quantity }}"
-                                                    {{ strlen($c->id) == 1  ? 'disabled' : '' }}>
+                                                    {{ strlen($c->id) == 1 ? 'disabled' : '' }}>
                                             </x-table.cell>
                                             <x-table.cell>
                                                 <input type="number" id="d{{ $c->id }}"

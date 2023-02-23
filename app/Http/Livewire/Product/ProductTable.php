@@ -42,6 +42,7 @@ class ProductTable extends Component
 
     public function mount()
     {
+        $this->search = '';
         $this->sortField = 'name';
         $this->editing = $this->makeBlankFields();
         $this->statuses = Product::STATUSES;
@@ -202,7 +203,7 @@ class ProductTable extends Component
 
     public function makeBlankFields()
     {
-        return Product::make(['status' => 'activo', 'stock' => 0]); /*para dejar vacios los inpust*/
+        return Product::make(['status' => 'activo', 'stock' => 0, 'sale_price' => 0, 'purchase_price' => 0]); /*para dejar vacios los inpust*/
     }
 
     public function create()

@@ -68,8 +68,8 @@ class OtTable extends Component
                 $this->search,
                 fn ($q, $search) => $q->where('code', 'like', '%' . $search . '%')
                     ->orwhere('odo', 'like', '%' . $search . '%')
-                    ->withWhereHas('customerUser', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%'))
-                    ->withWhereHas('vehiclePlate', fn ($q2) => $q2->where('license_plate', 'like', '%' . $search . '%'))
+                    ->orwhere(fn ($q) => $q->whereHas('customerUser', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%')))
+                    ->orwhere(fn ($q) => $q->whereHas('vehiclePlate', fn ($q2) => $q2->where('license_plate', 'like', '%' . $search . '%')))
             )
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
             ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer', $customer))

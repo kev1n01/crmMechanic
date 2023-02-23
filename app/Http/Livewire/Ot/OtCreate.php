@@ -91,6 +91,7 @@ class OtCreate extends Component
                 $this->searchProductService,
                 fn ($q, $searchProductService) =>
                 $q->where('name', 'like', '%' . $searchProductService . '%')
+                ->orwhere('code', 'like', '%' . $searchProductService . '%')
             )->get();
         } else {
             $this->concepts = [];

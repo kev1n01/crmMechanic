@@ -19,6 +19,7 @@ Route::get('productos', \App\Http\Livewire\Product\ProductTable::class)->name('p
 //Rutas entradas y salidas de productos
 Route::get('compras', \App\Http\Livewire\Purchase\PurchaseTable::class)->name('compras');
 Route::get('crear-compra', \App\Http\Livewire\Purchase\PurchaseCreate::class)->name('compras.crear');
+Route::get('editar-compra/{code}', \App\Http\Livewire\Purchase\PurchaseEdit::class)->name('compras.editar');
 Route::get('ventas', \App\Http\Livewire\Sale\SaleTable::class)->name('ventas');
 Route::get('crear-venta', \App\Http\Livewire\Sale\SaleCreate::class)->name('ventas.crear');
 

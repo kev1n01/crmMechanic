@@ -103,7 +103,6 @@
                             </x-slot>
 
                             <x-slot name="body">
-
                                 @forelse ($products as $product)
                                     <x-table.row wire:key="row-{{ $product->id }}" wire:loading.class="bg-light"
                                         wire:target="search">
@@ -176,8 +175,8 @@
                     <x-input.select class="col-xl-6" name="editing.category_products_id" label="Categorías"
                         :options="$categories" :error="$errors->first('editing.category_products_id')" :required=true />
 
-                    <x-input.select class="col-xl-6" name="editing.brand_products_id" label="Marcas" :options="$brands"
-                        :error="$errors->first('editing.brand_products_id')" :required=true />
+                    <x-input.select class="col-xl-6" name="editing.brand_products_id" label="Marcas"
+                        :options="$brands" :error="$errors->first('editing.brand_products_id')" :required=true />
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.sale_price" label="Precio venta"
                         type="text" :error="$errors->first('editing.sale_price')" :required=true />

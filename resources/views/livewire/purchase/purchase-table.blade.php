@@ -124,8 +124,10 @@
                                         </x-table.cell>
 
                                         <x-table.cell>
-                                            <a class="action-icon" wire:click="edit({{ $purchase->id }})">
-                                                <i class="mdi mdi-square-edit-outline"></i> </a>
+                                            @if ($purchase->status == "pendiente")
+                                                <a class="action-icon" href="{{ route('compras.editar',$purchase->code_purchase) }}" >
+                                                    <i class="mdi mdi-square-edit-outline"></i></a>
+                                            @endif
                                             <a class="action-icon" onclick="Confirm({{ $purchase->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
                                         </x-table.cell>

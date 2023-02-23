@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Customer;
 use App\Models\Customer;
 use App\Traits\DataTable;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Termwind\Components\Dd;
@@ -109,7 +110,7 @@ class CustomerTable extends Component
         return [
             'editing.name' => ['required', 'min:3', 'max:100', Rule::unique('customers', 'name')->ignore($this->editing)],
             'editing.dni' => ['nullable', 'min:8', 'max:8', Rule::unique('customers', 'dni')->ignore($this->editing)],
-            'editing.ruc' => ['required', 'min:11', 'max:11', Rule::unique('customers', 'ruc')->ignore($this->editing)],
+            'editing.ruc' => ['nullable', 'min:11', 'max:11', Rule::unique('customers', 'ruc')->ignore($this->editing)],
             'editing.address' => ['nullable', 'min:5', 'max:100', Rule::unique('customers', 'address')->ignore($this->editing)],
             'editing.phone' => ['required', 'min:9', 'max:9', Rule::unique('customers', 'phone')->ignore($this->editing)],
             'editing.email' => ['nullable', 'email', Rule::unique('customers', 'email')->ignore($this->editing)],
@@ -127,7 +128,6 @@ class CustomerTable extends Component
         'editing.dni.max' => 'El dni no debe tener más de 8 caracteres',
         'editing.dni.unique' => 'Este dni ya fue registrado',
 
-        'editing.ruc.required' => 'El ruc es obligatorio',
         'editing.ruc.min' => 'El ruc debe tener al menos 11 caracteres',
         'editing.ruc.max' => 'El ruc no debe tener más de 11 caracteres',
         'editing.ruc.unique' => 'El ruc ya fue registrado',
@@ -157,11 +157,32 @@ class CustomerTable extends Component
         $this->emit('refreshList');
     }
 
+    public function updatedEditingDni($value)
+    {
+        if (strlen($value) < 8) {
+            return;
+        }
+        $response = Http::get('https://dniruc.apisperu.com/api/v1/dni/' . $value . '?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNyYXp5YXJub2xkMDFAZ21haWwuY29tIn0.J8854s4Hy2oclyowM_lWgcGCRoHlXd5i1c6QXLrKORI');
+        $data = $response->json();
+        $this->editing->name = $data['nombres'] . ' ' . $data['apellidoPaterno'] . ' ' . $data['apellidoMaterno'];
+    }
+
+    public function updatedEditingRuc($value)
+    {
+        if (strlen($value) < 11) {
+            return;
+        }
+        $response = Http::get('https://dniruc.apisperu.com/api/v1/ruc/' . $value . '?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNyYXp5YXJub2xkMDFAZ21haWwuY29tIn0.J8854s4Hy2oclyowM_lWgcGCRoHlXd5i1c6QXLrKORI');
+        $data = $response->json();
+        $this->editing->name = $data['razonSocial'];
+        $this->editing->address = $data['direccion'];
+    }
+
     public function updated($label)
     {
         $this->validateOnly($label, $this->rules(), $this->messages);
     }
-    
+
     public function makeBlankFields()
     {
         return Customer::make(['status' => 'activo']); /*para dejar vacios los inpust*/

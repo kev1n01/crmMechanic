@@ -31,6 +31,7 @@ class PurchaseTable extends Component
 
     public function mount()
     {
+        $this->search = '';
         $this->sortField = 'code_purchase';
         $this->statuses = Purchase::STATUSES;
         $this->providers = Provider::pluck('name', 'id');
@@ -61,7 +62,9 @@ class PurchaseTable extends Component
         return Purchase::query()
             ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
             $q->whereBetween('date_purchase', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d'), Carbon::parse($this->filters['toDate'])->format('Y-m-d')]))
-            ->when($this->search, fn ($q, $search) => $q->where('code_purchase', 'like', '%' . $search . '%'))
+            ->when($this->search, fn ($q, $search) => $q->where('code_purchase', 'like', '%' . $search . '%')
+                ->orwhere('total', 'like', '%' . $search . '%')
+                ->orwhere(fn ($q) => $q->whereHas('provider', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%'))))
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
             ->when($this->filters['provider'], fn ($q, $provider) => $q->where('provider_id', $provider))
             ->orderBy($this->sortField, $this->sortDirection)
@@ -109,13 +112,18 @@ class PurchaseTable extends Component
             $purchases = $purchase->purchaseDetail()->get();
             foreach ($purchases as $p) {
                 $p->product->stock += $p->quantity;
+                if ($p->product->purchase_price == 0) {
+                    $p->product->purchase_price = $p->price;
+                }
                 $p->product->save();
+
             }
         } else if ($purchase->status === 'recibido') {
             $purchase->status = 'cancelado';
             $purchases = $purchase->purchaseDetail()->get();
             foreach ($purchases as $p) {
                 $p->product->stock -= $p->quantity;
+                $p->product->purchase_price = 0;
                 $p->product->save();
             }
         } else {
