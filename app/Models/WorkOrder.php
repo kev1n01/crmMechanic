@@ -67,10 +67,20 @@ class WorkOrder extends Model
         ][$this->status] ?? 'default';
     }
 
+    public function getTypeColorAttribute()
+    {
+        return [
+            'preventivo' => 'info',
+            'correctivo' => 'primary',
+            'predictivo' => 'secondary',
+            'planchado y pintura' => 'dark',
+        ][$this->type_atention] ?? 'default';
+    }
+
     public function getConfirmationColorAttribute()
     {
         return [
-            0 => 'info',
+            0 => 'danger',
             1 => 'success',
         ][$this->is_confirmed] ?? 'default';
     }

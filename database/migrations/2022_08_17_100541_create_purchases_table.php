@@ -19,6 +19,9 @@ return new class extends Migration
             $table->decimal('total',10,2)->nullable();
             $table->string('code_purchase')->unique();
             $table->date('date_purchase')->nullable();
+            $table->string('method_payment')->nullable();
+            $table->string('type_cpe')->nullable();
+            $table->string('nro_cpe')->nullable();
             $table->text('observation')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();

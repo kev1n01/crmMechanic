@@ -16,8 +16,10 @@ class DuePaytable extends Component
     public $showFilters = false;
     public $selected = [];
     public $selectedPage = false;
+    
+    public $reasons = [];
 
-    protected $listeners = ['delete', 'refreshList' => '$refresh', 'deleteSelected'];
+    protected $listeners = ['delete', 'refreshList' => '$refresh', 'deleteSelected','exportSelected'];
 
     protected $queryString = ['search' => ['except' => '']];
 
@@ -26,6 +28,7 @@ class DuePaytable extends Component
     public function mount()
     {
         $this->sortField = 'description';
+        $this->reasons = DuePay::REASONS;
         $this->editing = $this->makeBlankFields();
     }
 
@@ -95,7 +98,7 @@ class DuePaytable extends Component
             'editing.person_owed' => ['required'],
             'editing.amount_owed' => ['required'],
             'editing.amount_paid' => ['required'],
-            'editing.reason' => 'required',
+            'editing.reason' => 'required|in:' . collect(DuePay::REASONS)->keys()->implode(',')
         ];
     }
 
@@ -106,13 +109,22 @@ class DuePaytable extends Component
         'editing.amount_owed.required' => 'El monto adeudado es obligatorio',
         'editing.amount_paid.required' => 'El monto pagado es obligatorio',
         'editing.reason.required' => 'La razon es obligatorio',
+        'editing.reason.in' => 'El valor es invalido',
     ];
 
     public function save()
     {
         $this->validate();
-        $this->editing->save();
-        $this->nameModal === 'Crear nueva marca' ? $this->emit('success_alert', 'Marca creada') : $this->emit('success_alert', 'Marca actualizada');
+        if($this->editing->amount_paid >= $this->editing->amount_owed){
+            $sale = Sale::where('code_sale', $this->editing->description)->first();
+            $sale->status = 'pagado';
+            $sale->cash = $this->editing->amount_paid;
+            $sale->save();
+            $this->editing->delete();
+        }else{
+            $this->editing->save();
+        }
+        $this->nameModal === 'Crear deuda por cobrar' ? $this->emit('success_alert', 'Deuda por cobrar creada') : $this->emit('success_alert', 'Deuda por cobrar actualizada');
         $this->dispatchBrowserEvent('close-modal');
         $this->emit('refreshList');
     }

@@ -14,7 +14,7 @@ class CategoryTable extends Component
     public $showFilters = false;
     public $selected = [];
     public $selectedPage = false;
-    protected $listeners = ['refreshList' => '$refresh', 'delete', 'deleteSelected'];
+    protected $listeners = ['refreshList' => '$refresh', 'delete', 'deleteSelected', 'exportSelected'];
 
     protected $queryString = ['search' => ['except' => '']];
 
@@ -43,7 +43,6 @@ class CategoryTable extends Component
     public function render()
     {
         sleep(0.5); //se toma 2 seg para renderizar
-
         return view('livewire.category.category-table', [
             'categories' => $this->categories,
         ])->extends('layouts.admin.app')->section('content');
@@ -51,6 +50,11 @@ class CategoryTable extends Component
     public function resetFilters()
     {
         $this->reset('filters');
+    }
+
+    public function updatedFilters()
+    {
+        $this->resetPage();
     }
 
     public function delete(CategoryProduct $categoryProduct)

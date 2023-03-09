@@ -54,7 +54,9 @@ body::-webkit-scrollbar-thumb:hover {
 .table-responsive::-webkit-scrollbar-thumb:hover {
   background-color: rgb(62, 84, 200) !important;    /* color of the scroll thumb */
 }
-
+.cursor{
+  cursor: pointer;
+}
 #scroll-products::-webkit-scrollbar {
   width: 10px !important;               /* width of the entire scrollbar */
   height: 10px !important;               /* width of the entire scrollbar */

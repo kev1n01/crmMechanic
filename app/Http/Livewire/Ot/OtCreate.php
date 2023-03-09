@@ -8,7 +8,6 @@ use App\Models\Product;
 use App\Models\Vehicle;
 use App\Models\WorkOrder;
 use App\Models\workOrderDetail;
-use Carbon\Carbon;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -24,23 +23,26 @@ class OtCreate extends Component
     public $types = [];
     public $customers = [];
     public $vehicles = [];
-    public $wo_sid = [];
+    public $vf = [];
+    public $cf = [];
+    public $cart = [];
 
-    public $subtotal;
     public $total;
-    public $itemsQuantity;
+    public $totalDiscount = 0;
+    public $totalOG = 0;
 
     public $another = false;
+    protected $listeners = ['refreshListModals'];
 
     public function rules()
     {
         return [
             'editing.code' => ['required', 'min:6', 'max:6', Rule::unique('work_orders', 'code')->ignore($this->editing)],
             'editing.odo' => 'required',
-            'editing.arrival_date' => 'required',
-            'editing.arrival_hour' => 'required',
-            'editing.departure_date' => 'nullable',
-            'editing.departure_hour' => 'nullable',
+            // 'editing.arrival_date' => 'required',
+            // 'editing.arrival_hour' => 'required',
+            // 'editing.departure_date' => 'nullable',
+            // 'editing.departure_hour' => 'nullable',
             'editing.customer' => 'required',
             'editing.vehicle' => 'required',
             'editing.type_atention' => 'required',
@@ -54,8 +56,8 @@ class OtCreate extends Component
         'editing.code.required' => 'El código es obligatorio',
         'editing.code.unique' => 'Ya existe un proforma con este código',
         'editing.odo.required' => 'El kilometraje es obligatorio',
-        'editing.arrival_date.required' => 'La fecha de llegada es obligatoria',
-        'editing.arrival_hour.required' => 'La hora de llegada es obligatoria',
+        // 'editing.arrival_date.required' => 'La fecha de llegada es obligatoria',
+        // 'editing.arrival_hour.required' => 'La hora de llegada es obligatoria',
         'editing.customer.required' => 'El cliente es obligatorio',
         'editing.type_atention.required' => 'El tipo de atención es obligatorio',
         'editing.vehicle.required' => 'El vehiculo es obligatorio',
@@ -76,7 +78,7 @@ class OtCreate extends Component
         $this->editing->odo = '0';
         $this->statuses = WorkOrder::STATUSES;
         $this->types  = WorkOrder::TYPES;
-        $this->customers = Customer::pluck('name', 'id');
+        $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
     }
 
     public function render()
@@ -91,7 +93,7 @@ class OtCreate extends Component
                 $this->searchProductService,
                 fn ($q, $searchProductService) =>
                 $q->where('name', 'like', '%' . $searchProductService . '%')
-                ->orwhere('code', 'like', '%' . $searchProductService . '%')
+                    ->orwhere('code', 'like', '%' . $searchProductService . '%')
             )->get();
         } else {
             $this->concepts = [];
@@ -99,10 +101,10 @@ class OtCreate extends Component
         }
 
         if ($this->editing->vehicle) {
-            $cart = Cart::session($this->editing->vehicle)->getContent()->sortBy('name');
+            $this->cart = Cart::session($this->editing->vehicle)->getContent()->sortBy('name');
             $this->updateCartOptions();
         } else {
-            $cart = [];
+            $this->cart = [];
         }
 
         if ($this->editing->customer) {
@@ -112,26 +114,42 @@ class OtCreate extends Component
             $this->vehicles = [];
         }
 
-        return view('livewire.ot.ot-create', ['cart' => $cart])
+        return view('livewire.ot.ot-create')
             ->extends('layouts.admin.app')->section('content');
     }
 
-    public function updatedEditingCustomer()
+    public function updatedEditingCustomer($value)
     {
         $this->editing->odo = '0';
         $this->editing->vehicle = '';
+        $this->cf = Customer::find($value);
     }
 
-    public function updatedEditingVehicle()
+    public function updatedEditingVehicle($value)
     {
-        $vf = Vehicle::find($this->editing->vehicle);
-        $this->editing->odo = $vf ? $vf->odo : 0;
+        $this->vf = Vehicle::find($value);
+        $this->editing->odo = $this->vf ? $this->vf->odo : 0;
     }
 
     public function updateCartOptions()
     {
         $this->total = Cart::session($this->editing->vehicle)->getTotal();
-        $this->itemsQuantity = Cart::session($this->editing->vehicle)->getTotalQuantity();
+        $this->calculeTotal();
+    }
+
+    public function refreshListModals()
+    {
+        $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
+        $this->products = Product::query()
+            ->where('stock', '>', 0)
+            ->get();
+        $this->concepts = Concept::query()->get();
+        if ($this->editing->customer) {
+            $this->vehicles = Vehicle::where('customer_id', $this->editing->customer)
+                ->pluck('license_plate', 'id');
+        } else {
+            $this->vehicles = [];
+        }
     }
 
     public function makeBlankFields()
@@ -164,44 +182,37 @@ class OtCreate extends Component
         $this->emit('success_alert', 'Producto agregado a la proforma');
     }
 
-    public function updateQuantityCart($code_id, $cant, $discount = 0)
+    public function updateQuantityCart($id, $cant, $discount = 0)
     {
-        if (strlen($code_id) == 1) {
-            $product_or_concept = Concept::find($code_id);
-            $code = intval($product_or_concept->code);
-            $itemprice = Cart::session($this->editing->vehicle)->get($code);
-        } else {
-            $product_or_concept = Product::where('code', $code_id)->first();
-            $code = intval($product_or_concept->code);
-            $itemprice = Cart::session($this->editing->vehicle)->get($code);
-        }
+        $code = intval($id);
+        $item = Cart::session($this->editing->vehicle)->get($code);
         if ($cant > 0) {
             $this->removeItem($code);
-            Cart::session($this->editing->vehicle)->add($code, $product_or_concept->name, $itemprice->price, $cant, array('discount' => $discount));
+            Cart::session($this->editing->vehicle)->add($code, $item->name, $item->price, $cant, array('discount' => $discount));
         } else {
             $this->removeItem($code);
         }
         $this->updateCartOptions();
     }
 
-    public function updatePriceCart($code_id, $price)
+    public function updatePriceCart($id, $price = 0)
     {
-        $concept = Concept::where('code', $code_id)->first();
-        Cart::session($this->editing->vehicle)->update(intval($concept->code), array('price' => $price));
+        $code = intval($id);
+        if ($price > 0) {
+            Cart::session($this->editing->vehicle)->update(intval($code), array('price' => $price));
+        } else {
+            Cart::session($this->editing->vehicle)->update(intval($code), array('price' => 0));
+        }
         $this->updateCartOptions();
     }
 
-    public function updateDiscountCart($code_id, $discount)
+    public function updateDiscountCart($id, $discount = 0)
     {
-        if (strlen($code_id) == 1) {
-            $concept = Concept::find($code_id);
-            $code = intval($concept->code);
-        } else {
-            $product = Product::where('code', $code_id)->first();
-            $code = intval($product->code);
-        }
+        $code = intval($id);
         if ($discount > 0) {
             Cart::session($this->editing->vehicle)->update($code, array('attributes' => array('discount' => $discount)));
+        } else {
+            Cart::session($this->editing->vehicle)->update($code, array('attributes' => array('discount' => 0)));
         }
         $this->updateCartOptions();
     }
@@ -219,6 +230,16 @@ class OtCreate extends Component
         $this->emit('success_alert', 'Lista de servicios y productos eliminados');
     }
 
+    public function calculeTotal()
+    {
+        $this->totalDiscount = 0;
+        $this->cart = Cart::session($this->editing->vehicle)->getContent();
+        foreach ($this->cart as $c) {
+            $this->totalDiscount += $c->price * $c->quantity - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
+        }
+        $this->totalOG = $this->totalDiscount / 1.18;
+    }
+
     public function cancel()
     {
         Cart::session($this->editing->vehicle)->clear();
@@ -233,11 +254,15 @@ class OtCreate extends Component
 
     public function save()
     {
-        $this->saveLogic();
-        if ($this->another) {
-            return redirect()->route('proforma.orden.crear');
+        if (count($this->cart) == 0) {
+            $this->emit('error_alert', 'No hay productos en la venta');
         } else {
-            return redirect()->route('proformas');
+            $this->saveLogic();
+            if ($this->another) {
+                return redirect()->route('proforma.orden.crear');
+            } else {
+                return redirect()->route('proformas');
+            }
         }
     }
 
@@ -249,25 +274,12 @@ class OtCreate extends Component
     public function saveLogic()
     {
         $this->validate();
-        $cartItems = Cart::session($this->editing->vehicle)->getContent();
-        $totalDiscount = 0;
-        foreach ($cartItems as $c) {
-            $totalDiscount += ($c->price * $c->quantity) - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
-        }
-        $this->editing->total = $totalDiscount;
-        $this->editing->status = 'en progreso';
+        $this->calculeTotal();
+        $this->editing->total = $this->totalDiscount;
         $this->editing->is_confirmed = 0;
-        $this->editing->arrival_date = Carbon::parse($this->editing->arrival_date)->format('Y-m-d');
-        $this->editing->arrival_hour = $this->editing->arrival_hour . ':00';
-        if ($this->editing->departure_date != null) {
-            $this->editing->departure_date = Carbon::parse($this->editing->departure_date)->format('Y-m-d');
-        }
-        if ($this->editing->departure_hour != null) {
-            $this->editing->departure_hour = $this->editing->departure_hour . ':00';
-        }
         $this->editing->save();
 
-        foreach ($cartItems as $item) {
+        foreach ($this->cart as $item) {
             workOrderDetail::create([
                 'price' => $item->price,
                 'quantity' => $item->quantity,

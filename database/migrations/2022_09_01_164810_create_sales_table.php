@@ -17,9 +17,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('customer_id')->constrained('customers'); //client
             $table->string('code_sale')->unique();
-            $table->decimal('total', 10, 2)->nullable();    
+            $table->decimal('total', 10, 2)->nullable();
             $table->decimal('cash', 10, 2)->nullable();
-            $table->decimal('change', 10, 2)->nullable();
+            $table->string('type_sale')->nullabe();
+            $table->string('method_payment')->nullabe();
+            $table->string('type_payment')->nullabe();
             $table->date('date_sale')->nullable();
             $table->text('observation')->nullable();
             $table->string('status')->nullabe();

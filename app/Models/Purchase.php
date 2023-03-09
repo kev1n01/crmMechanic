@@ -8,24 +8,40 @@ use Illuminate\Database\Eloquent\Model;
 class Purchase extends Model
 {
     use HasFactory;
-    
-    CONST STATUSES = [
+
+    const STATUSES = [
         'recibido' => 'Recibido',
-        'cancelado' => 'Cancelado', 
         'pendiente' => 'Pendiente',
-    ];  
+    ];
+
+    const TYPE_CPE = [
+        'factura' => 'Factura',
+        'boleta' => 'Boleta',
+    ];
+
+    const METHOD_PAYMENTS = [
+        'efectivo' => 'Efectivo',
+        'yape' => 'Yape',
+        'plin' => 'Plin',
+        'transferencia' => 'Transferencia',
+        'deposito' => 'Depósito',
+    ];
 
     protected $fillable = [
         'provider_id',
         'total',
         'code_purchase',
         'date_purchase',
+        'method_payment',
+        'type_cpe',
+        'nro_cpe',
         'observation',
         'status',
     ];
-    
-    
-    public function getStatusColorAttribute(){
+
+
+    public function getStatusColorAttribute()
+    {
         return [
             'recibido' => 'success',
             'cancelado' => 'danger',
@@ -33,19 +49,23 @@ class Purchase extends Model
         ][$this->status] ?? 'secondary';
     }
 
-    public function getDateForTableAttribute(){
+    public function getDateForTableAttribute()
+    {
         return $this->date_purchase->format('d m Y');
     }
 
-    public function getDateForEditingAttribute(){
+    public function getDateForEditingAttribute()
+    {
         return optional($this->date_purchase)->format('d/m/Y');
     }
 
-    public function provider(){
-        return $this->belongsTo(Provider::class,'provider_id');
+    public function provider()
+    {
+        return $this->belongsTo(Provider::class, 'provider_id');
     }
-    
-    public function purchaseDetail(){
+
+    public function purchaseDetail()
+    {
         return $this->hasMany(PurchaseDetail::class);
     }
 }

@@ -4,11 +4,10 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-2">
-                        <div class="col-xl-8">
-                            <div
-                                class="row gy-2 gx-2 align-items-center justify-content-xl-start justify-content-between">
+                        <div class="col-xl-7">
+                            <div class="row">
                                 <div class="col-2">
-                                    <div class="d-flex align-items-start ">
+                                    <div class="d-flex align-items-start">
                                         <select class="form-select ps-1 pe-0" id="perPage" wire:model="perPage">
                                             <option value="2">2</option>
                                             <option value="5">5</option>
@@ -18,36 +17,65 @@
                                     </div>
                                 </div>
 
-                                <div class="col-6">
+                                <div class="col-8">
                                     <input type="search" class="form-control" wire:model="search"
                                         placeholder="Buscar...">
                                 </div>
-
-                                <div class="col-3">
-                                    <a wire:click="showFilter"
-                                        class="action-icon">{{ $showFilters ? 'Ocultar filtros..' : 'Mostrar filtros..' }}</a>
-                                </div>
                             </div>
                         </div>
-                        <div class="row col-xl-4">
+                        <div class="row col-xl-5">
                             <div class="text-xl-end mt-xl-0 mt-2">
+                                <button wire:click="showFilter" type="button"
+                                    class="btn btn-outline-dark mb-2 me-2">Filtros
+                                    @if ($showFilters)
+                                        <i class="mdi mdi-close-circle-outline me-1"></i>
+                                    @else
+                                        <i class="mdi mdi-filter-outline me-1"></i>
+                                    @endif
+                                </button>
                                 <button type="button" wire:click="create" class="btn btn-dark mb-2 me-2"><i
                                         class="mdi mdi-plus me-1"></i>
                                     Nuevo</button>
-                                <button type="button" class="btn btn-light mb-2 dropdown-toggle"
+
+                                <button type="button" class="btn btn-light mb-2 me-2 dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones <span
                                         class="{{ count($selected) == 0 ? 'd-none' : '' }} fs-6 badge rounded-pill bg-primary">{{ count($selected) }}</span></button>
                                 <div class="dropdown-menu">
-                                    <button class="dropdown-item action-icon" wire:click="exportSelected"><i
+                                    <button class="dropdown-item action-icon"
+                                        @if ($selected != []) onclick="window.livewire.emit('exportSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
                                             class="mdi mdi-download"></i> Exportar</button>
                                     <button class="dropdown-item action-icon"
-                                        onclick="Confirm(null,'deleteSelected')"><i class="mdi mdi-delete"></i>
+                                        @if ($selected != []) onclick="Confirm(null,'deleteSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
+                                            class="mdi mdi-delete"></i>
                                         Eliminar</button>
+                                    <button class="dropdown-item action-icon" data-bs-toggle="offcanvas"
+                                        data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><i
+                                            class="mdi mdi-upload"></i>Importar</button>
+                                </div>
+
+                                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight"
+                                    aria-labelledby="offcanvasRightLabel">
+                                    <div class="offcanvas-header text-center">
+                                        <h5 id="offcanvasRightLabel">Importar gastos</h5>
+                                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body">
+                                        {{-- @livewire('cost.import') --}}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         @if ($showFilters)
                             <div class="border shadow-none bg-light rounded">
+                                <div class="row m-1">
+                                    <div class="d-flex flex-row-reverse bd-highlight">
+                                        <div class="bd-highlight">
+                                            <p class="mb-0 fw-bold text-decoration-underline cursor"
+                                                wire:click.prevent="resetFilters">Limpiar</p>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row m-1">
                                     <div class="col-lg-3">
                                         <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1" />
@@ -58,12 +86,6 @@
                                     <div class="col-lg-3">
                                         <x-input.select name="filters.voucher" label="Tipo de comprobante"
                                             :options="$vouchers" />
-                                    </div>
-                                </div>
-                                <div class="d-flex flex-row-reverse bd-highlight">
-                                    <div class="p-2 bd-highlight">
-                                        <button class="btn btn-primary" wire:click.prevent="resetFilters">Limpiar
-                                            filtros</button>
                                     </div>
                                 </div>
                             </div>
@@ -153,29 +175,22 @@
     <x-form method="save">
         <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
             <x-slot name="body">
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.description" label="Descripción"
+                <div class="row g-2">
+                    <x-input.input-tooltip-error class="col-xl-12" name="editing.description" label="Descripción"
                         type="text" :error="$errors->first('editing.description')" :required=true />
-                </x-input.input-group>
 
-                <x-input.datepicker class="" name="editing.date" label="Fecha" id="dp3" :error="$errors->first('editing.date')"
-                    :required=true />
+                    <x-input.datepicker class="col-xl-6" name="editing.date" label="Fecha" id="dp3"
+                        :error="$errors->first('editing.date')" :required=true />
 
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.time" label="Hora" type="time"
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.time" label="Hora" type="time"
                         :error="$errors->first('editing.time')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editing.total" label="Monto" type="text"
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.total" label="Monto" type="text"
                         :error="$errors->first('editing.total')" :required=true />
-                </x-input.input-group>
 
-                <x-input.input-group>
-                    <x-input.select class="col-12" name="editing.type_voucher" label="Tipo de comprobante"
+                    <x-input.select class="col-xl-6" name="editing.type_voucher" label="Tipo de comprobante"
                         :options="$vouchers" :error="$errors->first('editing.type_voucher')" :required=true />
-                </x-input.input-group>
-
+                </div>
             </x-slot>
 
             <x-slot name="footer">

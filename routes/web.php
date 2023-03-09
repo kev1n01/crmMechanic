@@ -22,6 +22,7 @@ Route::get('crear-compra', \App\Http\Livewire\Purchase\PurchaseCreate::class)->n
 Route::get('editar-compra/{code}', \App\Http\Livewire\Purchase\PurchaseEdit::class)->name('compras.editar');
 Route::get('ventas', \App\Http\Livewire\Sale\SaleTable::class)->name('ventas');
 Route::get('crear-venta', \App\Http\Livewire\Sale\SaleCreate::class)->name('ventas.crear');
+Route::get('editar-venta/{code}', \App\Http\Livewire\Sale\SaleEdit::class)->name('ventas.editar');
 
 //Rutas para registro de vehiculos
 Route::get('tipos-vehiculo', \App\Http\Livewire\Vehicle\TypeVehicleTable::class)->name('tipos.vehiculo');
@@ -32,7 +33,8 @@ Route::get('vehiculos', \App\Http\Livewire\Vehicle\VehicleTable::class)->name('v
 
 //Rutas para proforma
 Route::get('proformas', \App\Http\Livewire\InvoiceForm\IFTable::class)->name('proformas');
-Route::get('proforma-crear', \App\Http\Livewire\Ot\OtCreate::class)->name('proforma.orden.crear');
+Route::get('crear-proforma', \App\Http\Livewire\Ot\OtCreate::class)->name('proforma.orden.crear');
+Route::get('editar-proforma/{code}', \App\Http\Livewire\Ot\OtEdit::class)->name('proforma.orden.editar');
 
 //Rutas para Orden de trabajo
 Route::get('ordenes-trabajo', \App\Http\Livewire\Ot\OtTable::class)->name('ordenes');
@@ -50,10 +52,16 @@ Route::get('reporte/venta', \App\Http\Livewire\Report\Sale::class)->name('report
 Route::get('reporte/compra', \App\Http\Livewire\Report\Purchase::class)->name('reporte.compra');
 
 //Rutas para PDF de proforma
-Route::get('proforma/preview/{id}', [\App\Http\Controllers\PDFController::class, 'preview'])->name('proforma.pdf.preview');
-Route::get('proforma/view/{id}', [\App\Http\Controllers\PDFController::class, 'view'])->name('proforma.pdf.view');
-Route::get('proforma/download/{id}', [\App\Http\Controllers\PDFController::class, 'download'])->name('proforma.pdf.download');
+Route::get('proforma/preview/{id}', [\App\Http\Controllers\PDFController::class, 'previewPF'])->name('proforma.pdf.preview');
+Route::get('proforma/view/{id}', [\App\Http\Controllers\PDFController::class, 'viewPF'])->name('proforma.pdf.view');
+Route::get('proforma/download/{id}', [\App\Http\Controllers\PDFController::class, 'downloadPF'])->name('proforma.pdf.download');
 
 //Rutas para PDF de ventas
+Route::get('venta/preview/{id}', [\App\Http\Controllers\PDFController::class, 'previewSale'])->name('venta.pdf.preview');
+Route::get('venta/view/{id}', [\App\Http\Controllers\PDFController::class, 'viewSale'])->name('venta.pdf.view');
+Route::get('venta/download/{id}', [\App\Http\Controllers\PDFController::class, 'downloadSale'])->name('venta.pdf.download');
 
 //Rutas para PDF de compras
+Route::get('compra/preview/{id}', [\App\Http\Controllers\PDFController::class, 'previewPurchase'])->name('compra.pdf.preview');
+Route::get('compra/view/{id}', [\App\Http\Controllers\PDFController::class, 'viewPurchase'])->name('compra.pdf.view');
+Route::get('compra/download/{id}', [\App\Http\Controllers\PDFController::class, 'downloadPurchase'])->name('compra.pdf.download');

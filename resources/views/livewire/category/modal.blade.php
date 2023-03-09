@@ -23,3 +23,14 @@
         </x-modal-dialog>
     </x-form>
 </div>
+
+@push('js')
+    <script>
+        window.addEventListener('close-modal-category', event => {
+            $('#categoryModal').modal('hide');
+        });
+        window.addEventListener('open-modal-category', event => {
+            $('#categoryModal').modal('show');
+        });
+    </script>
+@endpush

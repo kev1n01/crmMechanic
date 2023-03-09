@@ -14,17 +14,25 @@ class SaleTable extends Component
 
     public $selected = [];
     public $selectedPage = false;
-
     public $showFilters = false;
+
+    public $statuses = [];
+    public $customers = [];
+    public $method_payments = [];
+    public $type_payments = [];
+    public $type_sales = [];
 
     public $filters = [
         'fromDate' => null,
         'toDate' => null,
         'status' => '',
         'customer' => '',
+        'method_payment' => '',
+        'type_payment' => '',
+        'type_sale' => '',
     ];
 
-    protected $listeners = ['delete', 'deleteSelected', 'refreshList' => '$refresh'];
+    protected $listeners = ['delete', 'deleteSelected', 'exportSelected', 'refreshList' => '$refresh'];
 
     protected $queryString = ['search' => ['except' => '']];
 
@@ -32,7 +40,10 @@ class SaleTable extends Component
     {
         $this->sortField = 'code_sale';
         $this->statuses = Sale::STATUSES;
-        $this->customers = Customer::pluck('name', 'id');
+        $this->method_payments = Sale::METHOD_PAYMENTS;
+        $this->type_payments = Sale::TYPE_PAYMENTS;
+        $this->type_sales = Sale::TYPES;
+        $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
     }
 
     public function updatedFilters()
@@ -58,10 +69,13 @@ class SaleTable extends Component
     public function getSalesProperty()
     {
         return Sale::query()
-            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) => 
-                $q->whereBetween('date_sale', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d'), Carbon::parse($this->filters['toDate'])->format('Y-m-d')]))            
+            ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
+            $q->whereBetween('date_sale', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d'), Carbon::parse($this->filters['toDate'])->format('Y-m-d')]))
             ->when($this->search, fn ($q, $search) => $q->where('code_sale', 'like', '%' . $search . '%'))
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
+            ->when($this->filters['type_sale'], fn ($q, $type_sale) => $q->where('type_sale', $type_sale))
+            ->when($this->filters['method_payment'], fn ($q, $method_payment) => $q->where('method_payment', $method_payment))
+            ->when($this->filters['type_payment'], fn ($q, $type_payment) => $q->where('type_payment', $type_payment))
             ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer_id', $customer))
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
@@ -99,28 +113,5 @@ class SaleTable extends Component
         }
         $sale->delete();
         $this->emit('success_alert', count($this->selected) . ' registros eliminados');
-    }
-
-    public function changeStatus(Sale $sale)
-    {
-        if ($sale->status === 'no pagado') {
-            $sale->status = 'pagado';
-        }else if ($sale->status === 'pagado') {
-            $sale->status = 'cancelado';
-            $sales = $sale->saleDetail()->get();
-            foreach ($sales as $p) {
-                $p->product->stock += $p->quantity;
-                $p->product->save();
-            }
-        }else{
-            $sale->status = 'no pagado';
-            $sales = $sale->saleDetail()->get();
-            foreach ($sales as $p) {
-                $p->product->stock -= $p->quantity;
-                $p->product->save();
-            }
-        }
-        $sale->save();
-        $this->emit('success_alert', 'Estado actualizado');
     }
 }

@@ -196,18 +196,23 @@
             </li>
 
             <li class="side-nav-item">
-                <a href="{{ route('deudas') }}" class="side-nav-link">
-                    <i class="uil-money-withdrawal"></i>
-                    <span>Deudas por cobrar</span>
-                </a>
-            </li>
-            <li class="side-nav-item">
-                <a href="{{ route('gastos') }}" class="side-nav-link">
+                <a data-bs-toggle="collapse" href="#finanzas" aria-expanded="false" aria-controls="finanzas"
+                    class="side-nav-link">
                     <i class="uil-usd-circle"></i>
-                    <span>Gastos</span>
+                    <span> Finanzas </span>
+                    <span class="menu-arrow"></span>
                 </a>
+                <div class="collapse" id="finanzas">
+                    <ul class="side-nav-second-level">
+                        <li>
+                            <a href="{{ route('deudas') }}">Deudas por cobrar</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('gastos') }}">Gastos</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
-
         </ul>
 
         <!-- End Sidebar -->

@@ -12,7 +12,7 @@ class Modal extends Component
     public $nameModal;
     public CategoryProduct $editing;
 
-    protected $listeners = ['create', 'edit'];
+    protected $listeners = ['createcategory' => 'create', 'editcategory' => 'edit'];
 
     public function rules()
     {
@@ -39,14 +39,14 @@ class Modal extends Component
         $this->editing->save();
         $this->emit('refreshList');
         $this->nameModal === 'Crear nueva categoria' ? $this->emit('success_alert', 'Categoría creada') : $this->emit('success_alert', 'categoría actualizada');
-        $this->dispatchBrowserEvent('close-modal');
+        $this->dispatchBrowserEvent('close-modal-category');
     }
 
     public function updated($label)
     {
         $this->validateOnly($label, $this->rules(), $this->messages);
     }
-    
+
     public function makeBlankFields()
     {
         return CategoryProduct::make(); /*para dejar vacios los inpust*/
@@ -58,7 +58,7 @@ class Modal extends Component
         $this->nameModal = 'Crear nueva categoria';
         $this->resetErrorBag();
         $this->resetValidation();
-        $this->dispatchBrowserEvent('open-modal');
+        $this->dispatchBrowserEvent('open-modal-category');
     }
 
     public function edit(CategoryProduct $categoryProduct)
@@ -66,13 +66,13 @@ class Modal extends Component
         $this->nameModal = 'Editar categoria';
         $this->resetErrorBag();
         $this->resetValidation();
-        $this->dispatchBrowserEvent('open-modal');
+        $this->dispatchBrowserEvent('open-modal-category');
         if ($this->editing->isNot($categoryProduct)) $this->editing = $categoryProduct; // para preservar cambios en los inputs
     }
 
     public function closeModal()
     {
-        $this->dispatchBrowserEvent('close-modal');
+        $this->dispatchBrowserEvent('close-modal-category');
     }
 
     public function render()

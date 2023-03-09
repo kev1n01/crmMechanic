@@ -15,9 +15,11 @@ class PurchaseTable extends Component
 
     public $selected = [];
     public $selectedPage = false;
-
     public $showFilters = false;
-
+    
+    public $statuses = [];
+    public $providers = [];
+    
     public $filters = [
         'fromDate' => null,
         'toDate' => null,
@@ -25,7 +27,7 @@ class PurchaseTable extends Component
         'provider' => '',
     ];
 
-    protected $listeners = ['delete', 'deleteSelected', 'refreshList' => '$refresh'];
+    protected $listeners = ['delete', 'deleteSelected', 'refreshList' => '$refresh', 'exportSelected'];
 
     protected $queryString = ['search' => ['except' => '']];
 
@@ -34,7 +36,7 @@ class PurchaseTable extends Component
         $this->search = '';
         $this->sortField = 'code_purchase';
         $this->statuses = Purchase::STATUSES;
-        $this->providers = Provider::pluck('name', 'id');
+        $this->providers = Provider::where('status','activo')->pluck('name', 'id');
     }
 
     public function updatedFilters()
@@ -103,34 +105,5 @@ class PurchaseTable extends Component
         }
         $purchase->delete();
         $this->emit('success_alert', count($this->selected) . ' registros eliminados');
-    }
-
-    public function changeStatus(Purchase $purchase)
-    {
-        if ($purchase->status === 'pendiente') {
-            $purchase->status = 'recibido';
-            $purchases = $purchase->purchaseDetail()->get();
-            foreach ($purchases as $p) {
-                $p->product->stock += $p->quantity;
-                if ($p->product->purchase_price == 0) {
-                    $p->product->purchase_price = $p->price;
-                }
-                $p->product->save();
-
-            }
-        } else if ($purchase->status === 'recibido') {
-            $purchase->status = 'cancelado';
-            $purchases = $purchase->purchaseDetail()->get();
-            foreach ($purchases as $p) {
-                $p->product->stock -= $p->quantity;
-                $p->product->purchase_price = 0;
-                $p->product->save();
-            }
-        } else {
-            $purchase->status = 'pendiente';
-        }
-
-        $purchase->save();
-        $this->emit('success_alert', 'Estado actualizado');
     }
 }

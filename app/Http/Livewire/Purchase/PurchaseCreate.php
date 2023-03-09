@@ -18,11 +18,19 @@ class PurchaseCreate extends Component
     public $searchProduct = '';
     public $products = [];
     public $statuses = [];
+    public $methods = [];
+    public $types = [];
     public $providers = [];
+    public $cart = [];
 
     public $total;
+    public $totalDiscount = 0;
+    public $totalOG = 0;
 
+    public $serial = '';
+    public $correlative = '';
     public $another = false;
+    protected $listeners = ['refreshListModals'];
 
     public function rules()
     {
@@ -34,9 +42,20 @@ class PurchaseCreate extends Component
                 ->keys()
                 ->implode(','),
             'editing.provider_id' => 'required',
+            'editing.method_payment' => 'required|in:' .
+                collect(Purchase::METHOD_PAYMENTS)
+                ->keys()
+                ->implode(','),
+            'editing.type_cpe' => 'required|in:' .
+                collect(Purchase::TYPE_CPE)
+                ->keys()
+                ->implode(','),
             'editing.date_purchase' => 'required',
+            'editing.nro_cpe' => 'required',
             'editing.total' => 'nullable',
             'editing.observation' => 'nullable',
+            'serial' => 'required',
+            'correlative' => 'required',
         ];
     }
 
@@ -47,8 +66,15 @@ class PurchaseCreate extends Component
         'editing.code_purchase.unique' => 'Ya existe una compra con este código',
         'editing.status.required' => 'El estado es obligatorio',
         'editing.status.in' => 'El valor es inválido',
+        'editing.method_payment.required' => 'El metodo de pago es obligatorio',
+        'editing.method_payment.in' => 'El valor es inválido',
+        'editing.type_cpe.required' => 'El tipo de cpe es obligatorio',
+        'editing.type_cpe.in' => 'El valor es inválido',
+        'editing.nro_cpe.required' => 'El numero de cpe es obligatorio',
         'editing.provider_id.required' => 'El valor es inválido',
         'editing.date_purchase.required' => 'La fecha de compra es obligatorio',
+        'serial.required' => 'La serie de cpe es obligatorio',
+        'correlative.required' => 'El correlativo de cpe es obligatorio',
     ];
 
     public function code_random($lenght)
@@ -67,6 +93,8 @@ class PurchaseCreate extends Component
         $this->editing->date_purchase = Carbon::now()->format('d-m-Y');
         $this->editing->code_purchase = $this->code_random(5);
         $this->statuses = Purchase::STATUSES;
+        $this->methods = Purchase::METHOD_PAYMENTS;
+        $this->types = Purchase::TYPE_CPE;
         $this->providers = Provider::where('status', 'activo')->pluck('name', 'id');
     }
 
@@ -81,13 +109,13 @@ class PurchaseCreate extends Component
         }
 
         if ($this->editing->provider_id > 0) {
-            $cart = Cart::session($this->editing->provider->name)->getContent()->sortBy('name');
+            $this->cart = Cart::session($this->editing->provider->name)->getContent()->sortBy('name');
             $this->updateCartOptions();
         } else {
-            $cart = [];
+            $this->cart = [];
         }
 
-        return view('livewire.purchase.purchase-create', ['cart' => $cart])
+        return view('livewire.purchase.purchase-create')
             ->extends('layouts.admin.app')
             ->section('content');
     }
@@ -95,12 +123,38 @@ class PurchaseCreate extends Component
     public function updateCartOptions()
     {
         $this->total = Cart::session($this->editing->provider->name)->getTotal();
+        $this->calculeTotal();
+    }
+
+    public function refreshListModals()
+    {
+        $this->providers = Provider::where('status', 'activo')->pluck('name', 'id');
+        $this->products = Product::query()->get();
     }
 
     public function makeBlankFields()
     {
-        return Purchase::make(['status' => 'pendiente']);
+        return Purchase::make(['status' => 'pendiente', 'method_payment' => 'efectivo']);
     } /*para dejar vacios los inpust*/
+
+    public function updatedEditingTypeCpe($value)
+    {
+        if ($value == 'boleta') {
+            $this->serial = 'B00';
+        } else {
+            $this->serial = 'F00';
+        }
+    }
+
+    public function updatedSerial($value)
+    {
+        $this->editing->nro_cpe = $value . ' - ' . $this->correlative;
+    }
+
+    public function updatedCorrelative($value)
+    {
+        $this->editing->nro_cpe = $this->serial . ' - ' . $value;
+    }
 
     public function addProduct(Product $product, $cant = 1, $discount = 0)
     {
@@ -153,7 +207,17 @@ class PurchaseCreate extends Component
     {
         Cart::session($this->editing->provider->name)->clear();
         $this->updateCartOptions();
-        $this->emit('success_alert', 'Lista de compra reiniciado');
+        $this->emit('success_alert', 'Lista de productos reiniciado');
+    }
+
+    public function calculeTotal()
+    {
+        $this->totalDiscount = 0;
+        $this->cart = Cart::session($this->editing->provider->name)->getContent();
+        foreach ($this->cart as $c) {
+            $this->totalDiscount += $c->price * $c->quantity - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
+        }
+        $this->totalOG = $this->totalDiscount / 1.18;
     }
 
     public function cancel()
@@ -170,11 +234,15 @@ class PurchaseCreate extends Component
 
     public function save()
     {
-        $this->saveLogic();
-        if ($this->another) {
-            return redirect()->route('compras.crear');
+        if (count($this->cart) == 0) {
+            $this->emit('error_alert', 'No hay productos en la venta');
         } else {
-            return redirect()->route('compras');
+            $this->saveLogic();
+            if ($this->another) {
+                return redirect()->route('compras.crear');
+            } else {
+                return redirect()->route('compras');
+            }
         }
     }
 
@@ -186,15 +254,11 @@ class PurchaseCreate extends Component
     public function saveLogic()
     {
         $this->validate();
-        $cartItems = Cart::session($this->editing->provider->name)->getContent();
-        $totalDiscount = 0;
-        foreach ($cartItems as $c) {
-            $totalDiscount += $c->price * $c->quantity - $c->quantity * $c->price * ($c->attributes['discount'] / 100);
-        }
-        $this->editing->total = $totalDiscount;
+        $this->calculeTotal();
+        $this->editing->total = $this->totalDiscount;
         $this->editing->date_purchase = Carbon::parse($this->editing->date_purchase)->format('Y-m-d');
         $this->editing->save();
-        foreach ($cartItems as $item) {
+        foreach ($this->cart as $item) {
             PurchaseDetail::create([
                 'price' => $item->price,
                 'quantity' => $item->quantity,

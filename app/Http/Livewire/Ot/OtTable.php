@@ -13,8 +13,10 @@ class OtTable extends Component
 {
     use DataTable;
 
-    public $selected = [];
-    public $selectedPage = false;
+    public $statuses = [];
+    public $customers = [];
+    public $vehicles = [];
+    public $types = [];
 
     public $showFilters = false;
 
@@ -22,11 +24,12 @@ class OtTable extends Component
         'fromDate' => null,
         'toDate' => null,
         'status' => '',
+        'type' => '',
         'customer' => '',
         'vehicle' => '',
     ];
 
-    protected $listeners = ['delete', 'deleteSelected', 'refreshList' => '$refresh'];
+    protected $listeners = ['delete', 'refreshList' => '$refresh'];
 
     protected $queryString = ['search' => ['except' => '']];
 
@@ -34,6 +37,7 @@ class OtTable extends Component
     {
         $this->sortField = 'code';
         $this->statuses = WorkOrder::STATUSES;
+        $this->types = WorkOrder::TYPES;
         $this->customers = Customer::pluck('name', 'id');
         $this->vehicles = Vehicle::pluck('license_plate', 'id');
     }
@@ -41,11 +45,6 @@ class OtTable extends Component
     public function updatedFilters()
     {
         $this->resetPage();
-    }
-
-    public function updatedSelectedPage($value)
-    {
-        $this->selected = $value ? $this->works->pluck('id')->map(fn ($id) => (string) $id) : [];
     }
 
     public function resetFilters()
@@ -72,6 +71,7 @@ class OtTable extends Component
                     ->orwhere(fn ($q) => $q->whereHas('vehiclePlate', fn ($q2) => $q2->where('license_plate', 'like', '%' . $search . '%')))
             )
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
+            ->when($this->filters['type'], fn ($q, $status) => $q->where('type_atention', $status))
             ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer', $customer))
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
@@ -92,27 +92,15 @@ class OtTable extends Component
         $this->emit('success_alert', 'El orden de trabajo fue eliminado');
     }
 
-    public function exportSelected()
-    {
-        return response()->streamDownload(function () {
-            echo WorkOrder::whereKey($this->selected)->toCsv();
-        }, 'Ordenes_trabajo.csv');
-        $this->emit('success_alert', 'Se exportaron los registros seleccionados');
-    }
-
-    public function deleteSelected()
-    {
-        $wo = WorkOrder::whereKey($this->selected);
-        $wofind = WorkOrder::find($this->selected);
-        foreach ($wofind as $wof) {
-            $wof->workOrderDetail()->delete();
-        }
-        $wo->delete();
-        $this->emit('success_alert', count($this->selected) . ' registros eliminados');
-    }
     public function changeStatus(WorkOrder $wo)
     {
-        $wo->status = $wo->status === 'finalizado' ? 'en progreso' : ($wo->status === 'en progreso' ? 'retrasado' : 'finalizado');
+        if ($wo->status == 'en progreso') {
+            $wo->status = 'finalizado';
+        } elseif ($wo->status == 'retrasado') {
+            $wo->status = 'finalizado';
+        } elseif ($wo->status == 'finalizado') {
+            $wo->status = 'en progreso';
+        }
         $wo->save();
         $this->emit('success_alert', 'Estado actualizado');
     }

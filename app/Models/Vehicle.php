@@ -51,7 +51,6 @@ class Vehicle extends Model
         'model_vehicle',
         'color_vehicle',
         'model_year',
-        'model_year',
         'odo',
         'image',
         'description',

@@ -83,6 +83,7 @@
                                                     <a class="action-icon"
                                                         wire:click.prevent="viewDetails({{ $purchase->id }})"><i
                                                             class="mdi mdi-eye-outline"></i></a>
+                                                            
                                                 </x-table.cell>
                                             </x-table.row>
                                         @empty

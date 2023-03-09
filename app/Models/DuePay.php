@@ -9,6 +9,12 @@ class DuePay extends Model
 {
     use HasFactory;
 
+    const REASONS = [
+        'proforma' => 'Proforma',
+        'venta' => 'Venta',
+        'otro' => 'Otro',
+    ];
+
     protected $fillable = [
         'description',
         'person_owed',

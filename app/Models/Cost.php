@@ -11,11 +11,9 @@ class Cost extends Model
 
     const VOUCHERS = [
         'factura electronica' => 'Factura Electronica',
-        'boleta de compra electronica' => 'Boleta de compra Electronica',
-        'nota de crédito electronica' => 'Nota de Crédito Electronica',
-        'nota de débito electronica' => 'Nota de Débito Electronica',
+        'boleta electronica' => 'Boleta Electronica',
     ];
-    
+
     protected $fillable = [
         'description',
         'date',
@@ -24,12 +22,11 @@ class Cost extends Model
         'type_voucher',
     ];
 
-    public function getVoucherColorAttribute(){
+    public function getVoucherColorAttribute()
+    {
         return [
             'factura electronica' => 'success',
-            'boleta de compra electronica' => 'warning',
-            'nota de crédito electronica' => 'info',
-            'nota de débito electronica' => 'primary',
+            'boleta electronica' => 'info',
         ][$this->type_voucher] ?? 'secondary';
     }
 }

@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <p class="fs-2 fw-b text-form">Proforma de mantenimiento preventivo y correctivo</p>
+        <p class="fs-2 fw-b text-form">{{ $wo->is_confirmed === 0 ? 'Proforma de mantenimiento' : 'Orden de trabajo' }} - {{ $wo->type_atention }}</p>
 
         <p class="fs-3 fw-sb">Detalle del orden de trabajo</p>
         <table class="table">
@@ -123,9 +123,7 @@
         <table class="table-list">
             <thead>
                 <tr>
-                    <th colspan="5" class="fw-b">Repuestos</th>
-                </tr>
-                <tr>
+                    <th>Codigo</th>
                     <th>Descripcion</th>
                     <th>P. unitario</th>
                     <th>Cant</th>
@@ -134,82 +132,19 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($wod_replacement as $k)
+                @forelse ($dot as $w)
                     <tr>
-                        <td class="fs-3 fw-sb text-wrap w-45">{{ $k->product->name }}</td>
-                        <td class="fs-3 fw-sb">{{ $k->price }}</td>
-                        <td class="fs-3 fw-sb">{{ $k->quantity }}</td>
-                        <td class="fs-3 fw-sb">{{ $k->discount ?? 0 }} %</td>
-                        <td class="fs-3 fw-sb">{{ $k->price * $k->quantity - $k->price * $k->quantity * ($k->discount / 100) }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td class="text-center" colspan="5">
-                            No hay repuestos agregados
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-            <tfoot>
-                @php
-                    $totalNoDiscountReplacement = 0;
-                    $totalOGReplacement = 0;
-                    $totalDiscountReplacement = 0;
-                    foreach ($wod_replacement as $c) {
-                        $totalNoDiscountReplacement += $c->price * $c->quantity;
-                        $totalDiscountReplacement += $c->price * $c->quantity - $c->price * $c->quantity * ($c->discount / 100);
-                    }
-                    $totalOGReplacement =  $totalDiscountReplacement / 1.18;
-                @endphp
-                <tr>
-                    <td colspan="2"></td>
-                    <td class="fw-sb" colspan="2">Total Ope. Gravadas</td>
-                    <td class="fw-sb">S/ {{ number_format($totalOGReplacement, 2) }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td class="fw-sb" colspan="2">Total Descuentos</td>
-                    <td class="fw-sb">S/ {{ number_format($totalNoDiscountReplacement - $totalDiscountReplacement, 2) }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td class="fw-sb" colspan="2">Total IGV 18%</td>
-                    <td class="fw-sb">S/ {{ number_format($totalDiscountReplacement  - $totalOGReplacement, 2) }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td class="text-black fw-sb" colspan="2">TOTAL</td>
-                    <td class="fw-sb">S/ {{ number_format($totalDiscountReplacement , 2) }}</td>
-                </tr>
-            </tfoot>
-
-        </table><br>
-        <table class="table-list">
-            <thead>
-                <tr>
-                    <th colspan="5" class="fw-b">Servicios</th>
-                </tr>
-                <tr>
-                    <th>Descripcion</th>
-                    <th>P. unitario</th>
-                    <th>Cant</th>
-                    <th>Dto.</th>
-                    <th>Importe</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($wod_service as $w)
-                    <tr>
-                        <td class="fs-3 fw-sb text-wrap w-45">{{ $w->concept->name }}</td>
+                        <td class="fs-3 fw-sb">{{ $w->item->code }}</td>
+                        <td class="fs-3 fw-sb text-wrap w-45">{{ $w->item->name }}</td>
                         <td class="fs-3 fw-sb">{{ $w->price }}</td>
                         <td class="fs-3 fw-sb">{{ $w->quantity }}</td>
-                        <td class="fs-3 fw-sb">{{ $w->discount }} %</td>
-                        <td class="fs-3 fw-sb">{{ $w->price * $w->quantity - $w->quantity * $w->price * ($w->discount / 100) }}</td>
+                        <td class="fs-3 fw-sb">{{ $w->discount }} </td>
+                        <td class="fs-3 fw-sb">{{ number_format($w->price * $w->quantity - $w->quantity * $w->price * ($w->discount / 100), 2) }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td class="text-center" colspan="5">
-                            No hay servicios agregados
+                        <td class="text-center" colspan="6">
+                            No hay servicios o repuestos registrados
                         </td>
                     </tr>
                 @endforelse
@@ -218,29 +153,34 @@
                 @php
                     $totalNoDiscount = 0;
                     $totalOG = 0;
-                    foreach ($wod_service as $c) {
+                    foreach ($dot as $c) {
                         $totalNoDiscount += $c->price * $c->quantity;
                     }
                     $totalOG = $wo->total / 1.18;
                 @endphp
                 <tr>
                     <td colspan="2"></td>
-                    <td class="fw-sb" colspan="2">Total Ope. Gravadas</td>
+                    <td class="fw-sb" colspan="3">Subtotal</td>
+                    <td class="fw-sb">S/ {{ number_format($totalNoDiscount, 2) }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="fw-sb" colspan="3">Total Ope. Gravadas</td>
                     <td class="fw-sb">S/ {{ number_format($totalOG, 2) }}</td>
                 </tr>
                 <tr>
                     <td colspan="2"></td>
-                    <td class="fw-sb" colspan="2">Total Descuentos</td>
-                    <td class="fw-sb">S/ {{ number_format($wo->total - $totalNoDiscount, 2) }}</td>
+                    <td class="fw-sb" colspan="3">Total Descuentos</td>
+                    <td class="fw-sb">S/ {{ number_format($totalNoDiscount - $wo->total, 2) }}</td>
                 </tr>
                 <tr>
                     <td colspan="2"></td>
-                    <td class="fw-sb" colspan="2">Total IGV 18%</td>
+                    <td class="fw-sb" colspan="3">Total IGV 18%</td>
                     <td class="fw-sb">S/ {{ number_format($wo->total - $totalOG, 2) }}</td>
                 </tr>
                 <tr>
                     <td colspan="2"></td>
-                    <td class="text-black fw-sb"colspan="2">TOTAL</td>
+                    <td class="text-black fw-sb"colspan="3">TOTAL</td>
                     <td class="fw-sb">S/ {{ number_format($wo->total, 2) }}</td>
                 </tr>
             </tfoot>
