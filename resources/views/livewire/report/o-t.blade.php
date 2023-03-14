@@ -75,7 +75,10 @@
                                     <x-slot name="body">
                                         @forelse($ots as $ot)
                                             <x-table.row>
-                                                <x-table.cell>{{ $ot->code }}</x-table.cell>
+                                                <x-table.cell>
+                                                    <a href="{{ route('proforma.orden.editar', $ot->code) }}">
+                                                        {{ $ot->code }}</a>
+                                                </x-table.cell>
 
                                                 <x-table.cell>{{ $ot->odo }}</x-table.cell>
 
@@ -114,133 +117,189 @@
 
     <x-modal-dialog :id="$idModal" title="{{ $nameModal }}" optionsModal="{{ $modalsize }}">
         <x-slot name="body">
-            <div class="table-responsive">
-                <x-table class="table-bordered table-striped table-centered">
-                    <x-slot name="head">
-                        <th class="text-left">Kilometraje</th>
-                        <th class="text-left">F/H llegada</th>
-                        <th class="text-left">F/H Salida</th>
-                        <th class="text-left">Observacion</th>
-                    </x-slot>
-                    <x-slot name="body">
-                        @foreach ($ot_dt as $od)
-                            <x-table.row>
-                                <x-table.cell class="text-center">{{ $od->odo }}</x-table.cell>
-                                <x-table.cell class="text-center">{{ $od->arrival_date .'/'.$od->arrival_hour }}</x-table.cell>
-                                <x-table.cell class="text-center">{{ $od->departure_date .'/'.$od->departure_hour ?? 'S/F'}}</x-table.cell>
-                                <x-table.cell>{{ $od->observation }}</x-table.cell>
-                            </x-table.row>
-                        @endforeach
-                    </x-slot>
-                </x-table>
-            </div>
-            
-            <h3 class="fs-4 text-center">Información del Cliente</h3>
-            <div class="table-responsive">
-                <x-table class="table-bordered table-striped table-centered">
-                    <x-slot name="head">
-                        <th class="text-left">Nombre</th>
-                        <th class="text-left">Email</th>
-                        <th class="text-left">Phone</th>
-                        <th class="text-left">Dni</th>
-                        <th class="text-left">Ruc</th>
-                    </x-slot>
-                    <x-slot name="body">
-                        @foreach ($ot_dt as $od)
-                            <x-table.row>
-                                <x-table.cell>{{ $od->customerUser->name }}</x-table.cell>
-                                <x-table.cell>{{ $od->customerUser->email }}</x-table.cell>
-                                <x-table.cell>{{ $od->customerUser->phone }}</x-table.cell>
-                                <x-table.cell>{{ $od->customerUser->dni }}</x-table.cell>
-                                <x-table.cell>{{ $od->customerUser->ruc }}</x-table.cell>
-                            </x-table.row>
-                        @endforeach
-                    </x-slot>
-                </x-table>
-            </div>
+            @if ($ot_dt)
 
-            <h3 class="fs-4 text-center">Lista de servicios</h3>
+                <div class="table-responsive">
+                    <x-table class="table-bordered">
+                        <x-slot name="head">
+
+                        </x-slot>
+                        <x-slot name="body">
+                            <tr>
+                                <th>Fecha/Hora de llegada</td>
+                                <td>
+                                    {{ \Carbon\Carbon::parse($ot_dt->arrival_date)->format('d-m-Y') .
+                                        ' , ' .
+                                        \Carbon\Carbon::parse($ot_dt->arrival_hour)->format('g:i a') }}
+                                </td>
+                                <th>Estado</th>
+                                <td>
+                                    {{ $ot_dt->status }}
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <th>Fecha/Hora de salida</th>
+                                <td>
+                                    {{ \Carbon\Carbon::parse($ot_dt->departure_date)->format('d-m-Y') .
+                                        ' , ' .
+                                        \Carbon\Carbon::parse($ot_dt->departure_hour)->format('g:i a ') }}
+                                </td>
+                                <th>Código</th>
+                                <td>{{ $ot_dt->code }}</td>
+                            </tr>
+                            <tr>
+                                <th>Observaciones</th>
+                                <td colspan="3">{{ $ot_dt->observation ?? 'Ninguno' }}</td>
+                            </tr>
+                        </x-slot>
+                    </x-table>
+                </div>
+
+                <h3 class="fs-4 text-center">Información del Cliente</h3>
+                <div class="table-responsive">
+                    <x-table class="table-bordered">
+                        <x-slot name="head">
+
+                        </x-slot>
+                        <x-slot name="body">
+                            <tr>
+                                <th>Señor(a)</th>
+                                <td>{{ $ot_dt->customerUser->name }}</td>
+
+                                <th>Dni</th>
+                                <td>{{ $ot_dt->customerUser->dni }}</td>
+                            </tr>
+                            <tr>
+                                <th>Estado</th>
+                                <td>{{ $ot_dt->customerUser->status }}</td>
+
+                                <th>Ruc</th>
+                                <td>{{ $ot_dt->customerUser->ruc }}</td>
+                            </tr>
+                            <tr>
+                                <th>Dirección</th>
+                                <td>{{ $ot_dt->customerUser->address }}</td>
+
+                                <th>Telófono</th>
+                                <td>{{ $ot_dt->customerUser->phone }}</td>
+                            </tr>
+                        </x-slot>
+                    </x-table>
+                </div>
+
+                <h3 class="fs-4 text-center">Información del Vehiculo {{ $ot_dt->vehiclePlate->license_plate }}</h3>
+                <div class="table-responsive">
+                    <x-table class="table-bordered">
+                        <x-slot name="head">
+                        </x-slot>
+                        <x-slot name="body">
+                            <tr>
+                                <th>Marca</th>
+                                <td>{{ $ot_dt->vehiclePlate->brand->name }}
+                                </td>
+
+                                <th>Color</th>
+                                <td>{{ $ot_dt->vehiclePlate->color->name }}</td>
+
+                                <th>Tipo</th>
+                                <td>{{ $ot_dt->vehiclePlate->type->name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Modelo</th>
+                                <td>{{ $ot_dt->vehiclePlate->model->name }}
+                                </td>
+
+                                <th>Año</th>
+                                <td>{{ $ot_dt->vehiclePlate->model_year }}</td>
+
+                                <th>Kilometraje</th>
+                                <td>{{ $ot_dt->odo }}</td>
+                            </tr>
+                        </x-slot>
+                    </x-table>
+                </div>
+            @endif
+
+            <h3 class="fs-4 text-center">Lista de repuestos / servicios</h3>
             <div class="table-responsive">
                 <x-table footer class="table-bordered table-striped table-centered">
                     <x-slot name="head">
+                        <th class="text-left">Codigo</th>
                         <th class="text-left">Descripcion</th>
                         <th class="text-center">Cantidad</th>
                         <th class="text-center">Precio U.</th>
+                        <th class="text-center">DTO.</th>
                         <th class="text-center">Importe</th>
                     </x-slot>
 
                     <x-slot name="body">
-                        @foreach ($wod_service as $d)
+                        @foreach ($dot_modal as $d)
                             <x-table.row>
-                                <x-table.cell>{{ $d->concept->name }}</x-table.cell>
+                                <x-table.cell>{{ $d->item->code }}</x-table.cell>
+                                <x-table.cell>{{ $d->item->name }}</x-table.cell>
                                 <x-table.cell class="text-center">{{ $d->quantity }}</x-table.cell>
                                 <x-table.cell class="text-center">{{ number_format($d->price, 2) }}</x-table.cell>
-                                <x-table.cell class="text-center">S/ {{ number_format($d->quantity * $d->price, 2) }}</x-table.cell>
+                                <x-table.cell class="text-center">{{ $d->discount }}</x-table.cell>
+                                <x-table.cell class="text-center">S/
+                                    {{ number_format($d->price * $d->quantity - $d->quantity * $d->price * ($d->discount / 100), 2) }}
+                                </x-table.cell>
                             </x-table.row>
                         @endforeach
                     </x-slot>
                     <x-slot name="foot">
-                        <td class="text-right">
-                            <h6 class="text-primary fs-5">TOTALES: </h6>
-                        </td>
-                        <td class="text-center">
-                            @if ($wod_service)
-                                <h6 class="text-primary fs-5">{{ $wod_service->sum('quantity') }}</h6>
-                            @endif
-                        </td>
-                        @if ($wod_service)
-                            @php $mytotal = 0; @endphp
-                            @foreach ($wod_service as $d)
-                                @php $mytotal += $d->quantity * $d->price; @endphp
-                            @endforeach
-                            <td></td>
-                            <td class="text-center">
-                                <h6 class="text-primary fs-5">S/ {{ number_format($mytotal, 2) }}</h6>
-                            </td>
-                        @endif
-                    </x-slot>
-                </x-table>
-            </div>
-
-            <h3 class="fs-4 text-center">Lista de repuestos</h3>
-            <div class="table-responsive">
-                <x-table footer class="table-bordered table-striped table-centered">
-                    <x-slot name="head">
-                        <th class="text-left">Descripcion</th>
-                        <th class="text-center">Cantidad</th>
-                        <th class="text-center">Precio U.</th>
-                        <th class="text-center">Importe</th>
-                    </x-slot>
-
-                    <x-slot name="body">
-                        @foreach ($wod_replacement as $d)
-                            <x-table.row>
-                                <x-table.cell>{{ $d->product->name }}</x-table.cell>
-                                <x-table.cell class="text-center">{{ $d->quantity }}</x-table.cell>
-                                <x-table.cell class="text-center">{{ number_format($d->price, 2) }}</x-table.cell>
-                                <x-table.cell class="text-center">S/ {{ number_format($d->quantity * $d->price, 2) }}</x-table.cell>
-                            </x-table.row>
+                        @php $subtotal = 0; @endphp
+                        @foreach ($dot_modal as $d)
+                            @php $subtotal += $d->price * $d->quantity; @endphp
                         @endforeach
-                    </x-slot>
-                    <x-slot name="foot">
-                        <td class="text-right">
-                            <h6 class="text-primary fs-5">TOTALES: </h6>
-                        </td>
-                        <td class="text-center">
-                            @if ($wod_replacement)
-                                <h6 class="text-primary fs-5">{{ $wod_replacement->sum('quantity') }}</h6>
-                            @endif
-                        </td>
-                        @if ($wod_replacement)
-                            @php $mytotal = 0; @endphp
-                            @foreach ($wod_replacement as $d)
-                                @php $mytotal += $d->quantity * $d->price; @endphp
-                            @endforeach
+                        @php $mytotal = 0; @endphp
+                        @foreach ($dot_modal as $d)
+                            @php $mytotal += ($d->price * $d->quantity) - (($d->quantity * $d->price) * ($d->discount / 100)); @endphp
+                        @endforeach
+                        <tr>
+                            <td></td>
+                            <td class="text-right">
+                                <h6 class="fs-5">SUBTOTAL: </h6>
+                            </td>
+                            <td class="text-center">
+                            </td>
+                            <td></td>
                             <td></td>
                             <td class="text-center">
-                                <h6 class="text-primary fs-5">S/ {{ number_format($mytotal, 2) }}</h6>
+                                <h6 class="fs-5">S/ {{ number_format($subtotal, 2) }}</h6>
                             </td>
-                        @endif
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="text-right">
+                                <h6 class="fs-5">DESCUENTO: </h6>
+                            </td>
+                            <td class="text-center">
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-center">
+                                <h6 class="fs-5">S/ {{ number_format($subtotal - $mytotal, 2) }}</h6>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="text-right">
+                                <h6 class="fs-5">TOTALES: </h6>
+                            </td>
+                            <td class="text-center">
+                                @if ($dot_modal)
+
+                                    <h6 class="fs-5">{{ $dot_modal->sum('quantity') }}</h6>
+                                @endif
+
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-center">
+                                <h6 class="fs-5">S/ {{ number_format($mytotal, 2) }}</h6>
+                            </td>
+                        </tr>
                     </x-slot>
                 </x-table>
             </div>

@@ -6,6 +6,7 @@ use App\Models\DuePay;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleDetail;
+use App\Models\Vehicle;
 use App\Models\WorkOrder;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -99,14 +100,6 @@ class OtConfModal extends Component
             if ($this->editing->departure_hour != null) {
                 $this->editing->departure_hour = $this->editing->departure_hour;
             }
-            // Filtrar los items que son servicios
-            // $wod_service = $this->editing->workOrderDetail()->get()->filter(function ($i) {
-            //     return strlen($i->item) < 4;
-            // });
-            // Sumar el total de los items que son servicios
-            // foreach ($wod_service as $wod) {
-            //     $total_service += ($wod->price * $wod->quantity) - (($wod->quantity * $wod->price) * ($wod->discount / 100));
-            // }
 
             // Filtrar los items que son repuestos
             $wod_replacement = $this->editing->workOrderDetail()->get()->filter(function ($i) {
@@ -166,14 +159,11 @@ class OtConfModal extends Component
                 $product->save();
             }
 
-            // DuePay::create([
-            //     'description' => $sale->code_sale,
-            //     'person_owed' => $this->editing->customerUser->name,
-            //     'amount_owed' => $total_replacement,
-            //     'amount_paid' => 0,
-            //     'reason' => 'venta vehicular',
-            // ]);
-
+            // update odo of vehicle to work order registeres
+            $vehicle = Vehicle::find($this->editing->vehicle);
+            $vehicle->odo = $this->editing->odo;
+            $vehicle->save();
+            
             $this->editing->save();
             $this->emit('success_alert', 'OT confirmada y configurada');
         } else {

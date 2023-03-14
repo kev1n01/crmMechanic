@@ -10,6 +10,7 @@ use App\Models\TypeVehicle;
 use App\Models\Vehicle;
 use App\Traits\DataTable;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
 class VehicleTable extends Component
@@ -119,5 +120,13 @@ class VehicleTable extends Component
         }
         $vehicle->delete();
         $this->emit('success_alert', count($this->selected) . ' registros eliminados');
+    }
+
+    public function removeImage($image)
+    {
+        if (!$image) return;
+        if (Storage::disk('public')->exists($image)) {
+            Storage::disk('public')->delete($image);
+        }
     }
 }

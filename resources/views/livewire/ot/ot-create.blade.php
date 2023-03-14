@@ -17,6 +17,26 @@
                             Guardar
                         </button>
                     </div>
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body p-0">
+                                <div class="d-flex">
+                                    <div class="p-2 mb-0 flex-fill header-title text-center">
+                                        <h5>Total de repuestos</h5>
+                                        <h4><span>S/{{ number_format($total_replacement, 2) }}</span></h4>
+                                    </div>
+                                    <div class="p-2 mb-0 flex-fill header-title text-center">
+                                        <h5>Total de servicios</h5>
+                                        <h4><span>S/{{ number_format($total_service, 2) }}</span></h4>
+                                    </div>
+                                    <div class="p-2 mb-0 flex-fill header-title text-center">
+                                        <h5>Monto total</h5>
+                                        <h4><span>S/{{ number_format($totalDiscount, 2) }}</span></h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-6">
                         <div class="card">
                             <div class="card-header">
@@ -56,6 +76,7 @@
                                             <input type="text" id="ruc" class="form-control" disabled
                                                 value="{{ $cf->ruc }}">
                                         </div>
+
                                         <div class="col-xl-12">
                                             <label class="form-label" for="email">Correo</label>
                                             <input type="text" id="email" class="form-control" disabled
@@ -84,15 +105,16 @@
                                     <x-input.select class="col-xl-4" name="editing.vehicle" label="Vehiculo"
                                         :required=true :options="$vehicles" :error="$errors->first('editing.vehicle')" />
 
-                                    <x-input.input-tooltip-error class="col-xl-4" name="editing.odo" label="ODO"
+                                    <x-input.input-tooltip-error class="col-xl-3" name="editing.odo" label="ODO"
                                         type="number" :error="$errors->first('editing.odo')" :required=true />
 
                                     @if ($editing->vehicle > 0)
-                                        <div class="col-xl-4">
+                                        <div class="col-xl-5 pe-0">
                                             <label class="form-label" for="color">Color</label>
                                             <input type="text" id="color" class="form-control" disabled
                                                 value="{{ $vf->color->name }}">
                                         </div>
+
                                         <div class="col-xl-6">
                                             <label class="form-label" for="type">Tipo</label>
                                             <input type="text" id="type" class="form-control" disabled

@@ -12,57 +12,91 @@
 <body>
     <div class="border-line">
         <div class="infoHeader">
-            <div style="float: left; width: 20%; height: 14%; margin-right: 4mm; margin-bottom: 4mm;">
+            <div style="float: left; width: 20%; height: 10%; margin-right: 2mm; margin-left: 4mm; margin-bottom: 2mm;">
                 <img src="{{ public_path('assets/images/newlogo.png') }}" class="logo_img">
             </div>
-            <div style="float: left; width: 50%; height: 14%; text-align: center;">
+            <div style="float: left; width: 50%; height: 10%; text-align: center; padding-top: 2%;">
                 <p class="fw-b m-0">MECANICA AUTOMOTRIZ FLOPAC</p>
                 <p class="fw-sb m-0">Sector Las Lomas - Chunapampa - Huanuco</p>
                 <p class="fw-sb m-0">Cel: 957235173 / 978610524 / 933865935</p>
-                <p class="fw-sb m-0">BBVA: 12312312324123</p>
-                <p class="fw-sb m-0">BCP: 1231231312323</p>
-                <p class="fw-sb m-0">INTERBANK: 1241241232312412</p>
             </div>
-            <div style="float: left; width: 30%; height: 14%; text-align: center;">
-
+            <div style="float: left; width: 30%; height: 10%;">
+                <div style="border: 2px solid rgb(39, 39, 39); border-radius: 4px; width: 100%;">
+                    <div class="text-center" style="padding: 1%">
+                        <p style="margin-bottom: 0%;">RUC N 2023242423</p>
+                        <p style="margin-bottom: 0%;">PROFORMA</p>
+                        <p >{{ $wo->code }}</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <p class="fs-2 fw-b text-form">{{ $wo->is_confirmed === 0 ? 'Proforma de mantenimiento' : 'Orden de trabajo' }} - {{ $wo->type_atention }}</p>
+        <p class="fs-2 fw-b text-form">
+            {{ $wo->is_confirmed === 0 ? 'Proforma de mantenimiento' : 'Orden de trabajo' }}
+            - {{ $wo->type_atention }}</p>
+        @if ($wo->is_confirmed == 1)
+            <p class="fs-3 fw-sb">Detalle del orden de trabajo</p>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="border-td border-th fw-sb">Fecha/Hora de llegada</td>
+                        <td class="border-td fw-sb" style="width: 26%;">
+                            {{ $wo->arrival_date != null
+                                ? \Carbon\Carbon::parse($wo->arrival_date)->format('d-m-Y') .
+                                    ' , ' .
+                                    \Carbon\Carbon::parse($wo->arrival_hour)->format('g:i a')
+                                : 'No especificado' }}
+                        </td>
+                        <td class="border-td border-th fw-sb">Estado</td>
+                        <td class="border-td fw-sb">{{ $wo->is_confirmed == 1 ? $wo->status : $wo->confirmation_name }}
+                        </td>
 
-        <p class="fs-3 fw-sb">Detalle del orden de trabajo</p>
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td class="border-td border-th fw-sb">Fecha/Hora de llegada</td>
-                    <td class="border-td fw-sb" style="width: 26%;">
-                        {{ \Carbon\Carbon::parse($wo->arrival_date)->format('d-m-Y') .
-                            ' | ' .
-                            \Carbon\Carbon::parse($wo->arrival_hour)->format('H:i') }}
-                    </td>
-                    <td class="border-td border-th fw-sb">Estado</td>
-                    <td class="border-td fw-sb">{{ $wo->status }}</td>
+                    </tr>
+                    <tr>
+                        <td class="border-td border-th ps-2 fw-sb">Fecha/Hora de salida</td>
+                        <td class="border-td fw-sb">
+                            {{ $wo->departure_date != null
+                                ? \Carbon\Carbon::parse($wo->departure_date)->format('d-m-Y') .
+                                    ' , ' .
+                                    \Carbon\Carbon::parse($wo->departure_hour)->format('g:i a ')
+                                : 'No especificado' }}
+                        </td>
+                        <td class="border-td border-th ps-2 fw-sb">Código</td>
+                        <td class="border-td fw-sb">{{ $wo->code }}</td>
+                    </tr>
+                    <tr>
+                        <td class="border-td border-th ps-2 fw-sb">Observaciones</td>
+                        <td class="border-td fw-sb" colspan="3">{{ $wo->observation ?? 'Ninguno' }}</td>
+                    </tr>
 
-                </tr>
-                <tr>
-                    <td class="border-td border-th ps-2 fw-sb">Fecha/Hora de salida</td>
-                    <td class="border-td fw-sb">
-                        {{ $wo->departure_date != null
-                            ? \Carbon\Carbon::parse($wo->departure_date)->format('d-m-Y') .
-                                ' | ' .
-                                \Carbon\Carbon::parse($wo->departure_hour)->format('H:i ')
-                            : 'No especificado' }}
-                    </td>
-                    <td class="border-td border-th ps-2 fw-sb">Código</td>
-                    <td class="border-td fw-sb">{{ $wo->code }}</td>
-                </tr>
-                <tr>
-                    <td class="border-td border-th ps-2 fw-sb">Observaciones</td>
-                    <td class="border-td fw-sb" colspan="3">{{ $wo->observation ?? 'Ninguno' }}</td>
-                </tr>
+                </tbody>
+            </table>
+        @else
+            <p class="fs-3 fw-sb">Detalle de la proforma </p>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="border-td border-th ps-2 fw-sb">Código</td>
+                        <td class="border-td fw-sb">{{ $wo->code }}</td>
+                        <td class="border-td border-th fw-sb">Estado</td>
+                        <td class="border-td fw-sb">{{ $wo->is_confirmed == 1 ? $wo->status : $wo->confirmation_name }}
+                        </td>
+                        <td class="border-td border-th fw-sb">Fecha/Hora</td>
+                        <td class="border-td fw-sb">
+                            {{ \Carbon\Carbon::parse($wo->created_at)->format('d-m-Y') .
+                                ' , ' .
+                                \Carbon\Carbon::parse($wo->created_at)->format('g:i a ') }}
+                        </td>
 
-            </tbody>
-        </table>
+                    </tr>
+                    <tr>
+                        <td class="border-td border-th ps-2 fw-sb">Observaciones</td>
+                        <td class="border-td fw-sb" colspan="5">{{ $wo->observation ?? 'Ninguno' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        @endif
+
 
         <p class="fs-3 fw-sb">Informacion del cliente</p>
         <table class="table">
@@ -91,7 +125,8 @@
             </tbody>
         </table>
 
-        <p class="fs-3 fw-sb">Informacion del vehiculo con placa <span class="fw-b">{{ $wo->vehiclePlate->license_plate }}</span></p>
+        <p class="fs-3 fw-sb">Informacion del vehiculo con placa <span
+                class="fw-b">{{ $wo->vehiclePlate->license_plate }}</span></p>
 
         <table class="table">
             <tbody>
@@ -139,7 +174,9 @@
                         <td class="fs-3 fw-sb">{{ $w->price }}</td>
                         <td class="fs-3 fw-sb">{{ $w->quantity }}</td>
                         <td class="fs-3 fw-sb">{{ $w->discount }} </td>
-                        <td class="fs-3 fw-sb">{{ number_format($w->price * $w->quantity - $w->quantity * $w->price * ($w->discount / 100), 2) }}</td>
+                        <td class="fs-3 fw-sb">
+                            {{ number_format($w->price * $w->quantity - $w->quantity * $w->price * ($w->discount / 100), 2) }}
+                        </td>
                     </tr>
                 @empty
                     <tr>
@@ -187,12 +224,42 @@
         </table>
     </div>
     <div id="footer">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td class="border-td border-th fw-sb text-center">ENTIDAD FINANCIERA </td>
+                    <td class="border-td border-th fw-sb text-center">CUENTA BANCARIA </td>
+                    <td class="border-td border-th fw-sb text-center">CUENTA INTERBANCARIA </td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th fw-sb text-center">BCP </td>
+                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
+                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th fw-sb text-center">BBVA </td>
+                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
+                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th fw-sb text-center">Interbank </td>
+                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
+                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th fw-sb text-center">La Nacion </td>
+                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
+                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
+                </tr>
+            </tbody>
+        </table>
         <p class="text-footer">
-            En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad a 
+            En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad a
             todos nuestros clientes
         </p>
         <p class="text-footer">
-            <span class="fw-b">ATENCION:</span> Todo trabajo se realizará con un 50% de adelanto al costo de proforma,
+            <span class="fw-b">ATENCION:</span> Todo trabajo se realizará con un 50% de adelanto al costo de
+            proforma,
             y tendrá 7 días hábiles a recoger su vehículo, luego de esto se sumarán costos de una cochera
         </p>
     </div>

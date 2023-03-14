@@ -8,15 +8,15 @@ body {
     padding: 3mm;
 }
 
-.text-footer{
+.text-footer {
     font-size: 11pt;
 }
 
-.text-form{
-    font-size: 15pt !important;
-    text-align: center;
+.text-form {
+    font-size: 13pt !important;
     margin-bottom: 0;
 }
+
 @page {
     margin: 0;
 }
@@ -96,13 +96,17 @@ body {
     text-align: center;
 }
 
+.text-center {
+    text-align: center;
+}
+
 .table-list thead {
     text-transform: uppercase;
     color: black;
     font-size: 3mm;
 }
 
-.text-black  {
+.text-black {
     color: black;
 }
 
@@ -114,14 +118,14 @@ body {
     padding-left: 5mm;
 }
 
-.m-0{
+.m-0 {
     margin: 0mm 0mm 0mm 0mm !important;
 }
 
-.text-wrap{
-    white-space: normal !important; 
+.text-wrap {
+    white-space: normal !important;
 }
 
-.w-45{
+.w-45 {
     width: 45% !important;
 }

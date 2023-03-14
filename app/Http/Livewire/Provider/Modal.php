@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Provider;
 
 use App\Models\Provider;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -61,6 +62,25 @@ class Modal extends Component
         $this->nameModal === 'Crear nuevo proveedor' ? $this->emit('success_alert', 'Proveedor creado') : $this->emit('success_alert', 'Proveedor actualizado');
         $this->dispatchBrowserEvent('close-modal-provider');
         $this->emit('refreshList');
+    }
+
+    public function searchRuc()
+    {
+        if (strlen($this->editing->ruc) != 11) {
+            $this->emit('info_alert', 'Ingrese un RUC primero');
+            return;
+        } else {
+            $response = Http::get('https://dniruc.apisperu.com/api/v1/ruc/' . $this->editing->ruc . '?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNyYXp5YXJub2xkMDFAZ21haWwuY29tIn0.J8854s4Hy2oclyowM_lWgcGCRoHlXd5i1c6QXLrKORI');
+            $data = $response->collect();
+            if ($data->count() != 2) {
+                $this->editing->name = $data['razonSocial'];
+                $this->editing->address = $data['direccion'];
+            } else {
+                $this->editing->name = '';
+                $this->editing->address = '';
+                $this->emit('error_alert', 'El RUC no existe');
+            }
+        }
     }
 
     public function updated($label)

@@ -32,7 +32,10 @@ class OtEdit extends Component
     public $totalCart = 0;
     public $totalOG = 0;
     public $total = 0;
-    public $totalDiscount;
+    public $totalDiscount = 0;
+
+    public $total_replacement = 0;
+    public $total_service = 0;
 
     protected $listeners = ['refreshListModals'];
 
@@ -106,7 +109,6 @@ class OtEdit extends Component
                     $item->item = Concept::where('code', str_pad($item->item, 3, "0", STR_PAD_LEFT))->select('name')->first();
                 return $item;
             });
-            // dd($this->dtw->toArray());
         }
 
         $this->vehicles = Vehicle::where('customer_id', $this->editing->customer)
@@ -257,6 +259,8 @@ class OtEdit extends Component
     public function calculeTotal()
     {
         $this->totalDiscount = 0;
+        $this->total_replacement = 0;
+        $this->total_service = 0;
         $this->cart = Cart::session($this->editing->code)->getContent();
         $totalDiscountCart = 0;
         $totalDiscountDp = 0;
@@ -275,6 +279,45 @@ class OtEdit extends Component
         $this->totalOG = $totalCartOG + $totalDpOG;
         $this->total = $this->totalCart + $totalDp;
         $this->totalDiscount = $totalDiscountCart + $totalDiscountDp;
+
+        $wod = workOrderDetail::where('work_order_id', $this->editing->id)->select('id', 'item', 'price', 'discount', 'quantity')->get();
+
+        // Filtrar los items que son servicios
+        $cart_replacement = $this->cart->filter(function ($i) {
+            return strlen($i->id) > 4;
+        });
+
+        $dtw_replacement = $wod->filter(function ($i) {
+            return strlen($i->item) > 4;
+        });
+
+        // Sumar el total de los items que son servicios
+        foreach ($dtw_replacement as $dtw) {
+            $this->total_replacement += ($dtw->price * $dtw->quantity) - (($dtw->quantity * $dtw->price) * ($dtw->discount / 100));
+        }
+        $dtw_service = $wod->filter(function ($i) {
+            return strlen($i->item) < 4;
+        });
+
+        // Sumar el total de los items que son servicios
+        foreach ($dtw_service as $dtw) {
+            $this->total_service += ($dtw->price * $dtw->quantity) - (($dtw->quantity * $dtw->price) * ($dtw->discount / 100));
+        }
+
+        // Sumar el total de los items que son servicios
+        foreach ($cart_replacement as $cr) {
+            $this->total_replacement += ($cr->price * $cr->quantity) - (($cr->quantity * $cr->price) * ($cr->attributes['discount'] / 100));
+        }
+
+        // Filtrar los items que son servicios
+        $cart_service = $this->cart->filter(function ($i) {
+            return strlen($i->id) < 4;
+        });
+
+        // Sumar el total de los items que son servicios
+        foreach ($cart_service as $cs) {
+            $this->total_service += ($cs->price * $cs->quantity) - (($cs->quantity * $cs->price) * ($cs->attributes['discount'] / 100));
+        }
     }
 
     public function cancel()

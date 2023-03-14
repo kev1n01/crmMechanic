@@ -18,13 +18,13 @@
         }
     });
 
-    const Toast2 = Swal.mixin({
-        toast: true,
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 1000,
-        background: '#eef2f7',
-    });
+    // const Toast2 = Swal.mixin({
+    //     toast: true,
+    //     position: 'bottom-end',
+    //     showConfirmButton: false,
+    //     timer: 1000,
+    //     background: '#eef2f7',
+    // });
 
     function ToastSuccessAlert(msg) {
         Toast.fire({
@@ -41,7 +41,7 @@
     }
 
     function ToastInfoAlert(msg) {
-        Toast2.fire({
+        Toast.fire({
             icon: 'info',
             title: msg,
         })

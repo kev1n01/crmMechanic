@@ -33,9 +33,22 @@
                                         <i class="mdi mdi-filter-outline me-1"></i>
                                     @endif
                                 </button>
-                                <button type="button" wire:click="$emit('createvehicle')"
-                                    class="btn btn-dark mb-2 me-2"><i class="mdi mdi-plus me-1"></i>
-                                    Nuevo</button>
+
+                                <button type="button" class="btn btn-dark mb-2 me-2 dropdown-toggle"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Nuevo</button>
+                                <div class="dropdown-menu">
+                                    <button wire:click="$emit('createvehicle')" class="dropdown-item action-icon">
+                                        Vehiculo</button>
+                                    <button wire:click="$emit('createtype')" class="dropdown-item action-icon">
+                                        Tipo</button>
+                                    <button wire:click="$emit('createbrand')" class="dropdown-item action-icon">
+                                        Marca</button>
+                                    <button wire:click="$emit('createmodel')" class="dropdown-item action-icon">
+                                        Model</button>
+                                    <button wire:click="$emit('createcolor')" class="dropdown-item action-icon">
+                                        Color</button>
+                                </div>
+                                
                                 <button type="button" class="btn btn-light mb-2 dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones <span
                                         class="{{ count($selected) == 0 ? 'd-none' : '' }} fs-6 badge rounded-pill bg-primary">{{ count($selected) }}</span></button>
@@ -171,4 +184,8 @@
 </div>
 @push('modals')
     @livewire('vehicle.modal')
+    @livewire('vehicle.color-modal')
+    @livewire('vehicle.type-modal')
+    @livewire('vehicle.model-modal')
+    @livewire('vehicle.brand-modal')
 @endpush

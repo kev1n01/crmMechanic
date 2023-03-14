@@ -31,6 +31,9 @@ class OtCreate extends Component
     public $totalDiscount = 0;
     public $totalOG = 0;
 
+    public $total_replacement = 0;
+    public $total_service = 0;
+
     public $another = false;
     protected $listeners = ['refreshListModals'];
 
@@ -39,10 +42,6 @@ class OtCreate extends Component
         return [
             'editing.code' => ['required', 'min:6', 'max:6', Rule::unique('work_orders', 'code')->ignore($this->editing)],
             'editing.odo' => 'required',
-            // 'editing.arrival_date' => 'required',
-            // 'editing.arrival_hour' => 'required',
-            // 'editing.departure_date' => 'nullable',
-            // 'editing.departure_hour' => 'nullable',
             'editing.customer' => 'required',
             'editing.vehicle' => 'required',
             'editing.type_atention' => 'required',
@@ -56,8 +55,6 @@ class OtCreate extends Component
         'editing.code.required' => 'El código es obligatorio',
         'editing.code.unique' => 'Ya existe un proforma con este código',
         'editing.odo.required' => 'El kilometraje es obligatorio',
-        // 'editing.arrival_date.required' => 'La fecha de llegada es obligatoria',
-        // 'editing.arrival_hour.required' => 'La hora de llegada es obligatoria',
         'editing.customer.required' => 'El cliente es obligatorio',
         'editing.type_atention.required' => 'El tipo de atención es obligatorio',
         'editing.vehicle.required' => 'El vehiculo es obligatorio',
@@ -233,11 +230,33 @@ class OtCreate extends Component
     public function calculeTotal()
     {
         $this->totalDiscount = 0;
+        $this->total_replacement = 0;
+        $this->total_service = 0;
         $this->cart = Cart::session($this->editing->vehicle)->getContent();
         foreach ($this->cart as $c) {
             $this->totalDiscount += $c->price * $c->quantity - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
         }
         $this->totalOG = $this->totalDiscount / 1.18;
+
+        // Filtrar los items que son servicios
+        $cart_replacement = $this->cart->filter(function ($i) {
+            return strlen($i->id) > 4;
+        });
+
+        // Sumar el total de los items que son servicios
+        foreach ($cart_replacement as $cr) {
+            $this->total_replacement += ($cr->price * $cr->quantity) - (($cr->quantity * $cr->price) * ($cr->attributes['discount'] / 100));
+        }
+
+        // Filtrar los items que son servicios
+        $cart_service = $this->cart->filter(function ($i) {
+            return strlen($i->id) < 4;
+        });
+
+        // Sumar el total de los items que son servicios
+        foreach ($cart_service as $cs) {
+            $this->total_service += ($cs->price * $cs->quantity) - (($cs->quantity * $cs->price) * ($cs->attributes['discount'] / 100));
+        }
     }
 
     public function cancel()
@@ -288,11 +307,6 @@ class OtCreate extends Component
                 'work_order_id' => $this->editing->id,
             ]);
         }
-
-        // update odo of vehicle to work order registeres
-        $vehicle = Vehicle::find($this->editing->vehicle);
-        $vehicle->odo = $this->editing->odo;
-        $vehicle->save();
 
         Cart::session($this->editing->vehicle)->clear();
         $this->updateCartOptions();

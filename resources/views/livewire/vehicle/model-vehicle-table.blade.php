@@ -34,8 +34,8 @@
                                         <i class="mdi mdi-filter-outline me-1"></i>
                                     @endif
                                 </button>
-                                <button type="button" wire:click="create" class="btn btn-dark mb-2 me-2"><i
-                                        class="mdi mdi-plus me-1"></i>
+                                <button type="button" wire:click="$emit('createmodel')"
+                                    class="btn btn-dark mb-2 me-2"><i class="mdi mdi-plus me-1"></i>
                                     Nuevo</button>
                                 <button type="button" class="btn btn-light mb-2 dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones <span
@@ -111,9 +111,9 @@
 
                                         <x-table.cell>
 
-                                            <a class="action-icon" wire:click="edit({{ $model->id }})">
+                                            <a class="action-icon cursor" wire:click="$emit('editmodel',{{ $model->id }})">
                                                 <i class="mdi mdi-square-edit-outline"></i> </a>
-                                            <a class="action-icon" onclick="Confirm({{ $model->id }}, 'delete')"><i
+                                            <a class="action-icon cursor" onclick="Confirm({{ $model->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
                                         </x-table.cell>
 
@@ -137,38 +137,8 @@
             </div>
         </div>
     </div>
-    <x-form method="save">
-        <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
-            <x-slot name="body">
 
-                <x-input.input-group>
-                    <x-input.input-group>
-                        <x-input.input-tooltip-error class="col-12" name="editing.name" label="Nombre del modelo"
-                            type="text" :error="$errors->first('editing.name')" :required=true />
-                    </x-input.input-group>
-                </x-input.input-group>
-
-            </x-slot>
-
-            <x-slot name="footer">
-                <button type="button" class="btn btn-secondary" wire:click="closeModal">Cerrar</button>
-
-                <button type="submit" class="btn btn-primary">
-                    <span wire:loading.delay wire:target="save" class="spinner-border spinner-border-sm"></span>
-                    Guardar
-                </button>
-            </x-slot>
-        </x-modal-dialog>
-    </x-form>
 </div>
-
-@push('js')
-    <script>
-        window.addEventListener('close-modal', event => {
-            $('#modelVehicleModal').modal('hide');
-        });
-        window.addEventListener('open-modal', event => {
-            $('#modelVehicleModal').modal('show');
-        });
-    </script>
+@push('modals')
+    @livewire('vehicle.model-modal')
 @endpush

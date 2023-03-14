@@ -86,9 +86,6 @@
                                     @endif
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('email')" :direction="$sortField == 'email' ? $sortDirection : null">Correo
-                                </x-table.heading>
-
                                 <x-table.heading sortable wire:click="sortBy('name')" :direction="$sortField == 'name' ? $sortDirection : null">Nombre
                                 </x-table.heading>
 
@@ -115,15 +112,16 @@
                                             <x-input.check-input name="selected" value="{{ $customer->id }}" />
                                         </x-table.cell>
 
-                                        <x-table.cell>{{ $customer->email ?? 'N/D' }}</x-table.cell>
 
                                         <x-table.cell>{{ $customer->name }}</x-table.cell>
 
                                         <x-table.cell>{{ $customer->phone }}</x-table.cell>
 
-                                        <x-table.cell class="text-wrap">{{ $customer->address ?? 'N/D' }}</x-table.cell>
+                                        <x-table.cell class="text-wrap">
+                                            {{ $customer->address ? $customer->address : 'N/D' }}</x-table.cell>
 
-                                        <x-table.cell>{{ $customer->dni ?? 'N/D' }} | {{ $customer->ruc ?? 'N/D' }}
+                                        <x-table.cell>{{ $customer->dni ? $customer->dni : 'N/D' }} |
+                                            {{ $customer->ruc ? $customer->ruc : 'N/D' }}
                                         </x-table.cell>
 
                                         <x-table.cell>

@@ -141,6 +141,17 @@ class SaleEdit extends Component
         $this->emit('success_alert', 'Producto agregado a la venta');
     }
 
+    public function updatePriceCart(Product $product, $price)
+    {
+        Cart::session($this->editing->code_sale)->update($product->id, ['price' => $price]);
+        $this->updateCartOptions();
+    }
+
+    public function updatePriceDs(SaleDetail $ds, $price)
+    {
+        $ds->update(['price' => $price]);
+    }
+
     public function updateQuantityCart(Product $product, $cant, $discount = 0)
     {
         if ($cant > $product->stock) {

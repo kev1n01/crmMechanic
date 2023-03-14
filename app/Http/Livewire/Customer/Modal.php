@@ -11,7 +11,6 @@ class Modal extends Component
 {
     public $idModal = 'customerModal';
     public $nameModal;
-    public $showInputs = false;
     public $statuses = [];
     public Customer $editing;
     protected $listeners = ['createcustomer' => 'create', 'editcustomer' => 'edit'];
@@ -75,46 +74,53 @@ class Modal extends Component
         $this->emit('refreshListModals');
     }
 
-    public function updatedEditingDni($value)
+    public function searchDni()
     {
-        if (strlen($value) < 8) {
+        if (strlen($this->editing->dni) != 8) {
+            $this->emit('info_alert', 'Ingrese un DNI primero');
             return;
-        }
-
-        $response = Http::get('https://dniruc.apisperu.com/api/v1/dni/' . $value . '?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNyYXp5YXJub2xkMDFAZ21haWwuY29tIn0.J8854s4Hy2oclyowM_lWgcGCRoHlXd5i1c6QXLrKORI');
-        $data = $response->collect();
-        if ($data->count() != 2) {
-            $this->showInputs = true;
-            $this->editing->name = $data['nombres'] . ' ' . $data['apellidoPaterno'] . ' ' . $data['apellidoMaterno'];
-            $rucconsult = '10' . $data['dni'] . $data['codVerifica'];
-
-            $response = Http::get('https://dniruc.apisperu.com/api/v1/ruc/' . $rucconsult . '?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNyYXp5YXJub2xkMDFAZ21haWwuY29tIn0.J8854s4Hy2oclyowM_lWgcGCRoHlXd5i1c6QXLrKORI');
-            $data2 = $response->collect();
-            if ($data2->count() != 2) {
-                $this->editing->ruc = $rucconsult;
-            } else {
-                $this->editing->ruc = '';
-                $this->emit('error_alert', 'El DNI existe pero no esta registrado al RUC');
-            }
         } else {
-            $this->emit('error_alert', 'El DNI no existe');
+            $response = Http::get('https://dniruc.apisperu.com/api/v1/dni/' . $this->editing->dni . '?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNyYXp5YXJub2xkMDFAZ21haWwuY29tIn0.J8854s4Hy2oclyowM_lWgcGCRoHlXd5i1c6QXLrKORI');
+            $data = $response->collect();
+            if ($data->count() != 2) {
+                $this->editing->name = $data['nombres'] . ' ' . $data['apellidoPaterno'] . ' ' . $data['apellidoMaterno'];
+                $this->editing->ruc = '10' . $data['dni'] . $data['codVerifica'];
+                $this->searchRuc();
+                // $rucconsult = '10' . $data['dni'] . $data['codVerifica'];
+
+                // $response = Http::get('https://dniruc.apisperu.com/api/v1/ruc/' . $rucconsult . '?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNyYXp5YXJub2xkMDFAZ21haWwuY29tIn0.J8854s4Hy2oclyowM_lWgcGCRoHlXd5i1c6QXLrKORI');
+                // $data2 = $response->collect();
+                // if ($data2->count() != 2) {
+                //     $this->editing->ruc = $rucconsult;
+                // } else {
+                //     $this->editing->ruc = '';
+                //     $this->editing->address = '';
+                //     $this->emit('info_alert', 'El DNI existe pero no esta registrado al RUC');
+                // }
+            } else {
+                $this->emit('error_alert', 'El DNI es invalido');
+            }
         }
     }
 
-    public function updatedEditingRuc($value)
+    public function searchRuc()
     {
-        if (strlen($value) < 11) {
+        if (strlen($this->editing->ruc) != 11) {
+            $this->emit('info_alert', 'Ingrese un RUC primero');
             return;
-        }
-
-        $response = Http::get('https://dniruc.apisperu.com/api/v1/ruc/' . $value . '?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNyYXp5YXJub2xkMDFAZ21haWwuY29tIn0.J8854s4Hy2oclyowM_lWgcGCRoHlXd5i1c6QXLrKORI');
-        $data = $response->collect();
-        if ($data->count() != 2) {
-            $this->showInputs = true;
-            $this->editing->name = $data['razonSocial'];
-            $this->editing->address = $data['direccion'];
         } else {
-            $this->emit('error_alert', 'El RUC no existe');
+            $response = Http::get('https://dniruc.apisperu.com/api/v1/ruc/' . $this->editing->ruc . '?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNyYXp5YXJub2xkMDFAZ21haWwuY29tIn0.J8854s4Hy2oclyowM_lWgcGCRoHlXd5i1c6QXLrKORI');
+            $data = $response->collect();
+            if ($data->count() != 2) {
+                $this->editing->name = $data['razonSocial'];
+                $this->editing->address = $data['direccion'];
+                if ($this->editing->name != '' && substr($this->editing->ruc, 0, 2) == '10')
+                    $this->editing->dni = substr($this->editing->ruc, 2, 8);
+                if ($this->editing->address != '' && substr($this->editing->ruc, 0, 2) == '20')
+                    $this->editing->dni = '';
+            } else {
+                $this->emit('error_alert', 'El RUC es invalido');
+            }
         }
     }
 

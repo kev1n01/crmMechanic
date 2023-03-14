@@ -1,18 +1,18 @@
-@props(['error' => false, 'name' => '', 'label' => '', 'type' => '', 'required' => false, 'disabled' => false])
+@props(['error' => false, 'name' => '', 'label' => '', 'type' => '', 'required' => false, 'disabled' => false, 'max' => ''])
 
 <div {{ $attributes->merge(['class' => 'mb-0']) }}>
     <label class="form-label" for="{{ $name }}">{{ $label }}
         <span class="text-danger">{{ $required ? '*' : '' }}</span>
     </label>
     <input type="{{ $type }}" class="form-control {{ $error ? 'is-invalid' : '' }}" id="{{ $name }}"
-        placeholder="{{ $label }}" wire:model="{{ $name }}" {{ $disabled ? 'disabled' : ''}}>
-        
-    @unless ($error)
-        
+        placeholder="{{ $label }}" wire:model="{{ $name }}" {{ $disabled ? 'disabled' : '' }} maxlength="{{ $max }}"
+        size="{{ $max }}">
+
+    @unless($error)
     @else
         <p class="text-danger mb-0">
             {{ $error }}
         </p>
-    @endif
-   
-</div>
+        @endif
+
+    </div>

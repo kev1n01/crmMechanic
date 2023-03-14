@@ -33,18 +33,18 @@
                                     <x-input.datepicker class="col-xl-6 mt-2" name="editing.date_purchase"
                                         label="Fecha" id="dp1" :error="$errors->first('editing.date_purchase')" :required=true />
 
-                                    <x-input.select class="col-xl-6 mt-2" name="editing.type_cpe" label="Tipo de CPE"
+                                    <x-input.select class="col-xl-3 mt-2" name="editing.type_cpe" label="Tipo de CPE"
                                         :required=true :options="$types" :error="$errors->first('editing.type_cpe')" />
 
                                     @if ($editing->type_cpe)
 
-                                        <x-input.input-tooltip-error class="col-xl-3" name="serial" label="Serie"
+                                        <x-input.input-tooltip-error class="col-xl-2" name="serial" label="Serie"
                                             type="text" :error="$errors->first('serial')" :required=true />
 
                                         <x-input.input-tooltip-error class="col-xl-3" name="correlative"
                                             label="Correlativo" type="text" :error="$errors->first('correlative')" :required=true />
 
-                                        <x-input.select class="col-xl-6 mt-2" name="editing.method_payment"
+                                        <x-input.select class="col-xl-4 mt-2" name="editing.method_payment"
                                             label="Metodo de pago" :required=true :options="$methods"
                                             :error="$errors->first('editing.method_payment')" />
                                     @endif
