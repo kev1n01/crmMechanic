@@ -128,13 +128,15 @@
                                         </x-table.cell>
                                         <x-table.cell>
                                             <button
-                                                class="btn btn-outline-{{ $wo->status_color }} rounded-pill btn-sm w-55"
+                                                class="btn btn-outline-{{ $wo->status_color }} rounded-pill btn-sm w-100"
                                                 type="button" wire:click="changeStatus({{ $wo->id }})">
                                                 {{ strtoupper($wo->status) }}
-                                                @if ($wo->departure_date != null && $wo->departure_hour != null)
-                                                    @if (date('Y-m-d H:i:s') > $wo->departure_date . ' ' . $wo->departure_hour)
-                                                        <span
-                                                            wire:init="updateStatusToDelayed({{ $wo->id }})"></span>
+                                                @if ($wo->status === 'en progreso')
+                                                    @if ($wo->departure_date != null && $wo->departure_hour != null)
+                                                        @if (date('Y-m-d H:i:s') > $wo->departure_date . ' ' . $wo->departure_hour)
+                                                            <span
+                                                                wire:init="updateStatusToDelayed({{ $wo->id }})"></span>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             </button>

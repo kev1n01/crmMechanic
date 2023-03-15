@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Livewire\Category;
+namespace App\Http\Livewire\Product;
 
 use App\Helpers\Csv;
-use App\Models\CategoryProduct;
-use Livewire\Component;
+use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Livewire\Component;
 use Livewire\WithFileUploads;
 
 class Import extends Component
@@ -14,17 +15,38 @@ class Import extends Component
     public $upload, $columns;
     public $fieldColumnMap = [
         'name' => '',
+        'code' => '',
+        'stock' => '',
+        'sale_price' => '',
+        'purchase_price' => '',
+        'status' => '',
     ];
 
     protected $rules = [
         'fieldColumnMap.name' => 'required',
+        'fieldColumnMap.code' => 'required',
+        'fieldColumnMap.stock' => 'required',
+        'fieldColumnMap.sale_price' => 'required',
+        'fieldColumnMap.purchase_price' => 'required',
+        'fieldColumnMap.status' => 'required',
     ];
+
     protected $messages = [
         'fieldColumnMap.name.required' => 'El campo nombre es obligatorio',
+        'fieldColumnMap.code.required' => 'El campo codigo es obligatorio',
+        'fieldColumnMap.stock.required' => 'El campo stock es obligatorio',
+        'fieldColumnMap.sale_price.required' => 'El campo precio venta es obligatorio',
+        'fieldColumnMap.purchase_price.required' => 'El campo precio compra es obligatorio',
+        'fieldColumnMap.status.required' => 'El campo estado es obligatorio',
     ];
 
     protected $customAttributes = [
         'fieldColumnMap.name' => 'nombre',
+        'fieldColumnMap.code' => 'codigo',
+        'fieldColumnMap.stock' => 'stock',
+        'fieldColumnMap.sale_price' => 'precio venta',
+        'fieldColumnMap.purchase_price' => 'precio compra',
+        'fieldColumnMap.status' => 'estado',
     ];
 
     public function updatingUpload($value)
@@ -49,8 +71,19 @@ class Import extends Component
         $this->columns = null;
         $this->fieldColumnMap = [
             'name' => '',
+            'code' => '',
+            'stock' => '',
+            'sale_price' => '',
+            'purchase_price' => '',
+            'status' => '',
         ];
     }
+
+    public function exportTemplate()
+    {
+        return response()->download(public_path() . "/exports/template_products_import.csv");
+    }
+    
     public function import()
     {
         $this->validate();
@@ -58,7 +91,7 @@ class Import extends Component
             $importCount = 0;
             Csv::from($this->upload)
                 ->eachRow(function ($row) use (&$importCount) {
-                    CategoryProduct::create(
+                    Product::create(
                         $this->extractFieldsFromRow($row)
                     );
 
@@ -66,13 +99,12 @@ class Import extends Component
                 });
             $this->emit('refreshList');
             $this->upload = null;
-            $this->emit('success_alert', $importCount . 'categorias fueron importados');
+            $this->emit('success_alert', $importCount . 'productos fueron importados');
         } catch (\Exception $e) {
-            $this->emit('error_alert', 'Error al importar categorías, por favor verifique lo siguiente:&nbsp;
-                                            - que el nombre de las categorías no estén repetidos&nbsp;
-                                            - que el nombre de las categorías tengan como minimo 3 caracteres&nbsp;
-                                            - que el nombre de las categorías tengan como maximo 30 caracteres&nbsp;
-                                            - que el nombre de las categorías no este vacias
+            $this->emit('error_alert', 'Error al importar productos, por favor verifique lo siguiente:&nbsp;
+                                            - que el campo nombre no estén repetidos o existan ya en la base de datos&nbsp;
+                                            - que el campo stock sea un numero entero&nbsp;
+                                            - que el campo precio compra y venta sean numeros&nbsp; 
                                             ');
         }
     }
@@ -92,6 +124,11 @@ class Import extends Component
     {
         $guesses = [
             'name' => ['name', 'name'],
+            'code' => ['code', 'code'],
+            'stock' => ['stock', 'stock'],
+            'sale_price' => ['sale_price', 'sale_price'],
+            'purchase_price' => ['purchase_price', 'purchase_price'],
+            'status' => ['status', 'status'],
         ];
 
         foreach ($this->columns as $column) {
@@ -104,6 +141,6 @@ class Import extends Component
 
     public function render()
     {
-        return view('livewire.category.import');
+        return view('livewire.product.import');
     }
 }

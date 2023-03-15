@@ -49,12 +49,27 @@
                                         class="{{ count($selected) == 0 ? 'd-none' : '' }} fs-6 badge rounded-pill bg-primary">{{ count($selected) }}</span></button>
                                 <div class="dropdown-menu">
                                     <button class="dropdown-item action-icon"
-                                    @if ($selected != []) onclick="window.livewire.emit('exportSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
-                                        class="mdi mdi-download"></i> Exportar</button>
-                                <button class="dropdown-item action-icon"
-                                    @if ($selected != []) onclick="Confirm(null,'deleteSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
-                                        class="mdi mdi-delete"></i>
-                                    Eliminar</button>
+                                        @if ($selected != []) onclick="window.livewire.emit('exportSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
+                                            class="mdi mdi-download"></i> Exportar</button>
+                                    <button class="dropdown-item action-icon"
+                                        @if ($selected != []) onclick="Confirm(null,'deleteSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
+                                            class="mdi mdi-delete"></i>
+                                        Eliminar</button>
+                                    <button class="dropdown-item action-icon" data-bs-toggle="offcanvas"
+                                        data-bs-target="#offcanvasRight1" aria-controls="offcanvasRight1"><i
+                                            class="mdi mdi-upload"></i>Importar</button>
+                                </div>
+
+                                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight1"
+                                    aria-labelledby="offcanvasRight1Label">
+                                    <div class="offcanvas-header text-center">
+                                        <h5 id="offcanvasRight1Label">Importar Productos</h5>
+                                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body">
+                                        @livewire('product.import')
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -138,15 +153,16 @@
                                             </button>
                                         </x-table.cell>
 
-                                        <x-table.cell>{{ $product->category->name }}</x-table.cell>
+                                        <x-table.cell>{{ $product->category->name ?? 'N/A' }}</x-table.cell>
 
-                                        <x-table.cell>{{ $product->brand->name }}</x-table.cell>
+                                        <x-table.cell>{{ $product->brand->name ?? 'N/A' }}</x-table.cell>
 
                                         <x-table.cell>
                                             <a class="action-icon cursor"
                                                 wire:click="$emit('editproduct',{{ $product->id }})">
                                                 <i class="mdi mdi-square-edit-outline"></i> </a>
-                                            <a class="action-icon cursor" onclick="Confirm({{ $product->id }}, 'delete')"><i
+                                            <a class="action-icon cursor"
+                                                onclick="Confirm({{ $product->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
                                         </x-table.cell>
                                     </x-table.row>

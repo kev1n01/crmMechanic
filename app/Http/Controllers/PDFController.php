@@ -58,12 +58,12 @@ class PDFController extends Controller
         return $pdf->download($workOrder->code . '/' . $workOrder->vehiclePlate->license_plate . '/' . $workOrder->customerUser->name . '.pdf');
     }
 
-    public function previewSale($id)
+    public function viewSale($id)
     {
         return view('pdf.pdf-sale', ['id' => $id]);
     }
 
-    public function viewSale($id)
+    public function previewSale($id)
     {
         $sale = Sale::where('id', $id)->first();
         $dts = SaleDetail::where('sale_id', $sale->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get();
@@ -95,12 +95,12 @@ class PDFController extends Controller
         return $pdf->download($sale->code_sale . '/' . $sale->customer->name . '.pdf');
     }
 
-    public function previewPurchase($id)
+    public function viewPurchase($id)
     {
         return view('pdf.pdf-purchase', ['id' => $id]);
     }
 
-    public function viewPurchase($id)
+    public function previewPurchase($id)
     {
         $purchase = Purchase::where('id', $id)->first();
         $dtp = PurchaseDetail::where('purchase_id', $purchase->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get();
@@ -128,6 +128,6 @@ class PDFController extends Controller
         $pdf = PDF::loadView('pdf.templates.invoice-purchase', [
             'purchase' => $purchase, 'dtp' => $ds->sortBy('product_id.code')
         ]);
-        return $pdf->download($sale->code_sale . '/' . $sale->customer->name . '.pdf');
+        return $pdf->download($purchase->code_purchase . '/' . $purchase->provider->name . '.pdf');
     }
 }

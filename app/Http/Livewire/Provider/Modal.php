@@ -25,7 +25,7 @@ class Modal extends Component
         return [
             'editing.name' => ['required', 'min:4', 'max:50', Rule::unique('providers', 'name')->ignore($this->editing)],
             'editing.phone' => ['required', 'min:9', 'max:9', Rule::unique('providers', 'phone')->ignore($this->editing)],
-            'editing.address' => ['nullable', 'min:5', 'max:50', Rule::unique('providers', 'address')->ignore($this->editing)],
+            'editing.address' => ['nullable', 'min:5', 'max:100', Rule::unique('providers', 'address')->ignore($this->editing)],
             'editing.ruc' => ['required', 'min:11', 'max:11', Rule::unique('providers', 'ruc')->ignore($this->editing)],
             'editing.status' => 'required|in:' . collect(Provider::STATUSES)->keys()->implode(','),
         ];
@@ -43,7 +43,7 @@ class Modal extends Component
         'editing.phone.unique' => 'El celular ya fue registrado',
 
         'editing.address.min' => 'La dirección debe tener al menos 5 caracteres',
-        'editing.address.max' => 'La dirección no debe tener más de 50 caracteres',
+        'editing.address.max' => 'La dirección no debe tener más de 100 caracteres',
         'editing.address.unique' => 'La dirección ya fue registrado',
 
         'editing.ruc.required' => 'El ruc es obligatorio',
@@ -62,6 +62,7 @@ class Modal extends Component
         $this->nameModal === 'Crear nuevo proveedor' ? $this->emit('success_alert', 'Proveedor creado') : $this->emit('success_alert', 'Proveedor actualizado');
         $this->dispatchBrowserEvent('close-modal-provider');
         $this->emit('refreshList');
+        $this->emit('refreshListModals');
     }
 
     public function searchRuc()

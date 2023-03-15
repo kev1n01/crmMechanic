@@ -33,7 +33,7 @@ class Import extends Component
             ['upload' => $value],
             ['upload' => 'required|mimes:csv'],
             ['upload.mimes' => 'Solo se permite archivo tipo .csv']
-        )->validate();
+        );
     }
 
     public function updatedUpload()

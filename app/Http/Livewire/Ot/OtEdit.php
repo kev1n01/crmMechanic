@@ -144,6 +144,12 @@ class OtEdit extends Component
         $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
         $this->products = Product::query()->get();
         $this->concepts = Concept::query()->get();
+        if ($this->editing->customer) {
+            $this->vehicles = Vehicle::where('customer_id', $this->editing->customer)
+                ->pluck('license_plate', 'id');
+        } else {
+            $this->vehicles = [];
+        }
     }
 
     public function makeBlankFields()

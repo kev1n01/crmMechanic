@@ -28,9 +28,11 @@ class PurchaseEdit extends Component
     public $totalOG;
     public $total;
     public $totalDiscount;
-    
+
     public $serial = '';
     public $correlative = '';
+
+    protected $listeners = ['refreshListModals'];
 
     public function rules()
     {
@@ -86,8 +88,8 @@ class PurchaseEdit extends Component
         $this->statuses = Purchase::STATUSES;
         $this->methods = Purchase::METHOD_PAYMENTS;
         $this->types = Purchase::TYPE_CPE;
-        $this->serial = substr($this->editing->nro_cpe,0,4);
-        $this->correlative = substr($this->editing->nro_cpe,7);
+        $this->serial = substr($this->editing->nro_cpe, 0, 4);
+        $this->correlative = substr($this->editing->nro_cpe, 7);
         $this->providers = Provider::where('status', 'activo')->pluck('name', 'id');
     }
 
@@ -121,6 +123,12 @@ class PurchaseEdit extends Component
     {
         $this->totalCart = Cart::session($this->editing->code_purchase)->getTotal();
         $this->calculeTotal();
+    }
+
+    public function refreshListModals()
+    {
+        $this->providers = Provider::where('status', 'activo')->pluck('name', 'id');
+        $this->products = Product::query()->get();
     }
 
     public function makeBlankFields()

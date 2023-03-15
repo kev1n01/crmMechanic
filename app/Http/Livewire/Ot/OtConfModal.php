@@ -134,7 +134,7 @@ class OtConfModal extends Component
                 'person_owed' => $this->editing->customerUser->name,
                 'amount_owed' => $totalwod,
                 'amount_paid' => 0,
-                'reason' => 'proforma',
+                'reason' => 'OT',
             ]);
 
 

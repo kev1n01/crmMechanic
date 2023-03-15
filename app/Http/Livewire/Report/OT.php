@@ -20,13 +20,14 @@ class OT extends Component
         $total_service,
         $ots,
         $dot_modal,
-        $ot_dt,
+        $id_ot,
         $wo_ids,
         $wo_sid,
         $plates,
         $idModal = "detailOtModal",
         $nameModal,
         $modalsize = "modal-lg";
+    protected $listeners = ['refresh' => '$refresh'];
 
     public function mount()
     {
@@ -36,7 +37,7 @@ class OT extends Component
         $this->total_replacement = 0;
         $this->total_service = 0;
         $this->ots = [];
-        $this->ot_dt = [];
+        // $this->ot_dt = [];
         $this->wo_ids = [];
         $this->wo_sid = [];
         $this->dot_modal = [];
@@ -95,20 +96,30 @@ class OT extends Component
         $this->total_service = $dots_service ? $this->total_service : 0;
 
         $this->total_replacement = $dots_replacement ? $this->total_replacement : 0;
+
+        if ($this->ots->count() > 0) {
+            $this->emit('info_alert', 'Se encontraron ' . $this->ots->count() . ' ordenes de trabajo');
+        } else {
+            $this->emit('info_alert', 'No se encontraron ordenes de trabajo');
+        }
     }
 
-    public function viewDetails(WorkOrder $wo)
+    public function viewDetails($id)
     {
-        $this->nameModal = "Detalle del orden de trabajo " . $wo->code;
-        $this->ot_dt = WorkOrder::where('id', $wo->id)->first();
-        $dots = $wo->workOrderDetail()->get();
-        $this->dot_modal = $dots->each(function ($item, $key) {
-            if (strlen(strval($item->item)) < 4) {
-                $item->item = Concept::where('code', str_pad($item->item, 3, "0", STR_PAD_LEFT))->select('name', 'code')->first();
-            } else {
-                $item->item = Product::where('code', strval($item->item))->select('name', 'code')->first();
-            }
-        });
+        $this->emit('refresh');
+        $this->nameModal = "Detalle de orden de trabajo";
+        $this->id_ot = $id;
+        // dd($this->id_ot);
+        // $this->ot_dt = WorkOrder::where('id', $wo->id)->first();
+        // $dots = $wo->workOrderDetail()->get();
+
+        // $this->dot_modal = $dots->each(function ($item, $key) {
+        //     if (strlen(strval($item->item)) < 4) {
+        //         $item->item = Concept::where('code', str_pad($item->item, 3, "0", STR_PAD_LEFT))->select('name', 'code')->first();
+        //     } else {
+        //         $item->item = Product::where('code', strval($item->item))->select('name', 'code')->first();
+        //     }
+        // });
         $this->dispatchBrowserEvent('open-modal');
     }
 

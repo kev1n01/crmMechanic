@@ -17,6 +17,7 @@ class Sale extends Component
         $total_replacement,
         $total_service,
         $sales,
+        $customers,
         $details,
         $sale_dt,
         $idModal = "detailSaleModal",
@@ -33,7 +34,7 @@ class Sale extends Component
         $this->sales = [];
         $this->details = [];
         $this->sale_dt = [];
-        $this->customers = Customer::pluck('name', 'id');
+        $this->customers = Customer::where('status','activo')->pluck('name', 'id');
     }
 
     public function render()
@@ -65,6 +66,12 @@ class Sale extends Component
         // dd($this->sales);
 
         $this->total = $this->sales ?  $this->sales->sum('total') : 0;
+        
+        if ($this->sales->count() > 0) {
+            $this->emit('info_alert', 'Se encontraron ' . $this->sales->count() . ' ventas');
+        } else {
+            $this->emit('info_alert', 'No se encontraron ventas');
+        }
     }
 
     public function viewDetails(ModelsSale $sale)

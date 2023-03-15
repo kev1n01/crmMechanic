@@ -15,6 +15,7 @@ class Purchase extends Component
         $provider_id,
         $total,
         $purchases,
+        $providers,
         $details,
         $purchase_dt,
         $idModal = "detailSaleModal",
@@ -61,6 +62,12 @@ class Purchase extends Component
         // dd($this->purchases);
 
         $this->total = $this->purchases ?  $this->purchases->sum('total') : 0;
+
+        if ($this->purchases->count() > 0) {
+            $this->emit('info_alert', 'Se encontraron ' . $this->purchases->count() . ' compras');
+        } else {
+            $this->emit('info_alert', 'No se encontraron compras');
+        }
     }
 
     public function viewDetails(ModelsPurchase $purchase)

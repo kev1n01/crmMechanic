@@ -5,30 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>OT MECANICA FLOPAC</title>
+    <title>VENTA MECANICA FLOPACH</title>
     <link href="{{ public_path('assets/css/pdf.css') }}" rel="stylesheet" type="text/css">
 </head>
 
 <body>
     <div class="border-line">
         <div class="infoHeader">
-            <div style="float: left; width: 20%; height: 14%; margin-right: 4mm; margin-bottom: 4mm;">
+            <div style="float: left; width: 20%; height: 10%; margin-right: 2mm; margin-left: 4mm; margin-bottom: 2mm;">
                 <img src="{{ public_path('assets/images/newlogo.png') }}" class="logo_img">
             </div>
-            <div style="float: left; width: 50%; height: 14%; text-align: center;">
-                <p class="fw-b m-0">MECANICA AUTOMOTRIZ FLOPAC</p>
+            <div style="float: left; width: 50%; height: 10%; text-align: center; padding-top: 2%;">
+                <p class="fw-b m-0">MECANICA AUTOMOTRIZ FLOPACH</p>
                 <p class="fw-sb m-0">Sector Las Lomas - Chunapampa - Huanuco</p>
                 <p class="fw-sb m-0">Cel: 957235173 / 978610524 / 933865935</p>
-                <p class="fw-sb m-0">BBVA: 12312312324123</p>
-                <p class="fw-sb m-0">BCP: 1231231312323</p>
-                <p class="fw-sb m-0">INTERBANK: 1241241232312412</p>
             </div>
-            <div style="float: left; width: 30%; height: 14%; text-align: center;">
-
+            <div style="float: left; width: 30%; height: 10%;">
+                <div style="border: 2px solid rgb(39, 39, 39); border-radius: 4px; width: 90%;">
+                    <div class="text-center" style="padding: 1%">
+                        <p style="margin-bottom: 0%;">RUC N 2023242423</p>
+                        <p style="margin-bottom: 0%;">VENTA</p>
+                        <p>{{ $sale->code_sale }}</p>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <p class="fs-2 fw-b text-form">Venta {{ $sale->type_sale }}</p>
+        <p class="fs-2 fw-b text-form">
+            {{ $sale->type_sale === 'vehicular' ? 'Venta Vehicular' : 'Venta Vehicular' }}</p>
 
         <p class="fs-3 fw-sb">Detalle de la venta</p>
         <table class="table">
@@ -165,18 +168,6 @@
             </tfoot>
         </table>
     </div>
-    <div id="footer">
-        <p class="text-footer">
-            En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad a
-            todos nuestros clientes
-        </p>
-        <p class="text-footer">
-            <span class="fw-b">ATENCION:</span> Todo trabajo se realizará con un 50% de adelanto al costo de
-            proforma,
-            y tendrá 7 días hábiles a recoger su vehículo, luego de esto se sumarán costos de una cochera
-        </p>
-    </div>
-
 </body>
 
 </html>

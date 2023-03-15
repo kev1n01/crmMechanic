@@ -137,9 +137,7 @@ class OtCreate extends Component
     public function refreshListModals()
     {
         $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
-        $this->products = Product::query()
-            ->where('stock', '>', 0)
-            ->get();
+        $this->products = Product::query()->get();
         $this->concepts = Concept::query()->get();
         if ($this->editing->customer) {
             $this->vehicles = Vehicle::where('customer_id', $this->editing->customer)

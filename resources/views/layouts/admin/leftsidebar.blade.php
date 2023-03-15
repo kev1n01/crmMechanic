@@ -3,7 +3,7 @@
     <!-- LOGO -->
     <a href="#" class="logo text-center logo-light">
         <span class="logo-lg fs-3">
-            <p class="mb-0 "><strong class="text-white">FLO</strong><strong class="text-primary">PAC</strong></p>
+            <p class="mb-0 "><strong class="text-white">FLO</strong><strong class="text-primary">PACH</strong></p>
         </span>
         <span class="logo-sm fs-4">
             <p class="mb-0"><strong class="text-white">F</strong><strong class="text-primary">P</strong></p>

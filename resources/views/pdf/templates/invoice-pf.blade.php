@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>OT MECANICA FLOPAC</title>
+    <title>OT MECANICA FLOPACH</title>
     <link href="{{ public_path('assets/css/pdf.css') }}" rel="stylesheet" type="text/css">
 </head>
 
@@ -21,10 +21,10 @@
                 <p class="fw-sb m-0">Cel: 957235173 / 978610524 / 933865935</p>
             </div>
             <div style="float: left; width: 30%; height: 10%;">
-                <div style="border: 2px solid rgb(39, 39, 39); border-radius: 4px; width: 100%;">
+                <div style="border: 2px solid rgb(39, 39, 39); border-radius: 4px; width: 90%;">
                     <div class="text-center" style="padding: 1%">
-                        <p style="margin-bottom: 0%;">RUC N 2023242423</p>
-                        <p style="margin-bottom: 0%;">PROFORMA</p>
+                        <p style="margin-bottom: 0%;">RUC N 20232424231</p>
+                        <p style="margin-bottom: 0%;"> {{ $wo->is_confirmed === 0 ? 'PROFORMA' : 'ORDEN TRABAJO' }}</p>
                         <p >{{ $wo->code }}</p>
                     </div>
                 </div>

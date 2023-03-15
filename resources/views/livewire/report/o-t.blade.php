@@ -51,7 +51,7 @@
                     <div class="card">
                         <div class="card-body pt-2">
 
-                            <div class="rounded mb-2 mt-1">
+                            {{-- <div class="rounded mb-2 mt-1">
                                 <div class="d-flex flex-row-reverse bd-highlight">
                                     <div class="p-1 bd-highlight">
                                         <button class="btn btn-danger">Exportar en pdf</button>
@@ -60,7 +60,7 @@
                                         <button class="btn btn-success">Exportar en csv</button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="table-responsive">
                                 <x-table class="table-striped table-centered">
@@ -92,7 +92,8 @@
 
                                                 <x-table.cell>
                                                     <a class="action-icon"
-                                                        wire:click.prevent="viewDetails({{ $ot->id }})"><i
+                                                    href="{{ route('proforma.pdf.preview') }}"
+                                                        wire:click="viewDetails({{ $ot->id }})"><i
                                                             class="mdi mdi-eye-outline"></i></a>
                                                 </x-table.cell>
                                             </x-table.row>
@@ -117,7 +118,7 @@
 
     <x-modal-dialog :id="$idModal" title="{{ $nameModal }}" optionsModal="{{ $modalsize }}">
         <x-slot name="body">
-            @if ($ot_dt)
+            {{-- @if ($ot_dt)
 
                 <div class="table-responsive">
                     <x-table class="table-bordered">
@@ -128,9 +129,11 @@
                             <tr>
                                 <th>Fecha/Hora de llegada</td>
                                 <td>
-                                    {{ \Carbon\Carbon::parse($ot_dt->arrival_date)->format('d-m-Y') .
-                                        ' , ' .
-                                        \Carbon\Carbon::parse($ot_dt->arrival_hour)->format('g:i a') }}
+                                    {{ $ot_dt->arrival_date != null
+                                        ? \Carbon\Carbon::parse($ot_dt->arrival_date)->format('d-m-Y') .
+                                            ' , ' .
+                                            \Carbon\Carbon::parse($ot_dt->arrival_hour)->format('g:i a')
+                                        : 'No especificado' }}
                                 </td>
                                 <th>Estado</th>
                                 <td>
@@ -141,9 +144,11 @@
                             <tr>
                                 <th>Fecha/Hora de salida</th>
                                 <td>
-                                    {{ \Carbon\Carbon::parse($ot_dt->departure_date)->format('d-m-Y') .
-                                        ' , ' .
-                                        \Carbon\Carbon::parse($ot_dt->departure_hour)->format('g:i a ') }}
+                                    {{ $ot_dt->departure_date != null
+                                        ? \Carbon\Carbon::parse($ot_dt->departure_date)->format('d-m-Y') .
+                                            ' , ' .
+                                            \Carbon\Carbon::parse($ot_dt->departure_hour)->format('g:i a ')
+                                        : 'No especificado' }}
                                 </td>
                                 <th>Código</th>
                                 <td>{{ $ot_dt->code }}</td>
@@ -302,6 +307,16 @@
                         </tr>
                     </x-slot>
                 </x-table>
+            </div> --}}
+            {{ $id_ot }}
+            <div class="row mt-3" wire:loading.remove wire:target="viewDetails">
+                <div class="col-12">
+                    <object width="100%" height="1000px"
+                        data="{{ env('APP_URL') }}/proforma/preview/{{ $id_ot }}" type="application/pdf">
+                        <embed src="{{ env('APP_URL') }}/proforma/preview/{{ $id_ot }}"
+                            type="application/pdf" />
+                    </object>
+                </div>
             </div>
         </x-slot>
 
