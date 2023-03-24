@@ -1,4 +1,4 @@
-<div class="navbar-custom">
+<div class="navbar-custom position-fixed">
     <ul class="list-unstyled topbar-menu float-end mb-0">
         {{-- <li class="dropdown notification-list d-lg-none">
             <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
@@ -25,17 +25,13 @@
             </div>
         </li> --}}
 
-        <li class="notification-list">
+        {{-- <li class="notification-list">
             <a class="nav-link end-bar-toggle" href="javascript: void(0);">
                 <i class="dripicons-gear noti-icon"></i>
             </a>
-        </li>
-        
-        {{-- <li class="notification-list">
-            <a class="nav-link" href="javascript: void(0);" id="change">
-                <i class="noti-icon uil-moon uil-24px "></i>
-            </a>
         </li> --}}
+      
+        @livewire('components.theme-change')
 
         {{-- <li class="dropdown notification-list">
             <a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
@@ -68,7 +64,7 @@
         </li> --}}
     </ul>
     <button class="button-menu-mobile open-left">
-        <i class="mdi mdi-menu"></i>
+        <i class="mdi mdi-record-circle-outline"></i>
     </button>
     {{-- <div class="app-search dropdown d-none d-lg-block">
         <form>

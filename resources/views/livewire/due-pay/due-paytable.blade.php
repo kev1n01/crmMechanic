@@ -1,3 +1,4 @@
+@section('title', 'Deudas por cobrar')
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -143,7 +144,8 @@
                                                     href="{{ route('proforma.orden.editar', substr($d->description, 9)) }}">
                                                     {{ substr($d->description, 9) }}
                                                 </a>
-                                            @else
+                                            @endif
+                                            @if (substr($d->description, -6, 1) != 'P' && substr($d->description, 0, 1) != 'V')
                                                 {{ $d->description }}
                                             @endif
                                         </x-table.cell>
@@ -167,7 +169,7 @@
                                         <x-table.cell>
 
                                             <a class="action-icon" wire:click="edit({{ $d->id }})">
-                                                <i class="mdi mdi-square-edit-outline"></i> </a>
+                                                <i class="mdi mdi-credit-card-plus-outline"></i> </a>
                                             <a class="action-icon" onclick="Confirm({{ $d->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
                                         </x-table.cell>
@@ -197,20 +199,37 @@
         <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
             <x-slot name="body">
                 <div class="row g-2">
-                    <x-input.input-tooltip-error class="col-xl-12" name="editing.description" label="Descripcion"
-                        type="text" :error="$errors->first('editing.description')" :required=true />
+                    @if ($editing->reason === 'otro')
+                        <x-input.input-tooltip-error class="col-xl-12" name="editing.description" label="Descripcion"
+                            type="text" :error="$errors->first('editing.description')" :required=true />
 
-                    <x-input.input-tooltip-error class="col-xl-6" name="editing.person_owed" label="Nombre deudor"
-                        type="text" :error="$errors->first('editing.person_owed')" :required=true />
+                        <x-input.input-tooltip-error class="col-xl-6" name="editing.person_owed"
+                            label="Nombre deudor" type="text" :error="$errors->first('editing.person_owed')" :required=true />
 
-                    <x-input.input-tooltip-error class="col-xl-6" name="editing.amount_owed" label="Monto adeudado"
-                        type="number" :error="$errors->first('editing.amount_owed')" :required=true />
+                        <x-input.input-tooltip-error class="col-xl-6" name="editing.amount_owed"
+                            label="Monto adeudado" type="number" :error="$errors->first('editing.amount_owed')" :required=true />
 
-                    <x-input.input-tooltip-error class="col-xl-6" name="editing.amount_paid" label="Monto pagado"
-                        type="number" :error="$errors->first('editing.amount_paid')" :required=true />
+                        <x-input.input-tooltip-error class="col-xl-6" name="editing.amount_paid" label="Monto pagado"
+                            type="number" :error="$errors->first('editing.amount_paid')" :required=true />
 
-                    <x-input.select class="col-xl-6" name="editing.reason" label="Razon" :options="$reasons"
-                        :error="$errors->first('editing.reason')" :required=true />
+                        <x-input.select class="col-xl-6" name="editing.reason" label="Razon" :options="$reasons"
+                            :error="$errors->first('editing.reason')" :required=true />
+                    @else
+                        <x-input.input-tooltip-error class="col-xl-12" name="editing.description" label="Descripcion"
+                            type="text" :error="$errors->first('editing.description')" :required=true :disabled=true />
+
+                        <x-input.input-tooltip-error class="col-xl-6" name="editing.person_owed"
+                            label="Nombre deudor" type="text" :error="$errors->first('editing.person_owed')" :required=true :disabled=true/>
+
+                        <x-input.input-tooltip-error class="col-xl-6" name="editing.amount_owed"
+                            label="Monto adeudado" type="number" :error="$errors->first('editing.amount_owed')" :required=true :disabled=true/>
+
+                        <x-input.input-tooltip-error class="col-xl-6" name="editing.amount_paid" label="Monto pagado"
+                            type="number" :error="$errors->first('editing.amount_paid')" :required=true />
+
+                        <x-input.select class="col-xl-6" name="editing.reason" label="Razon" :options="$reasons"
+                            :error="$errors->first('editing.reason')" :required=true :disabled=true/>
+                    @endif
                 </div>
             </x-slot>
 

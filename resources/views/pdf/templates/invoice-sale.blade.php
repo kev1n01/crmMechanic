@@ -23,7 +23,7 @@
             <div style="float: left; width: 30%; height: 10%;">
                 <div style="border: 2px solid rgb(39, 39, 39); border-radius: 4px; width: 90%;">
                     <div class="text-center" style="padding: 1%">
-                        <p style="margin-bottom: 0%;">RUC N 2023242423</p>
+                        <p style="margin-bottom: 0%;">R.U.C. N° 2023242423</p>
                         <p style="margin-bottom: 0%;">VENTA</p>
                         <p>{{ $sale->code_sale }}</p>
                     </div>
@@ -31,17 +31,17 @@
             </div>
         </div>
         <p class="fs-2 fw-b text-form">
-            {{ $sale->type_sale === 'vehicular' ? 'Venta Vehicular' : 'Venta Vehicular' }}</p>
+            {{ $sale->type_sale === 'vehicular' ? 'Venta Vehicular' : 'Venta Comercial' }}</p>
 
         <p class="fs-3 fw-sb">Detalle de la venta</p>
         <table class="table">
             <tbody>
                 <tr>
-                    <td class="border-td border-th fw-sb">Fecha/Hora de llegada</td>
+                    <td class="border-td border-th fw-sb">Fecha y Hora</td>
                     <td class="border-td fw-sb" style="width: 26%;">
                         {{ \Carbon\Carbon::parse($sale->date_sale)->format('d-m-Y') .
-                            ' | ' .
-                            \Carbon\Carbon::parse($sale->created_at)->format('H:i') }}
+                            ' , ' .
+                            \Carbon\Carbon::parse($sale->created_at)->format('g:i a') }}
                     </td>
                     <td class="border-td border-th fw-sb">Estado</td>
                     <td class="border-td fw-sb">{{ $sale->status }}</td>
@@ -54,14 +54,6 @@
                     </td>
                     <td class="border-td border-th ps-2 fw-sb">Metodo de pago</td>
                     <td class="border-td fw-sb">{{ $sale->method_payment }}</td>
-                </tr>
-                <tr>
-                    <td class="border-td border-th ps-2 fw-sb">Tipo de venta</td>
-                    <td class="border-td fw-sb">
-                        {{ $sale->type_sale }}
-                    </td>
-                    <td class="border-td border-th ps-2 fw-sb">Código</td>
-                    <td class="border-td fw-sb">{{ $sale->code_sale }}</td>
                 </tr>
                 <tr>
                     <td class="border-td border-th ps-2 fw-sb">Observaciones</td>
@@ -78,22 +70,19 @@
                     <td class="border-td border-th fw-sb">Señor(a)</td>
                     <td class="border-td fw-sb" style="width: 50%;">{{ $sale->customer->name }}</td>
 
-                    <td class="border-td border-th ps-2 fw-sb">Dni</td>
-                    <td class="border-td fw-sb">{{ $sale->customer->dni }}</td>
+                    <td class="border-td border-th ps-2 fw-sb">Telófono</td>
+                    <td class="border-td fw-sb">{{ $sale->customer->phone }}</td>
                 </tr>
                 <tr>
-                    <td class="border-td border-th fw-sb">Estado</td>
-                    <td class="border-td fw-sb">{{ $sale->customer->status }}</td>
+                    <td class="border-td border-th ps-2 fw-sb">Dni</td>
+                    <td class="border-td fw-sb">{{ $sale->customer->dni }}</td>
 
                     <td class="border-td border-th ps-2 fw-sb">Ruc</td>
                     <td class="border-td fw-sb">{{ $sale->customer->ruc }}</td>
                 </tr>
                 <tr>
                     <td class="border-td border-th fw-sb">Dirección</td>
-                    <td class="border-td fw-sb">{{ $sale->customer->address }}</td>
-
-                    <td class="border-td border-th ps-2 fw-sb">Telófono</td>
-                    <td class="border-td fw-sb">{{ $sale->customer->phone }}</td>
+                    <td colspan="3" class="border-td fw-sb">{{ $sale->customer->address }}</td>
                 </tr>
             </tbody>
         </table>
@@ -145,27 +134,58 @@
                     <td class="fw-sb" colspan="3">Subtotal</td>
                     <td class="fw-sb">S/ {{ number_format($totalNoDiscount, 2) }}</td>
                 </tr>
-                <tr>
+                {{-- <tr>
                     <td colspan="2"></td>
                     <td class="fw-sb" colspan="3">Total Ope. Gravadas</td>
                     <td class="fw-sb">S/ {{ number_format($totalOG, 2) }}</td>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td colspan="2"></td>
                     <td class="fw-sb" colspan="3">Total Descuentos</td>
                     <td class="fw-sb">S/ {{ number_format($totalNoDiscount - $sale->total, 2) }}</td>
                 </tr>
-                <tr>
+                {{-- <tr>
                     <td colspan="2"></td>
                     <td class="fw-sb" colspan="3">Total IGV 18%</td>
                     <td class="fw-sb">S/ {{ number_format($sale->total - $totalOG, 2) }}</td>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td colspan="2"></td>
                     <td class="text-black fw-sb"colspan="3">TOTAL</td>
                     <td class="fw-sb">S/ {{ number_format($sale->total, 2) }}</td>
                 </tr>
             </tfoot>
+        </table>
+    </div>
+    <div id="footer">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td class="border-td border-th fw-sb text-center">ENTIDAD FINANCIERA </td>
+                    <td class="border-td border-th fw-sb text-center">CUENTA BANCARIA </td>
+                    <td class="border-td border-th fw-sb text-center">CUENTA INTERBANCARIA </td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th fw-sb text-center">BCP </td>
+                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
+                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th fw-sb text-center">BBVA </td>
+                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
+                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th fw-sb text-center">Interbank </td>
+                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
+                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
+                </tr>
+                <tr>
+                    <td class="border-td border-th fw-sb text-center">La Nacion </td>
+                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
+                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </body>

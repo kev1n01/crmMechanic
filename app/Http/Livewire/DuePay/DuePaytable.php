@@ -16,10 +16,10 @@ class DuePaytable extends Component
     public $showFilters = false;
     public $selected = [];
     public $selectedPage = false;
-    
+
     public $reasons = [];
 
-    protected $listeners = ['delete', 'refreshList' => '$refresh', 'deleteSelected','exportSelected'];
+    protected $listeners = ['delete', 'refreshList' => '$refresh', 'deleteSelected', 'exportSelected'];
 
     protected $queryString = ['search' => ['except' => '']];
 
@@ -115,13 +115,13 @@ class DuePaytable extends Component
     public function save()
     {
         $this->validate();
-        if($this->editing->amount_paid >= $this->editing->amount_owed){
+        if ($this->editing->amount_paid >= $this->editing->amount_owed) {
             $sale = Sale::where('code_sale', $this->editing->description)->first();
             $sale->status = 'pagado';
-            $sale->cash = $this->editing->amount_paid;
+            $sale->cash = $sale->total;
             $sale->save();
             $this->editing->delete();
-        }else{
+        } else {
             $this->editing->save();
         }
         $this->nameModal === 'Crear deuda por cobrar' ? $this->emit('success_alert', 'Deuda por cobrar creada') : $this->emit('success_alert', 'Deuda por cobrar actualizada');
@@ -136,7 +136,7 @@ class DuePaytable extends Component
 
     public function makeBlankFields()
     {
-        return DuePay::make(['amount_owed' => 0, 'amount_paid' => 0]); /*para dejar vacios los inpust*/
+        return DuePay::make(['amount_owed' => 0, 'amount_paid' => 0, 'reason' => 'otro']); /*para dejar vacios los inpust*/
     }
 
     public function create()
@@ -150,7 +150,7 @@ class DuePaytable extends Component
 
     public function edit(DuePay $due)
     {
-        $this->nameModal = 'Editar deuda por cobrar';
+        $this->nameModal = 'Editar o pagar deuda por cobrar';
         $this->resetErrorBag();
         $this->resetValidation();
         $this->dispatchBrowserEvent('open-modal');

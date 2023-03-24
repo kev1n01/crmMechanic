@@ -1,3 +1,4 @@
+@section('title', 'Mis gastos')
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -106,9 +107,6 @@
                                 <x-table.heading sortable wire:click="sortBy('date')" :direction="$sortField == 'date' ? $sortDirection : null">Fecha
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('time')" :direction="$sortField == 'time' ? $sortDirection : null">Hora
-                                </x-table.heading>
-
                                 <x-table.heading sortable wire:click="sortBy('total')" :direction="$sortField == 'total' ? $sortDirection : null">Total
                                 </x-table.heading>
 
@@ -132,8 +130,6 @@
                                         <x-table.cell>{{ $cost->description }}</x-table.cell>
 
                                         <x-table.cell>{{ $cost->date }}</x-table.cell>
-
-                                        <x-table.cell>{{ $cost->time }}</x-table.cell>
 
                                         <x-table.cell>{{ $cost->total }}</x-table.cell>
 
@@ -181,9 +177,6 @@
 
                     <x-input.datepicker class="col-xl-6" name="editing.date" label="Fecha" id="dp3"
                         :error="$errors->first('editing.date')" :required=true />
-
-                    <x-input.input-tooltip-error class="col-xl-6" name="editing.time" label="Hora" type="time"
-                        :error="$errors->first('editing.time')" :required=true />
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.total" label="Monto" type="text"
                         :error="$errors->first('editing.total')" :required=true />

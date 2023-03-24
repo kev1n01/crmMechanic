@@ -48,7 +48,6 @@ class IFTable extends Component
         $this->confirmations = WorkOrder::IS_CONFIRMED;
         $this->customers = Customer::pluck('name', 'id');
         $this->vehicles = Vehicle::pluck('license_plate', 'id');
-
     }
 
     public function updatedFilters()
@@ -83,8 +82,9 @@ class IFTable extends Component
                     ->withWhereHas('customerUser', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%'))
                     ->withWhereHas('vehiclePlate', fn ($q2) => $q2->where('license_plate', 'like', '%' . $search . '%'))
             )
-            ->when($this->filters['confirmation'], fn ($q, $status) => $q->where('is_confirmed', $status))
+            ->when($this->filters['confirmation'], fn ($q, $confirmation) => $q->where('is_confirmed', $confirmation))
             ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer', $customer))
+            ->when($this->filters['vehicle'], fn ($q, $vehicle) => $q->where('vehicle', $vehicle))
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
     }
@@ -101,7 +101,7 @@ class IFTable extends Component
     {
         $wo->workOrderDetail()->delete();
         $wo->delete();
-        
+
         $this->emit('success_alert', 'La proforma fue eliminado');
     }
 

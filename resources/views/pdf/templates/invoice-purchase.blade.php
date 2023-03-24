@@ -23,7 +23,7 @@
             <div style="float: left; width: 30%; height: 10%;">
                 <div style="border: 2px solid rgb(39, 39, 39); border-radius: 4px; width: 90%;">
                     <div class="text-center" style="padding: 1%">
-                        <p style="margin-bottom: 0%;">RUC N 2023242423</p>
+                        <p style="margin-bottom: 0%;">R.U.C. N° 2023242423</p>
                         <p style="margin-bottom: 0%;">{{ strtoupper($purchase->type_cpe) }} ELECTRONICA</p>
                         <p>{{ $purchase->nro_cpe }}</p>
                     </div>
@@ -37,32 +37,21 @@
         <table class="table">
             <tbody>
                 <tr>
-                    <td class="border-td border-th fw-sb">Fecha/Hora</td>
+                    <td class="border-td border-th fw-sb">Fecha y Hora</td>
                     <td class="border-td fw-sb" style="width: 26%;">
                         {{ \Carbon\Carbon::parse($purchase->date_purchase)->format('d-m-Y') .
-                            ' | ' .
-                            \Carbon\Carbon::parse($purchase->created_at)->format('H:i') }}
+                            ' , ' .
+                            \Carbon\Carbon::parse($purchase->created_at)->format('g:i a') }}
                     </td>
                     <td class="border-td border-th ps-2 fw-sb">Estado</td>
                     <td class="border-td fw-sb">{{ $purchase->status }}</td>
-                </tr>
-                <tr>
-                    <td class="border-td border-th ps-2 fw-sb">Tipo de pago</td>
-                    <td class="border-td fw-sb">
-                        {{ $purchase->type_cpe }}
-                    </td>
-                    <td class="border-td border-th ps-2 fw-sb">Nro de CPE</td>
-                    <td class="border-td fw-sb">{{ $purchase->nro_cpe }}</td>
-                </tr>
-                <tr>
-                    <td class="border-td border-th ps-2 fw-sb">Metodo de pago</td>
+
+                    <td class="border-td border-th ps-2 fw-sb">Pago</td>
                     <td class="border-td fw-sb">{{ $purchase->method_payment }}</td>
-                    <td class="border-td border-th ps-2 fw-sb">Código</td>
-                    <td class="border-td fw-sb">{{ $purchase->code_purchase }}</td>
                 </tr>
                 <tr>
                     <td class="border-td border-th ps-2 fw-sb">Observaciones</td>
-                    <td class="border-td fw-sb" colspan="3">{{ $purchase->observation ?? 'Ninguno' }}</td>
+                    <td class="border-td fw-sb" colspan="5">{{ $purchase->observation ?? 'Ninguno' }}</td>
                 </tr>
 
             </tbody>

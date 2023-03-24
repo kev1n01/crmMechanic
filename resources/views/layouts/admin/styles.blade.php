@@ -3,7 +3,6 @@
 <link href="{{ asset('assets/css/app-dark.min.css') }}" rel="stylesheet" type="text/css" id="dark-style">
 
 <style>
-
 #scroll-products{
   height: 300px;
   width: 88% !important;

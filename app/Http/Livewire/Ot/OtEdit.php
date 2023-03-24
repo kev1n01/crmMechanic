@@ -4,7 +4,10 @@ namespace App\Http\Livewire\Ot;
 
 use App\Models\Concept;
 use App\Models\Customer;
+use App\Models\DuePay;
 use App\Models\Product;
+use App\Models\Sale;
+use App\Models\SaleDetail;
 use App\Models\Vehicle;
 use App\Models\WorkOrder;
 use App\Models\workOrderDetail;
@@ -28,6 +31,8 @@ class OtEdit extends Component
     public $cf = [];
     public $cart = [];
     public $dtw = [];
+
+    public $productNotUpdateStockInEdit = [];
 
     public $totalCart = 0;
     public $totalOG = 0;
@@ -74,6 +79,13 @@ class OtEdit extends Component
         $this->vf = Vehicle::find($this->editing->vehicle);
     }
 
+    public function code_random($lenght)
+    {
+        $countSale = Sale::count();
+        $code = str_pad($countSale + 1, $lenght, "0", STR_PAD_LEFT);
+        return 'V' . $code;
+    }
+
     public function render()
     {
         if ($this->searchProductService) {
@@ -82,22 +94,24 @@ class OtEdit extends Component
                 fn ($q, $searchProductService) =>
                 $q->where('name', 'like', '%' . $searchProductService . '%')
             )->get();
-            $this->products = Product::query()->when(
-                $this->searchProductService,
-                fn ($q, $searchProductService) =>
-                $q->where('name', 'like', '%' . $searchProductService . '%')
-                    ->orwhere('code', 'like', '%' . $searchProductService . '%')
-            )->get();
+            $this->products = Product::query()
+                ->where('stock', '>', 0)
+                ->when(
+                    $this->searchProductService,
+                    fn ($q, $searchProductService) =>
+                    $q->where('name', 'like', '%' . $searchProductService . '%')
+                        ->orwhere('code', 'like', '%' . $searchProductService . '%')
+                )->get();
         } else {
             $this->concepts = [];
             $this->products = [];
         }
 
-        $this->cart = Cart::session($this->editing->code)->getContent()->sortBy('name');
+        $this->cart = Cart::session($this->editing->code)->getContent()->sortBy('id');
         if (count($this->cart) == 0) {
             $this->cart = [];
         }
-        $wod = workOrderDetail::where('work_order_id', $this->editing->id)->select('id', 'item', 'price', 'discount', 'quantity')->get();
+        $wod = workOrderDetail::where('work_order_id', $this->editing->id)->select('id', 'item', 'price', 'discount', 'quantity')->get()->sortBy('item');
         // dd($wod->toArray());
         if (count($wod) == 0) {
             $this->dtw = [];
@@ -142,7 +156,8 @@ class OtEdit extends Component
     public function refreshListModals()
     {
         $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
-        $this->products = Product::query()->get();
+        $this->products = Product::query()
+            ->where('stock', '>', 0)->get();
         $this->concepts = Concept::query()->get();
         if ($this->editing->customer) {
             $this->vehicles = Vehicle::where('customer_id', $this->editing->customer)
@@ -184,6 +199,13 @@ class OtEdit extends Component
 
     public function updateQuantityCart($code_id, $cant, $discount = 0)
     {
+        if (strlen($code_id) > 4) {
+            $product = Product::where('code', $code_id)->first();
+            if ($cant > $product->stock) {
+                $this->emit('error_alert', 'No hay suficiente stock para este producto');
+                return;
+            }
+        }
         $code = intval($code_id);
         $item = Cart::session($this->editing->code)->get($code);
         if ($cant > 0) {
@@ -197,6 +219,17 @@ class OtEdit extends Component
 
     public function updateQuantityDot(workOrderDetail $dot, $cant = 0, $discount = 0)
     {
+        if (strlen($dot->item) > 4) {
+            $product = Product::where('code', $dot->item)->first();
+            //new_stock_cant = (20+3)-23= 0
+            $cant_pass = array($dot->quantity);//3
+            $new_stock_cant = ($product->stock + $dot->quantity) - $cant;
+            if ($new_stock_cant < 0) {
+                $this->emit('error_alert', 'No hay suficiente stock para este producto');
+                return;
+            }
+
+        }
         if ($cant > 0) {
             $dot->update(['quantity' => $cant, 'discount' => $discount, 'price' => $dot->price]);
         } else {
@@ -246,8 +279,9 @@ class OtEdit extends Component
         $this->updateCartOptions();
     }
 
-    public function removeItemDot(workOrderDetail $dot)
+    public function removeItemDot($id)
     {
+        $dot = workOrderDetail::find($id);
         $dot->delete();
     }
 
@@ -310,7 +344,7 @@ class OtEdit extends Component
             $this->total_service += ($dtw->price * $dtw->quantity) - (($dtw->quantity * $dtw->price) * ($dtw->discount / 100));
         }
 
-        // Sumar el total de los items que son servicios
+        // Sumar el total de los items que son repuestos
         foreach ($cart_replacement as $cr) {
             $this->total_replacement += ($cr->price * $cr->quantity) - (($cr->quantity * $cr->price) * ($cr->attributes['discount'] / 100));
         }
@@ -353,10 +387,14 @@ class OtEdit extends Component
     {
         $this->validate();
         $this->calculeTotal();
+        // update odo of vehicle to work order registeres
+        $vehicle = Vehicle::find($this->editing->vehicle);
+        $vehicle->odo = $this->editing->odo;
+        $vehicle->save();
         $this->editing->total = $this->totalDiscount;
-        $this->editing->is_confirmed = 0;
         $this->editing->save();
 
+        //added items into work order detail
         foreach ($this->cart as $item) {
             workOrderDetail::create([
                 'price' => $item->price,
@@ -366,14 +404,59 @@ class OtEdit extends Component
                 'work_order_id' => $this->editing->id,
             ]);
         }
+        if ($this->editing->is_confirmed == 1) {
+            //Updating a Sale and DuePay
+            $saleOt = Sale::where('code_sale', 'like', '%' . $this->editing->code . '%')->get();
+            if (count($saleOt->toArray()) > 0) {
+                //update sale
+                $saleOt->first()->update([
+                    'total' => $this->total_replacement,
+                    'customer_id' => $this->editing->customer,
+                ]);
 
-        // update odo of vehicle to work order registeres
-        $vehicle = Vehicle::find($this->editing->vehicle);
-        $vehicle->odo = $this->editing->odo;
-        $vehicle->save();
+                $saleOt->first()->saleDetail()->get()->each(function ($item, $key) {
+                    //update stock of product saled
+                    $product = Product::find($item->product_id);
+                    $product->stock += $item->quantity;
+                    $product->save();
+                });
+
+                $saleOt->first()->saleDetail()->delete();
+
+                // add new items to saleDetail - products
+                $wod = workOrderDetail::where('work_order_id', $this->editing->id)->select('id', 'item', 'price', 'discount', 'quantity')->get();
+                $dtw_replacement = $wod->filter(function ($i) {
+                    return strlen($i->item) > 4;
+                });
+
+                foreach ($dtw_replacement as $cr) {
+                    $productCodes = Product::where('code', $cr->item)->get();
+                    foreach ($productCodes as $productCode) {
+                        $product_id = $productCode->id;
+                    }
+                    SaleDetail::create([
+                        'price' => $cr->price,
+                        'quantity' => $cr->quantity,
+                        'discount' => $cr->discount,
+                        'product_id' => $product_id,
+                        'sale_id' => $saleOt->first()->id,
+                    ]);
+                    //update stock of product saled
+                    $product = Product::find($product_id);
+                    $product->stock -= $cr->quantity;
+                    $product->save();
+                }
+
+                // update amount_own duepay of ot
+                DuePay::where('description', $saleOt->first()->code_sale)->update([
+                    'amount_owed' => $this->totalDiscount,
+                    'person_owed' => $this->editing->customer,
+                ]);
+            }
+        }
 
         Cart::session($this->editing->code)->clear();
         $this->updateCartOptions();
-        $this->emit('success_alert', 'Proforma registrado');
+        $this->emit('success_alert', 'Proforma actualizado');
     }
 }

@@ -119,6 +119,9 @@ class Modal extends Component
                 if ($this->editing->address != '' && substr($this->editing->ruc, 0, 2) == '20')
                     $this->editing->dni = '';
             } else {
+                if (substr($this->editing->ruc, 0, 2) == '10'){
+                    $this->editing->ruc = '';
+                }
                 $this->emit('error_alert', 'El RUC es invalido');
             }
         }

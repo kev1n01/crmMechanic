@@ -23,7 +23,7 @@
             <div style="float: left; width: 30%; height: 10%;">
                 <div style="border: 2px solid rgb(39, 39, 39); border-radius: 4px; width: 90%;">
                     <div class="text-center" style="padding: 1%">
-                        <p style="margin-bottom: 0%;">RUC N 20232424231</p>
+                        <p style="margin-bottom: 0%;">R.U.C. N° 20232424231</p>
                         <p style="margin-bottom: 0%;"> {{ $wo->is_confirmed === 0 ? 'PROFORMA' : 'ORDEN TRABAJO' }}</p>
                         <p >{{ $wo->code }}</p>
                     </div>
@@ -105,22 +105,21 @@
                     <td class="border-td border-th fw-sb">Señor(a)</td>
                     <td class="border-td fw-sb" style="width: 50%;">{{ $wo->customerUser->name }}</td>
 
-                    <td class="border-td border-th ps-2 fw-sb">Dni</td>
-                    <td class="border-td fw-sb">{{ $wo->customerUser->dni }}</td>
+                    <td class="border-td border-th ps-2 fw-sb">Telófono</td>
+                    <td class="border-td fw-sb">{{ $wo->customerUser->phone }}</td>
                 </tr>
                 <tr>
-                    <td class="border-td border-th fw-sb">Estado</td>
-                    <td class="border-td fw-sb">{{ $wo->customerUser->status }}</td>
+
+                    <td class="border-td border-th ps-2 fw-sb">Dni</td>
+                    <td class="border-td fw-sb">{{ $wo->customerUser->dni }}</td>
 
                     <td class="border-td border-th ps-2 fw-sb">Ruc</td>
                     <td class="border-td fw-sb">{{ $wo->customerUser->ruc }}</td>
                 </tr>
                 <tr>
                     <td class="border-td border-th fw-sb">Dirección</td>
-                    <td class="border-td fw-sb">{{ $wo->customerUser->address }}</td>
-
-                    <td class="border-td border-th ps-2 fw-sb">Telófono</td>
-                    <td class="border-td fw-sb">{{ $wo->customerUser->phone }}</td>
+                    <td colspan="3" class="border-td fw-sb">{{ $wo->customerUser->address }}</td>
+                
                 </tr>
             </tbody>
         </table>
@@ -200,21 +199,21 @@
                     <td class="fw-sb" colspan="3">Subtotal</td>
                     <td class="fw-sb">S/ {{ number_format($totalNoDiscount, 2) }}</td>
                 </tr>
-                <tr>
+                {{-- <tr>
                     <td colspan="2"></td>
                     <td class="fw-sb" colspan="3">Total Ope. Gravadas</td>
                     <td class="fw-sb">S/ {{ number_format($totalOG, 2) }}</td>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td colspan="2"></td>
                     <td class="fw-sb" colspan="3">Total Descuentos</td>
                     <td class="fw-sb">S/ {{ number_format($totalNoDiscount - $wo->total, 2) }}</td>
                 </tr>
-                <tr>
+                {{-- <tr>
                     <td colspan="2"></td>
                     <td class="fw-sb" colspan="3">Total IGV 18%</td>
                     <td class="fw-sb">S/ {{ number_format($wo->total - $totalOG, 2) }}</td>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td colspan="2"></td>
                     <td class="text-black fw-sb"colspan="3">TOTAL</td>

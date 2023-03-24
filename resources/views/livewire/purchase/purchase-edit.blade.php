@@ -1,3 +1,4 @@
+@section('title', 'Editar compra '.$editing->code_purchase )
 <div>
     <div class="row mt-3">
         <div class="col-12">

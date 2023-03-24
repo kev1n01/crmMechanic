@@ -41,7 +41,7 @@ class OtCreate extends Component
     {
         return [
             'editing.code' => ['required', 'min:6', 'max:6', Rule::unique('work_orders', 'code')->ignore($this->editing)],
-            'editing.odo' => 'required',
+            'editing.odo' => 'nullable',
             'editing.customer' => 'required',
             'editing.vehicle' => 'required',
             'editing.type_atention' => 'required',
@@ -54,7 +54,6 @@ class OtCreate extends Component
         'editing.code.max' => 'El código no debe tener más de 6 caracteres',
         'editing.code.required' => 'El código es obligatorio',
         'editing.code.unique' => 'Ya existe un proforma con este código',
-        'editing.odo.required' => 'El kilometraje es obligatorio',
         'editing.customer.required' => 'El cliente es obligatorio',
         'editing.type_atention.required' => 'El tipo de atención es obligatorio',
         'editing.vehicle.required' => 'El vehiculo es obligatorio',
@@ -72,7 +71,6 @@ class OtCreate extends Component
         $this->editing = $this->makeBlankFields();
         if ($this->editing->getKey()) $this->editing = $this->makeBlankFields(); // para preservar cambios en los inputs for create
         $this->editing->code = $this->code_random(5, 'P');
-        $this->editing->odo = '0';
         $this->statuses = WorkOrder::STATUSES;
         $this->types  = WorkOrder::TYPES;
         $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
@@ -86,7 +84,7 @@ class OtCreate extends Component
                 fn ($q, $searchProductService) =>
                 $q->where('name', 'like', '%' . $searchProductService . '%')
             )->get();
-            $this->products = Product::query()->when(
+            $this->products = Product::query()->where('stock', '>', 0)->when(
                 $this->searchProductService,
                 fn ($q, $searchProductService) =>
                 $q->where('name', 'like', '%' . $searchProductService . '%')
@@ -117,7 +115,6 @@ class OtCreate extends Component
 
     public function updatedEditingCustomer($value)
     {
-        $this->editing->odo = '0';
         $this->editing->vehicle = '';
         $this->cf = Customer::find($value);
     }
@@ -125,7 +122,6 @@ class OtCreate extends Component
     public function updatedEditingVehicle($value)
     {
         $this->vf = Vehicle::find($value);
-        $this->editing->odo = $this->vf ? $this->vf->odo : 0;
     }
 
     public function updateCartOptions()
@@ -137,7 +133,7 @@ class OtCreate extends Component
     public function refreshListModals()
     {
         $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
-        $this->products = Product::query()->get();
+        $this->products = Product::query()->where('stock', '>', 0)->get();
         $this->concepts = Concept::query()->get();
         if ($this->editing->customer) {
             $this->vehicles = Vehicle::where('customer_id', $this->editing->customer)
@@ -179,6 +175,13 @@ class OtCreate extends Component
 
     public function updateQuantityCart($id, $cant, $discount = 0)
     {
+        if (strlen($id) > 4) {
+            $product = Product::where('code', $id)->first();
+            if ($cant > $product->stock) {
+                $this->emit('error_alert', 'No hay suficiente stock para este producto');
+                return;
+            }
+        }
         $code = intval($id);
         $item = Cart::session($this->editing->vehicle)->get($code);
         if ($cant > 0) {
@@ -293,6 +296,8 @@ class OtCreate extends Component
         $this->validate();
         $this->calculeTotal();
         $this->editing->total = $this->totalDiscount;
+        $vehicle = Vehicle::find($this->editing->vehicle);
+        $this->editing->odo = $vehicle->odo;
         $this->editing->is_confirmed = 0;
         $this->editing->save();
 

@@ -73,6 +73,7 @@ class OtTable extends Component
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
             ->when($this->filters['type'], fn ($q, $status) => $q->where('type_atention', $status))
             ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer', $customer))
+            ->when($this->filters['vehicle'], fn ($q, $vehicle) => $q->where('vehicle', $vehicle))
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
     }

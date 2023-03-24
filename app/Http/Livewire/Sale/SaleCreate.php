@@ -287,7 +287,7 @@ class SaleCreate extends Component
                     'person_owed' => $this->editing->customer->name,
                     'amount_owed' => $this->totalDiscount,
                     'amount_paid' => $this->editing->cash,
-                    'reason' => 'venta comercial',
+                    'reason' => 'venta',
                 ]);
             }
 

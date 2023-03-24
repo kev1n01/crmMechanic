@@ -95,7 +95,7 @@ class SaleEdit extends Component
             $this->cart = [];
         }
 
-        $this->dts = SaleDetail::where('sale_id', $this->editing->id)->get()->sortBy('name');
+        $this->dts = SaleDetail::where('sale_id', $this->editing->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get()->sortBy('name');
         if (count($this->dts) == 0) {
             $this->dts = [];
         }
@@ -150,6 +150,7 @@ class SaleEdit extends Component
     public function updatePriceDs(SaleDetail $ds, $price)
     {
         $ds->update(['price' => $price]);
+        $this->updateCartOptions();
     }
 
     public function updateQuantityCart(Product $product, $cant, $discount = 0)
@@ -159,8 +160,9 @@ class SaleEdit extends Component
             return;
         }
         if ($cant > 0) {
+            $price_cart_exist = Cart::session($this->editing->code_sale)->get($product->id)->price;
             $this->removeItem($product->id);
-            Cart::session($this->editing->code_sale)->add($product->id, $product->name, $product->sale_price, $cant, array('discount' => $discount));
+            Cart::session($this->editing->code_sale)->add($product->id, $product->name, $price_cart_exist, $cant, array('discount' => $discount));
         } else {
             $this->removeItem($product->id);
         }
@@ -316,35 +318,13 @@ class SaleEdit extends Component
                 $product->save();
             }
 
-            if ($this->editing->type_payment == 'credito') {
-                $this->editing->cash = 0;
-                $duepay = DuePay::where('description', $this->editing->code_sale)->first();
-                if (count($duepay) == 0) {
-                    DuePay::create([
-                        'description' => $this->editing->code_sale,
-                        'person_owed' => $this->editing->customer->name,
-                        'amount_owed' => $this->totalDiscount,
-                        'amount_paid' => 0,
-                        'reason' => 'venta comercial'
-                    ]);
-                }else{
-                    $duepay->update([
-                        'amount_owed' => $this->totalDiscount,
-                    ]);
-                }
-            }
-
-            if ($this->editing->type_payment == 'contado') {
-                $duepay = DuePay::where('description', $this->editing->code_sale)->first();
-                $duepay->delete();
-            }
+            $duepay = DuePay::where('description', $this->editing->code_sale)->first();
+            $duepay->amount_owed = $this->totalDiscount;
+            $duepay->save();
 
             Cart::session($this->editing->code_sale)->clear();
             $this->updateCartOptions();
-            $this->editing->cash < $this->totalDiscount ?
-                $this->emit('success_alert', 'Venta actualizada con deuda')
-                :
-                $this->emit('success_alert', 'Venta actualizada y pagada');
+            $this->emit('success_alert', 'Venta actualizada');
         }
     }
 }

@@ -1,3 +1,4 @@
+@section('title', 'Listado de ventas')
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -43,10 +44,10 @@
                                     <button class="dropdown-item action-icon"
                                         @if ($selected != []) onclick="window.livewire.emit('exportSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
                                             class="mdi mdi-download"></i> Exportar</button>
-                                    <button class="dropdown-item action-icon"
+                                    {{-- <button class="dropdown-item action-icon"
                                         @if ($selected != []) onclick="Confirm(null,'deleteSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
                                             class="mdi mdi-delete"></i>
-                                        Eliminar</button>
+                                        Eliminar</button> --}}
                                 </div>
                             </div>
                         </div>
@@ -171,12 +172,15 @@
                                                     <a href="javascript:void(0);" class="dropdown-item">Action</a>
                                                 </div>
                                             </div> --}}
-                                            <a class="action-icon cursor"
-                                                href="{{ route('ventas.editar', $sale->code_sale) }}">
-                                                <i class="mdi mdi-square-edit-outline"></i> </a>
-                                            <a class="action-icon cursor"
+                                            @if ($sale->type_sale == 'comercial')
+                                                <a class="action-icon cursor"
+                                                    href="{{ route('ventas.editar', $sale->code_sale) }}">
+                                                    <i class="mdi mdi-square-edit-outline"></i> </a>
+                                            @endif
+
+                                            {{-- <a class="action-icon cursor"
                                                 onclick="Confirm({{ $sale->id }}, 'delete')"><i
-                                                    class="mdi mdi-delete"></i></a>
+                                                    class="mdi mdi-delete"></i></a> --}}
                                             <a class="action-icon cursor"
                                                 href="{{ route('venta.pdf.view', $sale->id) }}">
                                                 <i class="mdi mdi-file-eye-outline"></i></a>

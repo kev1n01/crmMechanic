@@ -18,7 +18,7 @@ class VehicleFactory extends Factory
     {
         return [
             'license_plate' => strtoupper(fake()->bothify('?#?-##?')),
-            'customer_id' => rand(1, 50),
+            'customer_id' => rand(1, 30),
             'type_vehicle' => rand(1, 3),
             'brand_vehicle' => rand(1, 1),
             'model_vehicle' => rand(1, 13),

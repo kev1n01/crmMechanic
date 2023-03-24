@@ -106,7 +106,6 @@ class OT extends Component
 
     public function viewDetails($id)
     {
-        $this->emit('refresh');
         $this->nameModal = "Detalle de orden de trabajo";
         $this->id_ot = $id;
         // dd($this->id_ot);

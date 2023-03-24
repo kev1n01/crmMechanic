@@ -17,7 +17,6 @@ class Cost extends Model
     protected $fillable = [
         'description',
         'date',
-        'time',
         'total',
         'type_voucher',
     ];

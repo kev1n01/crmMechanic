@@ -1,3 +1,4 @@
+@section('title', 'Ordenes de trabajo' )
 <div>
     <div class="row mt-3">
         <div class="col-12">

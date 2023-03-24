@@ -31,14 +31,14 @@ class ProductTable extends Component
         'brand' => ''
     ];
 
-    protected $listeners = ['delete', 'deleteSelected','exportSelected', 'refreshList' => '$refresh'];
+    protected $listeners = ['delete', 'deleteSelected', 'exportSelected', 'refreshList' => '$refresh'];
 
     protected $queryString = ['search' => ['except' => '']];
 
     public function mount()
     {
         $this->search = '';
-        $this->sortField = 'name';
+        $this->sortField = 'stock';
         $this->statuses = Product::STATUSES;
         $this->brands = BrandProduct::pluck('name', 'id');
         $this->categories = CategoryProduct::pluck('name', 'id');
@@ -97,6 +97,7 @@ class ProductTable extends Component
         return response()->streamDownload(function () {
             echo Product::whereKey($this->selected)->toCsv();
         }, 'productos.csv');
+        $this->selectedPage = [];
         $this->selected = [];
         $this->emit('success_alert', 'Se exportaron los registros seleccionados');
     }
@@ -109,6 +110,7 @@ class ProductTable extends Component
             $this->removeImage($pf['image']);
         }
         $product->delete();
+        $this->selectedPage = [];
         $this->selected = [];
         $this->emit('success_alert', count($this->selected) . ' registros eliminados');
     }
@@ -119,7 +121,7 @@ class ProductTable extends Component
         $product->save();
         $this->emit('success_alert', 'Estado actualizado');
     }
-    
+
 
     public function removeImage($image)
     {

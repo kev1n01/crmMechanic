@@ -62,7 +62,7 @@ class CostTable extends Component
     {
         return Cost::query()
             ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
-                $q->whereBetween('created_at', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
+            $q->whereBetween('date', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
             ->when($this->search, fn ($q, $search) => $q->where('description', 'like', '%' . $search . '%'))
             ->when($this->filters['voucher'], fn ($q, $voucher) => $q->where('type_voucher', $voucher))
             ->orderBy($this->sortField, $this->sortDirection)
@@ -103,7 +103,6 @@ class CostTable extends Component
         return [
             'editing.description' => ['required', 'min:5', 'max:40'],
             'editing.date' => ['required'],
-            'editing.time' => ['required'],
             'editing.total' => ['required'],
             'editing.type_voucher' => 'required|in:' . collect(Cost::VOUCHERS)->keys()->implode(','),
         ];
@@ -113,13 +112,8 @@ class CostTable extends Component
         'editing.description.required' => 'La descripción es obligatorio',
         'editing.description.min' => 'La descripción  debe tener al menos 5 caracteres',
         'editing.description.max' => 'La descripción no debe tener más de 40 caracteres',
-
         'editing.date.required' => 'La fecha es obligatorio',
-
-        'editing.time.required' => 'La hora es obligatorio',
-
         'editing.total.required' => 'El costo es obligatorio',
-
         'editing.type_voucher.required' => 'El tipo de comprobante es obligatorio',
         'editing.type_voucher.in' => 'El tipo de comprobante es inválido',
     ];
@@ -138,10 +132,10 @@ class CostTable extends Component
     {
         $this->validateOnly($label, $this->rules(), $this->messages);
     }
-    
+
     public function makeBlankFields()
     {
-        return Cost::make(['type_voucher' => '1']); /*para dejar vacios los inpust*/
+        return Cost::make(['type_voucher' => 'factura electronica', 'date' => Carbon::now()->format('d-m-Y')]); /*para dejar vacios los inpust*/
     }
 
     public function create()

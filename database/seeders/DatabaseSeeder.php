@@ -19,10 +19,10 @@ class DatabaseSeeder extends Seeder
         $this->call(BrandVehicleSeeder::class);
         $this->call(ModelVehicleSeeder::class);
         $this->call(ColorVehicleSeeder::class);
-        \App\Models\Customer::factory(50)->create();
+        \App\Models\Customer::factory(30)->create();
         \App\Models\Provider::factory(10)->create();
-        \App\Models\Product::factory(40)->create();
-        \App\Models\Vehicle::factory(40)->create();
+        // \App\Models\Product::factory(5)->create();
+        \App\Models\Vehicle::factory(30)->create();
         $this->call(ConceptSeeder::class);
     }
 }

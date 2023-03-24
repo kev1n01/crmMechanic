@@ -6,14 +6,14 @@
                     <x-input.input-tooltip-error class="col-xl-5 pe-0" name="editing.dni" label="DNI" type="text"
                         :error="$errors->first('editing.dni')" max="8" />
                     <div class="col-xl-1 ps-0">
-                        <button type="button" wire:click.prevent="searchDni" class="btn btn-primary rounded btn-sm"
+                        <button type="button" wire:click.prefetch="searchDni" class="btn btn-primary rounded btn-sm"
                             style="margin-top:30px;"><i class="uil-search"></i></button>
                     </div>
 
                     <x-input.input-tooltip-error class="col-xl-5 pe-0" name="editing.ruc" label="RUC" type="text"
                         :error="$errors->first('editing.ruc')" max="11" />
                     <div class="col-xl-1 ps-0">
-                        <button type="button" wire:click.prevent="searchRuc" class="btn btn-primary rounded btn-sm"
+                        <button type="button" wire:click.prefetch="searchRuc" class="btn btn-primary rounded btn-sm"
                             style="margin-top:30px;"><i class="uil-search"></i></button>
                     </div>
                     @if (strlen($editing->dni) == 8)

@@ -1,3 +1,5 @@
+@section('title', 'Listado de clientes')
+
 <div>
     <div class="row mt-3">
         <div class="col-12">

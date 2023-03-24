@@ -12,10 +12,13 @@
     @include('layouts.admin.styles')
     @stack('styles')
     @livewireStyles
+    @php
+        $cookie = \Illuminate\Support\Facades\Cookie::get('theme');
+    @endphp
 </head>
 
 <body class="loading"
-    data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":true,"darkMode":true, "showRightSidebarOnStart": false}'>
+    data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":true, "leftSidebarScrollable":true,"darkMode":@if ($cookie === 'dark') true @else false @endif, "showRightSidebarOnStart": false}'>
     <!-- Begin page -->
     <div class="wrapper">
         <!-- ========== Left Sidebar Start ========== -->

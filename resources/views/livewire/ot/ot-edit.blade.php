@@ -1,3 +1,5 @@
+@section('title', 'Editar proforma' . $editing->code)
+
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -201,7 +203,8 @@
                                 <x-slot name="body">
                                     @if (count($dtw) > 0)
                                         <x-table.row>
-                                            <td colspan="6" class="text-center ">Productos y servicios registrados al OT</td>
+                                            <td colspan="6" class="text-center ">Productos y servicios registrados
+                                                al OT</td>
                                         </x-table.row>
                                     @endif
                                     @foreach ($dtw as $p)
@@ -291,21 +294,21 @@
                                         <td colspan="2">Subtotal</td>
                                         <td>S/ {{ number_format($total, 2) }}</td>
                                     </tr>
-                                    <tr>
+                                    {{-- <tr>
                                         <td colspan="2"></td>
                                         <td colspan="2">Total Ope. Gravadas</td>
                                         <td>S/ {{ number_format($totalOG, 2) }}</td>
-                                    </tr>
+                                    </tr> --}}
                                     <tr>
                                         <td colspan="2"></td>
                                         <td colspan="2">Total Descuentos</td>
                                         <td>S/ {{ number_format($total - $totalDiscount, 2) }}</td>
                                     </tr>
-                                    <tr>
+                                    {{-- <tr>
                                         <td colspan="2"></td>
                                         <td colspan="2">Total IGV 18%</td>
                                         <td>S/ {{ number_format($totalDiscount - $totalOG, 2) }}</td>
-                                    </tr>
+                                    </tr> --}}
                                     <tr>
                                         <td colspan="2"></td>
                                         <td colspan="2">TOTAL</td>

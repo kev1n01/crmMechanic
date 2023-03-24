@@ -104,14 +104,15 @@ class PurchaseEdit extends Component
         }
 
         $this->cart = Cart::session($this->editing->code_purchase)->getContent()->sortBy('name');
-        if ($this->cart->isEmpty()) {
+        if (count($this->cart) == 0) {
             $this->cart = [];
         }
 
-        $this->dtp = PurchaseDetail::where('purchase_id', $this->editing->id)->get()->sortBy('name');
+        $this->dtp = PurchaseDetail::where('purchase_id', $this->editing->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get();
         if (count($this->dtp) == 0) {
             $this->dtp = [];
         }
+
         $this->updateCartOptions();
 
         return view('livewire.purchase.purchase-edit')
@@ -176,6 +177,7 @@ class PurchaseEdit extends Component
     public function updatePriceDp(PurchaseDetail $dp, $price)
     {
         $dp->update(['price' => $price]);
+        $this->updateCartOptions();
     }
 
     public function updateQuantityCart(Product $product, $cant, $discount = 0)
@@ -196,6 +198,7 @@ class PurchaseEdit extends Component
         } else {
             $this->removeItemDp($dp->id);
         }
+        $this->updateCartOptions();
     }
 
     public function updateDiscountCart(Product $product, $discount)
@@ -215,6 +218,7 @@ class PurchaseEdit extends Component
         } else {
             $dp->update(['discount' => 0]);
         }
+        $this->updateCartOptions();
     }
 
     public function removeItem($productId)
@@ -226,6 +230,7 @@ class PurchaseEdit extends Component
     public function removeItemDp(PurchaseDetail $dp)
     {
         $dp->delete();
+        $this->updateCartOptions();
     }
 
     public function clearCart()
@@ -290,12 +295,14 @@ class PurchaseEdit extends Component
                 'product_id' => $item->id,
                 'purchase_id' => $this->editing->id,
             ]);
-
-            $product = Product::find($item->id);
-            if ($product->purchase_price == 0) {
-                $product->purchase_price = $item->price;
+            if ($this->editing->status == 'recibido') {
+                $product = Product::find($item->id);
+                $product->stock += $item->quantity;
+                if ($product->purchase_price == 0) {
+                    $product->purchase_price = $item->price;
+                }
+                $product->save();
             }
-            $product->save();
         }
         Cart::session($this->editing->code_purchase)->clear();
         $this->updateCartOptions();

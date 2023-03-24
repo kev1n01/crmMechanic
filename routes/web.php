@@ -46,6 +46,9 @@ Route::get('deudas', \App\Http\Livewire\DuePay\DuePaytable::class)->name('deudas
 //Rutas para Gastos
 Route::get('gastos', \App\Http\Livewire\Cost\CostTable::class)->name('gastos');
 
+//Rutas para procesos de sunat
+Route::get('sunat/crear-factura', \App\Http\Livewire\Sunat\CreateInvoiceTicket::class)->name('sunat.crear.factura');
+
 //Rutas para Reportes
 Route::get('reporte/orden-trabajo', \App\Http\Livewire\Report\OT::class)->name('reporte.ot');
 Route::get('reporte/venta', \App\Http\Livewire\Report\Sale::class)->name('reporte.venta');

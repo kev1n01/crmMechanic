@@ -1,4 +1,4 @@
-<div class="leftside-menu">
+<div class="leftside-menu position-fixed">
 
     <!-- LOGO -->
     <a href="#" class="logo text-center logo-light">
@@ -12,11 +12,11 @@
 
     <!-- LOGO -->
     <a href="#" class="logo text-center logo-dark">
-        <span class="logo-lg">
-            <img src="{{ asset('assets/images/logo_mechanic.png') }}" alt="" height="30">
+        <span class="logo-lg fs-3">
+            <p class="mb-0 "><strong class="text-secondary">FLO</strong><strong class="text-primary">PACH</strong></p>
         </span>
-        <span class="logo-sm">
-            <img src="{{ asset('assets/images/logo_mechanic_sm.png') }}" alt="" height="30">
+        <span class="logo-sm fs-4">
+            <p class="mb-0"><strong class="text-secondary">F</strong><strong class="text-primary">P</strong></p>
         </span>
     </a>
 
@@ -41,7 +41,7 @@
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#inventario" aria-expanded="false" aria-controls="inventario"
                     class="side-nav-link">
-                    <i class="uil-store"></i>
+                    <i class="uil-box"></i>
                     <span> Inventario </span>
                     <span class="menu-arrow"></span>
                 </a>
@@ -103,7 +103,7 @@
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#vehiculos" aria-expanded="false" aria-controls="vehiculos"
                     class="side-nav-link">
-                    <i class=" uil-car-sideview"></i>
+                    <i class="mdi mdi-car-multiple"></i>
                     <span> Vehiculos </span>
                     <span class="menu-arrow"></span>
                 </a>
@@ -167,11 +167,27 @@
             </li>
 
             {{-- <li class="side-nav-item">
-                <a href="#" class="side-nav-link">
+                <a data-bs-toggle="collapse" href="#sunat" aria-expanded="false" aria-controls="sunat"
+                    class="side-nav-link">
                     <i class="uil-invoice"></i>
-                    <span>Facturas</span>
+                    <span> Sunat </span>
+                    <span class="menu-arrow"></span>
                 </a>
+                <div class="collapse" id="sunat">
+                    <ul class="side-nav-second-level">
+                        <li>
+                            <a href="{{ route('sunat.crear.factura') }}">Facturas</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('sunat.crear.factura') }}">Boletas</a>
+                        </li>
+                        <li>
+                            <a href="#">Notas de crédito</a>
+                        </li>
+                    </ul>
+                </div>
             </li> --}}
+
 
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#reportes" aria-expanded="false" aria-controls="reportes"

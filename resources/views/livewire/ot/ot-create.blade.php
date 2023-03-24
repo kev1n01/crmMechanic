@@ -1,3 +1,4 @@
+@section('title', 'Crear proforma' )
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -105,10 +106,12 @@
                                     <x-input.select class="col-xl-4" name="editing.vehicle" label="Vehiculo"
                                         :required=true :options="$vehicles" :error="$errors->first('editing.vehicle')" />
 
-                                    <x-input.input-tooltip-error class="col-xl-3" name="editing.odo" label="ODO"
-                                        type="number" :error="$errors->first('editing.odo')" :required=true />
-
                                     @if ($editing->vehicle > 0)
+                                        <div class="col-xl-3 pe-0">
+                                            <label class="form-label" for="odo">ODO</label>
+                                            <input type="text" id="odo" class="form-control" disabled
+                                                value="{{ $vf->odo }}">
+                                        </div>
                                         <div class="col-xl-5 pe-0">
                                             <label class="form-label" for="color">Color</label>
                                             <input type="text" id="color" class="form-control" disabled
@@ -251,19 +254,24 @@
                                 <x-slot name="foot">
                                     <tr>
                                         <td colspan="2"></td>
+                                        <td colspan="2">Subtotal</td>
+                                        <td>S/ {{ number_format($total, 2) }}</td>
+                                    </tr>
+                                    {{-- <tr>
+                                        <td colspan="2"></td>
                                         <td colspan="2">Total Ope. Gravadas</td>
                                         <td>S/ {{ number_format($totalOG, 2) }}</td>
-                                    </tr>
+                                    </tr> --}}
                                     <tr>
                                         <td colspan="2"></td>
                                         <td colspan="2">Total Descuentos</td>
                                         <td>S/ {{ number_format($total - $totalDiscount, 2) }}</td>
                                     </tr>
-                                    <tr>
+                                    {{-- <tr>
                                         <td colspan="2"></td>
                                         <td colspan="2">Total IGV 18%</td>
                                         <td>S/ {{ number_format($totalDiscount - $totalOG, 2) }}</td>
-                                    </tr>
+                                    </tr> --}}
                                     <tr>
                                         <td colspan="2"></td>
                                         <td colspan="2">TOTAL</td>

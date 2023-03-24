@@ -134,7 +134,7 @@ class OtConfModal extends Component
                 'person_owed' => $this->editing->customerUser->name,
                 'amount_owed' => $totalwod,
                 'amount_paid' => 0,
-                'reason' => 'OT',
+                'reason' => 'ot',
             ]);
 
 
@@ -154,7 +154,7 @@ class OtConfModal extends Component
                 ]);
 
                 //update stock of product saled
-                $product = Product::find($wod->id);
+                $product = Product::find($product_id);
                 $product->stock -= $wod->quantity;
                 $product->save();
             }
@@ -163,7 +163,7 @@ class OtConfModal extends Component
             $vehicle = Vehicle::find($this->editing->vehicle);
             $vehicle->odo = $this->editing->odo;
             $vehicle->save();
-            
+
             $this->editing->save();
             $this->emit('success_alert', 'OT confirmada y configurada');
         } else {
@@ -182,6 +182,11 @@ class OtConfModal extends Component
             }
 
             $this->editing->save();
+            // update odo of vehicle to work order registeres
+            $vehicle = Vehicle::find($this->editing->vehicle);
+            $vehicle->odo = $this->editing->odo;
+            $vehicle->save();
+
             $this->emit('success_alert', 'Configuracion de horarios actualizados');
         }
     }

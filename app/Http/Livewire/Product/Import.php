@@ -83,7 +83,7 @@ class Import extends Component
     {
         return response()->download(public_path() . "/exports/template_products_import.csv");
     }
-    
+
     public function import()
     {
         $this->validate();
@@ -98,14 +98,19 @@ class Import extends Component
                     $importCount++;
                 });
             $this->emit('refreshList');
+            $this->emit('reset_page', '');
             $this->upload = null;
             $this->emit('success_alert', $importCount . 'productos fueron importados');
         } catch (\Exception $e) {
-            $this->emit('error_alert', 'Error al importar productos, por favor verifique lo siguiente:&nbsp;
-                                            - que el campo nombre no estén repetidos o existan ya en la base de datos&nbsp;
-                                            - que el campo stock sea un numero entero&nbsp;
-                                            - que el campo precio compra y venta sean numeros&nbsp; 
-                                            ');
+            $this->emit(
+                'error_alert',
+                // $e->getMessage()
+                'Error al importar productos, por favor verifique lo siguiente:&nbsp;
+                                                - que el campo nombre no estén repetidos o existan ya en la base de datos&nbsp;
+                                                - que el campo stock sea un numero entero&nbsp;
+                                                - que el campo precio compra y venta sean numeros&nbsp; 
+                                                '
+            );
         }
     }
 

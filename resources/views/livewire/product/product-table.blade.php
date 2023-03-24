@@ -1,3 +1,4 @@
+@section('title', 'Lista de productos')
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -143,7 +144,11 @@
 
                                         <x-table.cell>{{ $product->code }}</x-table.cell>
 
-                                        <x-table.cell class=" text-center">{{ $product->stock }}</x-table.cell>
+                                        <x-table.cell class=" text-center">
+                                            <button class="btn btn-{{ $product->stock < 10 ? 'danger' : 'success' }} btn-sm">
+                                                {{ $product->stock }}
+                                            </button>
+                                        </x-table.cell>
 
                                         <x-table.cell>
                                             <button

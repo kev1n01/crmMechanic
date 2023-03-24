@@ -10,7 +10,7 @@ class DuePay extends Model
     use HasFactory;
 
     const REASONS = [
-        'proforma' => 'Proforma',
+        'ot' => 'OT',
         'venta' => 'Venta',
         'otro' => 'Otro',
     ];

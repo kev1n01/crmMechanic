@@ -1,3 +1,4 @@
+@section('title', 'Listado de proveedores')
 <div>
     <div class="row mt-3">
         <div class="col-12">

@@ -1,3 +1,4 @@
+@section('title', 'Listado de proformas' )
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -43,10 +44,10 @@
                                     <button class="dropdown-item action-icon"
                                         @if ($selected != []) onclick="Confirm(null,'exportSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
                                             class="mdi mdi-download"></i> Exportar</button>
-                                    <button class="dropdown-item action-icon"
+                                    {{-- <button class="dropdown-item action-icon"
                                         @if ($selected != []) onclick="Confirm(null,'deleteSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
                                             class="mdi mdi-delete"></i>
-                                        Eliminar</button>
+                                        Eliminar</button> --}}
                                 </div>
                             </div>
                         </div>
@@ -118,22 +119,6 @@
                                         </x-table.cell>
 
                                         <x-table.cell>
-                                            {{-- @php
-                                                $sale = \App\Models\Sale::where('code_sale', 'like', '%' . $wo->code . '%')
-                                                    ->select('code_sale')
-                                                    ->get()
-                                                    ->toArray();
-                                                // dd($sale);
-                                                $sale_each = $sale->each(fn($item,$key)=>{
-                                                });                                           
-                                             @endphp
-                                            {{ $sale }} --}}
-                                            {{-- @if (substr($sale['code_sale'], 0, 1) == 'V')
-                                                <a href="{{ route('ventas.editar', substr($sale['code_sale'], 0, 6)) }}">
-                                                    {{ substr($sale['code_sale'], 0, 6) }}
-                                                </a>
-                                            @endif
-                                            - --}}
                                             {{ $wo->code }}
                                         </x-table.cell>
 
@@ -159,9 +144,9 @@
                                             <a class="action-icon cursor"
                                                 href="{{ route('proforma.orden.editar', $wo->code) }}">
                                                 <i class="mdi mdi-square-edit-outline"></i> </a>
-                                            <a class="action-icon cursor"
+                                            {{-- <a class="action-icon cursor"
                                                 onclick="Confirm({{ $wo->id }}, 'delete')"><i
-                                                    class="mdi mdi-delete"></i></a>
+                                                    class="mdi mdi-delete"></i></a> --}}
                                             <a class="action-icon cursor"
                                                 href="{{ route('proforma.pdf.view', $wo->id) }}">
                                                 <i class="mdi mdi-file-eye-outline"></i></a>
@@ -173,7 +158,7 @@
                                     </x-table.row>
                                 @empty
                                     <x-table.row>
-                                        <x-table.cell class="text-center" colspan="6">
+                                        <x-table.cell class="text-center" colspan="8">
                                             No se encontraron proformas
                                         </x-table.cell>
                                     </x-table.row>

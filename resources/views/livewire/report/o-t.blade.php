@@ -1,3 +1,4 @@
+@section('title', 'Reporte de OT' )
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -92,8 +93,9 @@
 
                                                 <x-table.cell>
                                                     <a class="action-icon"
-                                                    href="{{ route('proforma.pdf.preview') }}"
-                                                        wire:click="viewDetails({{ $ot->id }})"><i
+                                                    href="{{ route('proforma.pdf.preview', $ot->id) }}" target="_blank"
+                                                        {{-- wire:click="viewDetails({{ $ot->id }})" --}}
+                                                        ><i
                                                             class="mdi mdi-eye-outline"></i></a>
                                                 </x-table.cell>
                                             </x-table.row>
@@ -308,8 +310,8 @@
                     </x-slot>
                 </x-table>
             </div> --}}
-            {{ $id_ot }}
-            <div class="row mt-3" wire:loading.remove wire:target="viewDetails">
+            {{ $id_ot }}    
+            <div class="row mt-3">
                 <div class="col-12">
                     <object width="100%" height="1000px"
                         data="{{ env('APP_URL') }}/proforma/preview/{{ $id_ot }}" type="application/pdf">

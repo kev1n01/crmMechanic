@@ -9,7 +9,7 @@
         toast: true,
         position: 'bottom-end',
         showConfirmButton: false,
-        timer: 3000,
+        timer: 1800,
         background: '#eef2f7',
         timerProgressBar: true,
         didOpen: (toast) => {
@@ -82,6 +82,8 @@
         window.livewire.on('info_alert', Msg => {
             ToastInfoAlert(Msg);
         });
-
+        window.livewire.on('reset_page', fn => {
+            location.reload();
+        });
     });
 </script>

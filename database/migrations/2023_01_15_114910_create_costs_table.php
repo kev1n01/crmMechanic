@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('description');
             $table->date('date');
-            $table->time('time')->nullable();
             $table->decimal('total', 10, 2)->nullable();
             $table->string('type_voucher');
             $table->timestamps();
