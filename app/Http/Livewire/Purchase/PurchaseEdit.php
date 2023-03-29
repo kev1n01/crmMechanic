@@ -16,7 +16,6 @@ class PurchaseEdit extends Component
     public Purchase $editing;
 
     public $searchProduct = '';
-    public $dtp = [];
     public $cart = [];
     public $products = [];
     public $statuses = [];
@@ -24,7 +23,6 @@ class PurchaseEdit extends Component
     public $types = [];
     public $providers = [];
 
-    public $totalCart;
     public $totalOG;
     public $total;
     public $totalDiscount;
@@ -91,6 +89,20 @@ class PurchaseEdit extends Component
         $this->serial = substr($this->editing->nro_cpe, 0, 4);
         $this->correlative = substr($this->editing->nro_cpe, 7);
         $this->providers = Provider::where('status', 'activo')->pluck('name', 'id');
+
+        $this->cart = Cart::session($this->editing->code_purchase)->getContent()->sortBy('name');
+
+        $dtp = PurchaseDetail::where('purchase_id', $this->editing->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get();
+        if (count($dtp) == 0) {
+            $dtp = [];
+        } else {
+            foreach ($dtp as $item) {
+                Cart::session($this->editing->code_purchase)->add($item->product_id, $item->product->name, $item->price, $item->quantity, ['discount' => $item->discount]);
+                $id = Cart::session($this->editing->code_purchase)->get($item->product_id)->id;
+
+                $this->updateQuantityCart($id, $item->quantity, $item->discount);
+            }
+        }
     }
 
     public function render()
@@ -103,18 +115,7 @@ class PurchaseEdit extends Component
             $this->products = [];
         }
 
-        $this->cart = Cart::session($this->editing->code_purchase)->getContent()->sortBy('name');
-        if (count($this->cart) == 0) {
-            $this->cart = [];
-        }
-
-        $this->dtp = PurchaseDetail::where('purchase_id', $this->editing->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get();
-        if (count($this->dtp) == 0) {
-            $this->dtp = [];
-        }
-
         $this->updateCartOptions();
-
         return view('livewire.purchase.purchase-edit')
             ->extends('layouts.admin.app')
             ->section('content');
@@ -122,7 +123,7 @@ class PurchaseEdit extends Component
 
     public function updateCartOptions()
     {
-        $this->totalCart = Cart::session($this->editing->code_purchase)->getTotal();
+        $this->total = Cart::session($this->editing->code_purchase)->getTotal();
         $this->calculeTotal();
     }
 
@@ -162,7 +163,13 @@ class PurchaseEdit extends Component
             $this->emit('error_alert', 'Este producto está inactivo');
             return;
         }
-        Cart::session($this->editing->code_purchase)->add($product->id, $product->name, $product->purchase_price, $cant, ['discount' => $discount]);
+        $item_exist = Cart::session($this->editing->code_purchase)->get($product->id);
+        if ($item_exist != null) {
+            Cart::session($this->editing->code_purchase)->add($product->id, $product->name, $item_exist->price, $cant, ['discount' => $item_exist->attributes['discount']]);
+        } else {
+            Cart::session($this->editing->code_purchase)->add($product->id, $product->name, $product->purchase_price, $cant, ['discount' => $discount]);
+        }
+
         $this->searchProduct = '';
         $this->updateCartOptions();
         $this->emit('success_alert', 'Producto agregado a la compra');
@@ -174,29 +181,15 @@ class PurchaseEdit extends Component
         $this->updateCartOptions();
     }
 
-    public function updatePriceDp(PurchaseDetail $dp, $price)
+    public function updateQuantityCart($id, $cant, $discount = 0)
     {
-        $dp->update(['price' => $price]);
-        $this->updateCartOptions();
-    }
-
-    public function updateQuantityCart(Product $product, $cant, $discount = 0)
-    {
+        $product = Product::find($id);
         if ($cant > 0) {
             $price_cart_exist = Cart::session($this->editing->code_purchase)->get($product->id)->price;
             $this->removeItem($product->id);
             Cart::session($this->editing->code_purchase)->add($product->id, $product->name, $price_cart_exist, $cant, ['discount' => $discount]);
-            $this->updateCartOptions();
         } else {
             $this->removeItem($product->id);
-        }
-    }
-    public function updateQuantityDp(PurchaseDetail $dp, $cant, $discount = 0)
-    {
-        if ($cant > 0) {
-            $dp->update(['quantity' => $cant, 'discount' => $discount, 'price' => $dp->price]);
-        } else {
-            $this->removeItemDp($dp->id);
         }
         $this->updateCartOptions();
     }
@@ -211,25 +204,9 @@ class PurchaseEdit extends Component
         $this->updateCartOptions();
     }
 
-    public function updateDiscountDp(PurchaseDetail $dp, $discount)
-    {
-        if ($discount > 0) {
-            $dp->update(['discount' => $discount]);
-        } else {
-            $dp->update(['discount' => 0]);
-        }
-        $this->updateCartOptions();
-    }
-
     public function removeItem($productId)
     {
         Cart::session($this->editing->code_purchase)->remove($productId);
-        $this->updateCartOptions();
-    }
-
-    public function removeItemDp(PurchaseDetail $dp)
-    {
-        $dp->delete();
         $this->updateCartOptions();
     }
 
@@ -242,24 +219,12 @@ class PurchaseEdit extends Component
 
     public function calculeTotal()
     {
-        $totalDiscountCart = 0;
-        $totalDiscountDp = 0;
-        $totalCartOG = 0;
-        $totalDpOG = 0;
-        $totalDp = 0;
+        $this->totalDiscount = 0;
         $this->cart = Cart::session($this->editing->code_purchase)->getContent();
         foreach ($this->cart as $c) {
-            $totalDiscountCart += $c->price * $c->quantity - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
+            $this->totalDiscount += $c->price * $c->quantity - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
         }
-        foreach ($this->dtp as $p) {
-            $totalDiscountDp += $p->price * $p->quantity - (($p->quantity * $p->price) * ($p->discount / 100));
-            $totalDp += $p->price * $p->quantity;
-        }
-        $totalCartOG = $totalDiscountCart / 1.18;
-        $totalDpOG = $totalDiscountDp / 1.18;
-        $this->totalOG = $totalCartOG + $totalDpOG;
-        $this->total = $this->totalCart + $totalDp;
-        $this->totalDiscount = $totalDiscountCart + $totalDiscountDp;
+        $this->totalOG = $this->totalDiscount / 1.18;
     }
 
     public function cancel()
@@ -271,8 +236,13 @@ class PurchaseEdit extends Component
 
     public function save()
     {
-        $this->saveLogic();
-        return redirect()->route('compras');
+        if (count($this->cart) == 0) {
+            $this->emit('error_alert', 'No hay productos en la compra');
+            return;
+        } else {
+            $this->saveLogic();
+            return redirect()->route('compras');
+        }
     }
 
     public function updated($label)
@@ -287,6 +257,16 @@ class PurchaseEdit extends Component
         $this->editing->total = $this->totalDiscount;
         $this->editing->date_purchase = Carbon::parse($this->editing->date_purchase)->format('Y-m-d');
         $this->editing->save();
+
+        if ($this->editing->status == 'recibido') {
+            $this->editing->purchaseDetail()->get()->each(function ($item) {
+                $item->product->stock -= $item->quantity;
+                $item->product->save();
+            });
+        }
+
+        $this->editing->purchaseDetail()->delete();
+
         foreach ($this->cart as $item) {
             PurchaseDetail::create([
                 'price' => $item->price,

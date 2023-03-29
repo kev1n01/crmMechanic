@@ -30,7 +30,7 @@
                                     <x-input.datepicker class="col-xl-6 mt-2" name="editing.date_sale" label="Fecha"
                                         id="dp1" :error="$errors->first('editing.date_sale')" :required=true />
 
-                                    <x-input.select class="col-xl-6 mt-2" name="editing.type_payment"
+                                    <x-input.select class="col-xl-6 mt-2" name="editing.type_payment" :disabled=true
                                         label="Tipo de pago" :required=true :options="$types_payment" :error="$errors->first('editing.type_payment')" />
 
                                     @if ($editing->type_payment)
@@ -131,53 +131,6 @@
                                         </x-slot>
 
                                         <x-slot name="body">
-                                            @if (count($dts) > 0)
-                                                <x-table.row>
-                                                    <td colspan="6" class="text-center ">Productos registrados de la
-                                                        venta</td>
-                                                </x-table.row>
-                                            @endif
-
-                                            @foreach ($dts as $s)
-                                                <x-table.row>
-                                                    <x-table.cell>{{ $s->product->name }}</x-table.cell>
-                                                    <x-table.cell>
-                                                        <input type="number" id="p{{ $s->id }}"
-                                                            class="form-control w-auto"
-                                                            wire:change="updatePriceDs({{ $s->id }}, $('#p' + {{ $s->id }}).val())"
-                                                            value="{{ $s->price }}">
-                                                    </x-table.cell>
-                                                    <x-table.cell>
-                                                        <input type="number" id="r{{ $s->id }}"
-                                                            min="1"
-                                                            wire:change="updateQuantityDs({{ $s->id }}, $('#r' + {{ $s->id }}).val(), $('#d'+{{ $s->id }}).val())"
-                                                            class="form-control text-center"
-                                                            value="{{ $s->quantity }}">
-                                                    </x-table.cell>
-                                                    <x-table.cell>
-                                                        <input type="number" id="d{{ $s->id }}"
-                                                            wire:change="updateDiscountDs({{ $s->id }}, $('#d'+{{ $s->id }}).val())"
-                                                            class="form-control" value="{{ $s->discount }}"
-                                                            min="0" max="100">
-                                                    </x-table.cell>
-                                                    <x-table.cell>
-                                                        <input type="text" class="form-control w-auto"
-                                                            value="S/ {{ number_format($s->price * $s->quantity - $s->price * $s->quantity * ($s->discount / 100), 2) }}"
-                                                            disabled>
-                                                    </x-table.cell>
-                                                    <x-table.cell>
-                                                        <a class="action-icon"
-                                                            wire:click.prevent="removeItemDs({{ $s->id }})"><i
-                                                                class="mdi mdi-delete"></i></a>
-                                                    </x-table.cell>
-                                                </x-table.row>
-                                            @endforeach
-                                            @if (count($cart) > 0)
-                                                <x-table.row>
-                                                    <td colspan="6" class="text-center ">Productos agregados
-                                                        recientemente</td>
-                                                </x-table.row>
-                                            @endif
                                             @foreach ($cart as $c)
                                                 <x-table.row>
                                                     <x-table.cell>{{ $c->name }}</x-table.cell>
@@ -213,7 +166,7 @@
                                                     </x-table.cell>
                                                 </x-table.row>
                                             @endforeach
-                                            @if (count($dts) == 0 && count($cart) == 0)
+                                            @if (count($cart) == 0)
                                                 <x-table.row>
                                                     <x-table.cell class="text-center" colspan="6">
                                                         No hay productos recientemente agregados a la venta

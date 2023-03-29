@@ -101,8 +101,13 @@
                                     <x-input.select class="col-xl-4" name="editing.vehicle" label="Vehiculo"
                                         :required=true :options="$vehicles" :error="$errors->first('editing.vehicle')" />
 
-                                    <x-input.input-tooltip-error class="col-xl-3" name="editing.odo" label="ODO"
-                                        type="number" :error="$errors->first('editing.odo')" :required=true />
+                                    @if ($editing->is_confirmed == 1)
+                                        <x-input.input-tooltip-error class="col-xl-3" name="editing.odo" label="ODO"
+                                            type="number" :error="$errors->first('editing.odo')" :required=true />
+                                    @else
+                                        <x-input.input-tooltip-error class="col-xl-3" name="editing.odo" label="ODO "
+                                            type="number" :error="$errors->first('editing.odo')" :disabled=true/>  
+                                    @endif
 
                                     @if ($editing->vehicle > 0)
                                         <div class="col-xl-5">
@@ -132,9 +137,15 @@
                                         </div>
                                     @endif
 
-                                    <x-input.textarea class="col-xl-12" name="editing.observation"
-                                        label="Observaciones" />
                                 </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="row g-2 p-2">
+                                <x-input.textarea class="col-xl-8" name="editing.observation"
+                                    label="Observaciones" />
+                                <x-input.datepicker class="col-xl-4" name="editing.date_emission"
+                                    label="Fecha emision" id="dp1" :error="$errors->first('editing.date_emission')" :required=true />
                             </div>
                         </div>
                     </div>
@@ -201,50 +212,6 @@
                                 </x-slot>
 
                                 <x-slot name="body">
-                                    @if (count($dtw) > 0)
-                                        <x-table.row>
-                                            <td colspan="6" class="text-center ">Productos y servicios registrados
-                                                al OT</td>
-                                        </x-table.row>
-                                    @endif
-                                    @foreach ($dtw as $p)
-                                        <x-table.row>
-                                            <x-table.cell>{{ $p->item->name }}</x-table.cell>
-                                            <x-table.cell>
-                                                <input type="number" id="cp{{ $p->id }}"
-                                                    class="form-control w-auto"
-                                                    wire:change="updatePriceDot({{ $p->id }}, $('#cp' + {{ $p->id }}).val())"
-                                                    value="{{ $p->price }}">
-                                            </x-table.cell>
-                                            <x-table.cell>
-                                                <input type="number" id="cr{{ $p->id }}" min="1"
-                                                    wire:change="updateQuantityDot({{ $p->id }}, $('#cr' + {{ $p->id }}).val(), $('#cd'+{{ $p->id }}).val())"
-                                                    class="form-control text-center" value="{{ $p->quantity }}">
-                                            </x-table.cell>
-                                            <x-table.cell>
-                                                <input type="number" id="cd{{ $p->id }}"
-                                                    wire:change="updateDiscountDot({{ $p->id }}, $('#cd'+{{ $p->id }}).val())"
-                                                    class="form-control" value="{{ $p->discount }}" min="0"
-                                                    max="100">
-                                            </x-table.cell>
-                                            <x-table.cell>
-                                                <input type="text" class="form-control w-auto"
-                                                    value="S/ {{ number_format($p->price * $p->quantity - $p->price * $p->quantity * ($p->discount / 100), 2) }}"
-                                                    disabled>
-                                            </x-table.cell>
-                                            <x-table.cell>
-                                                <a class="action-icon"
-                                                    wire:click.prevent="removeItemDot({{ $p->id }})"><i
-                                                        class="mdi mdi-delete"></i></a>
-                                            </x-table.cell>
-                                        </x-table.row>
-                                    @endforeach
-                                    @if (count($cart) > 0)
-                                        <x-table.row>
-                                            <td colspan="6" class="text-center ">Productos y servicios agregados
-                                                recientemente</td>
-                                        </x-table.row>
-                                    @endif
                                     @foreach ($cart as $c)
                                         <x-table.row wire:key="row-{{ $c->name }}">
                                             <x-table.cell>{{ $c->name }}</x-table.cell>
@@ -279,7 +246,7 @@
                                             </x-table.cell>
                                         </x-table.row>
                                     @endforeach
-                                    @if (count($dtw) == 0 && count($cart) == 0)
+                                    @if (count($cart) == 0)
                                         <x-table.row>
                                             <x-table.cell class="text-center" colspan="6">
                                                 No hay productos y/o servicios agregados a la proforma

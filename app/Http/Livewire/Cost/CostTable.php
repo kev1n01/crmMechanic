@@ -18,13 +18,11 @@ class CostTable extends Component
     /* FOR MODAL */
     public $idModal = 'costModal';
     public $nameModal;
-    public $vouchers;
     public Cost $editing;
 
     public $filters = [
         'fromDate' => null,
         'toDate' => null,
-        'voucher' => ''
     ];
 
     protected $listeners = ['delete', 'deleteSelected', 'refreshList' => '$refresh'];
@@ -35,7 +33,6 @@ class CostTable extends Component
     {
         $this->sortField = 'description';
         $this->editing = $this->makeBlankFields();
-        $this->vouchers = Cost::VOUCHERS;
     }
 
     public function updatedFilters()
@@ -64,7 +61,6 @@ class CostTable extends Component
             ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
             $q->whereBetween('date', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d') . ' 00:00:00', Carbon::parse($this->filters['toDate'])->format('Y-m-d') . ' 23:59:00']))
             ->when($this->search, fn ($q, $search) => $q->where('description', 'like', '%' . $search . '%'))
-            ->when($this->filters['voucher'], fn ($q, $voucher) => $q->where('type_voucher', $voucher))
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
     }
@@ -104,7 +100,6 @@ class CostTable extends Component
             'editing.description' => ['required', 'min:5', 'max:40'],
             'editing.date' => ['required'],
             'editing.total' => ['required'],
-            'editing.type_voucher' => 'required|in:' . collect(Cost::VOUCHERS)->keys()->implode(','),
         ];
     }
 
@@ -114,8 +109,6 @@ class CostTable extends Component
         'editing.description.max' => 'La descripción no debe tener más de 40 caracteres',
         'editing.date.required' => 'La fecha es obligatorio',
         'editing.total.required' => 'El costo es obligatorio',
-        'editing.type_voucher.required' => 'El tipo de comprobante es obligatorio',
-        'editing.type_voucher.in' => 'El tipo de comprobante es inválido',
     ];
 
     public function save()
@@ -135,7 +128,7 @@ class CostTable extends Component
 
     public function makeBlankFields()
     {
-        return Cost::make(['type_voucher' => 'factura electronica', 'date' => Carbon::now()->format('d-m-Y')]); /*para dejar vacios los inpust*/
+        return Cost::make(['date' => Carbon::now()->format('d-m-Y')]); /*para dejar vacios los inpust*/
     }
 
     public function create()

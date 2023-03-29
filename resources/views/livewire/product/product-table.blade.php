@@ -145,7 +145,7 @@
                                         <x-table.cell>{{ $product->code }}</x-table.cell>
 
                                         <x-table.cell class=" text-center">
-                                            <button class="btn btn-{{ $product->stock < 10 ? 'danger' : 'success' }} btn-sm">
+                                            <button class="btn btn-{{ $product->stock < 10 ? 'warning' : 'secondary' }} btn-sm">
                                                 {{ $product->stock }}
                                             </button>
                                         </x-table.cell>

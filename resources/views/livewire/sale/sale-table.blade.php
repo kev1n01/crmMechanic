@@ -176,6 +176,21 @@
                                                 <a class="action-icon cursor"
                                                     href="{{ route('ventas.editar', $sale->code_sale) }}">
                                                     <i class="mdi mdi-square-edit-outline"></i> </a>
+                                                @if ($sale->status == 'no pagado')
+                                                    <a class="action-icon cursor"
+                                                        wire:click="$emit('payDuepay','{{ $sale->code_sale }}')">
+                                                        <i class="mdi mdi-credit-card-plus-outline"></i> </a>
+                                                @endif
+                                            @endif
+                                            @if ($sale->type_sale == 'vehicular')
+                                                <a class="action-icon cursor"
+                                                    href="{{ route('proforma.orden.editar', substr($sale->code_sale, 9)) }}">
+                                                    <i class="mdi mdi-square-edit-outline"></i> </a>
+                                                @if ($sale->status == 'no pagado')
+                                                    <a class="action-icon cursor"
+                                                        href="{{ route('deudas') }}">
+                                                        <i class="mdi mdi-credit-card-plus-outline"></i> </a>
+                                                @endif
                                             @endif
 
                                             {{-- <a class="action-icon cursor"
@@ -209,3 +224,4 @@
         </div>
     </div>
 </div>
+@livewire('due-pay.modal')

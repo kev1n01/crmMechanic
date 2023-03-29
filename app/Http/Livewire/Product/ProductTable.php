@@ -33,7 +33,7 @@ class ProductTable extends Component
 
     protected $listeners = ['delete', 'deleteSelected', 'exportSelected', 'refreshList' => '$refresh'];
 
-    protected $queryString = ['search' => ['except' => '']];
+    protected $queryString = ['search' => ['except' => ''], 'page'];
 
     public function mount()
     {
@@ -42,6 +42,11 @@ class ProductTable extends Component
         $this->statuses = Product::STATUSES;
         $this->brands = BrandProduct::pluck('name', 'id');
         $this->categories = CategoryProduct::pluck('name', 'id');
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
     }
 
     public function updatedFilters()
@@ -88,8 +93,13 @@ class ProductTable extends Component
 
     public function delete(Product $product)
     {
-        $this->removeImage($product->image);
-        $product->delete();
+        try {
+            $this->removeImage($product->image);
+            $product->delete();
+            $this->emit('success_alert', 'Producto eliminado');
+        } catch (\Exception $e) {
+            $this->emit('error_alert', 'No se puede eliminar el producto');
+        }
     }
 
     public function exportSelected()
@@ -104,15 +114,19 @@ class ProductTable extends Component
 
     public function deleteSelected()
     {
-        $product = Product::whereKey($this->selected);
-        $productfind = Product::find($this->selected);
-        foreach ($productfind as $pf) {
-            $this->removeImage($pf['image']);
+        try {
+            $product = Product::whereKey($this->selected);
+            $productfind = Product::find($this->selected);
+            foreach ($productfind as $pf) {
+                $this->removeImage($pf['image']);
+            }
+            $product->delete();
+            $this->selectedPage = [];
+            $this->selected = [];
+            $this->emit('success_alert', count($this->selected) . ' registros eliminados');
+        } catch (\Exception $e) {
+            $this->emit('error_alert', 'Uno o más de los registros no se pueden eliminar');
         }
-        $product->delete();
-        $this->selectedPage = [];
-        $this->selected = [];
-        $this->emit('success_alert', count($this->selected) . ' registros eliminados');
     }
 
     public function changeStatus(Product $product)

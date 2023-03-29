@@ -131,11 +131,9 @@
                                         </x-table.cell>
 
                                         <x-table.cell>
-                                            @if ($purchase->status == 'pendiente')
-                                                <a class="action-icon cursor"
-                                                    href="{{ route('compras.editar', $purchase->code_purchase) }}">
-                                                    <i class="mdi mdi-square-edit-outline"></i></a>
-                                            @endif
+                                            <a class="action-icon cursor"
+                                                href="{{ route('compras.editar', $purchase->code_purchase) }}">
+                                                <i class="mdi mdi-square-edit-outline"></i></a>
                                             {{-- <a class="action-icon cursor" onclick="Confirm({{ $purchase->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a> --}}
                                             <a class="action-icon cursor"

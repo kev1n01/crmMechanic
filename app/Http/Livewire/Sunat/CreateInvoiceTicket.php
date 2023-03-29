@@ -6,6 +6,7 @@ use Livewire\Component;
 
 class CreateInvoiceTicket extends Component
 {
+    //data invoice
     public $tipoDoc;
     public $serie;
     public $correlativo;
@@ -13,6 +14,7 @@ class CreateInvoiceTicket extends Component
     public $moneda;
     public $tipo;
 
+    //data client
     public $tipoDocClient;
     public $numDoc;
     public $rznSocialClient;
@@ -22,6 +24,7 @@ class CreateInvoiceTicket extends Component
     public $distritoClient;
     public $ubigueoClient;
 
+    //data company
     public $ruc;
     public $razonSocialCompany;
     public $nombreComercialCompany;
@@ -31,6 +34,7 @@ class CreateInvoiceTicket extends Component
     public $distritoCompany;
     public $ubigueoCompany;
 
+    //data invoice amount
     public $mtoOperGravadas;
     public $mtoOperExoneradas;
     public $mtoIGV;

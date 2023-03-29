@@ -22,11 +22,9 @@ class SaleEdit extends Component
     public $methods_payment = [];
     public $types_payment = [];
     public $customers = [];
-    public $dts = [];
     public $cart = [];
 
     public $change = 0;
-    public $totalCart = 0;
     public $totalOG = 0;
     public $total = 0;
     public $totalDiscount;
@@ -73,6 +71,21 @@ class SaleEdit extends Component
         $this->methods_payment = Sale::METHOD_PAYMENTS;
         $this->types_payment = Sale::TYPE_PAYMENTS;
         $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
+
+        $this->cart = Cart::session($this->editing->code_sale)->getContent()->sortBy('name');
+
+        $dts = SaleDetail::where('sale_id', $this->editing->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get()->sortBy('name');
+        if (count($dts) == 0) {
+            $dts = [];
+        } else {
+            foreach ($dts as $item) {
+                Cart::session($this->editing->code_sale)->add($item->product_id, $item->product->name, $item->price, $item->quantity, ['discount' => $item->discount]);
+
+                $id = Cart::session($this->editing->code_sale)->get($item->product_id)->id;
+
+                $this->updateQuantityCart($id, $item->quantity, $item->discount);
+            }
+        }
     }
 
     public function render()
@@ -90,15 +103,6 @@ class SaleEdit extends Component
             $this->products = [];
         }
 
-        $this->cart = Cart::session($this->editing->code_sale)->getContent()->sortBy('name');
-        if ($this->cart->isempty()) {
-            $this->cart = [];
-        }
-
-        $this->dts = SaleDetail::where('sale_id', $this->editing->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get()->sortBy('name');
-        if (count($this->dts) == 0) {
-            $this->dts = [];
-        }
         $this->updateCartOptions();
         return view('livewire.sale.sale-edit')
             ->extends('layouts.admin.app')->section('content');
@@ -106,7 +110,7 @@ class SaleEdit extends Component
 
     public function updateCartOptions()
     {
-        $this->totalCart = Cart::session($this->editing->code_sale)->getTotal();
+        $this->total = Cart::session($this->editing->code_sale)->getTotal();
         $this->calculeTotal();
     }
 
@@ -133,8 +137,13 @@ class SaleEdit extends Component
             $this->emit('error_alert', 'Este producto no tiene suficiento stock');
             return;
         }
+        $item_exist = Cart::session($this->editing->code_sale)->get($product->id);
+        if ($item_exist != null) {
+            Cart::session($this->editing->code_sale)->add($product->id, $product->name, $item_exist->price, $cant, ['discount' => $item_exist->attributes['discount']]);
+        } else {
+            Cart::session($this->editing->code_sale)->add($product->id, $product->name, $product->sale_price, $cant, ['discount' => $discount]);
+        }
 
-        Cart::session($this->editing->code_sale)->add($product->id, $product->name, $product->sale_price, $cant, array('discount' => $discount));
         $this->searchProduct = '';
         $this->updateCartOptions();
 
@@ -147,39 +156,28 @@ class SaleEdit extends Component
         $this->updateCartOptions();
     }
 
-    public function updatePriceDs(SaleDetail $ds, $price)
+    public function updateQuantityCart($id, $cant, $discount = 0)
     {
-        $ds->update(['price' => $price]);
-        $this->updateCartOptions();
-    }
 
-    public function updateQuantityCart(Product $product, $cant, $discount = 0)
-    {
-        if ($cant > $product->stock) {
+        $product = Product::find($id);
+        $cart_exist = Cart::session($this->editing->code_sale)->get($product->id);
+        $sale_detail_quantity = SaleDetail::where('sale_id', $this->editing->id)->where('product_id', $product->id)->first();
+        // dd($sale_detail_quantity);
+        if ($sale_detail_quantity == null) {
+            $saleq = 0;
+        } else {
+            $saleq = $sale_detail_quantity->quantity;
+        }
+        if ($cant > ($product->stock + $saleq)) {
             $this->emit('info_alert', 'Este producto no tiene suficiento stock');
             return;
         }
-        if ($cant > 0) {
-            $price_cart_exist = Cart::session($this->editing->code_sale)->get($product->id)->price;
-            $this->removeItem($product->id);
-            Cart::session($this->editing->code_sale)->add($product->id, $product->name, $price_cart_exist, $cant, array('discount' => $discount));
-        } else {
-            $this->removeItem($product->id);
-        }
-        $this->updateCartOptions();
-    }
 
-    public function updateQuantityDs(SaleDetail $ds, $cant, $discount = 0)
-    {
-        $product = Product::find($ds->product_id);
-        if ($cant > $product->stock) {
-            $this->emit('info_alert', 'Este producto no tiene suficiente stock');
-            return;
-        }
         if ($cant > 0) {
-            $ds->update(['quantity' => $cant, 'discount' => $discount, 'price' => $ds->price]);
+            $this->removeItem($product->id);
+            Cart::session($this->editing->code_sale)->add($product->id, $product->name, $cart_exist->price, $cant, array('discount' => $discount));
         } else {
-            $this->removeItemDp($ds->id);
+            $this->removeItem($product->id);
         }
         $this->updateCartOptions();
     }
@@ -190,16 +188,6 @@ class SaleEdit extends Component
             Cart::session($this->editing->code_sale)->update($product->id, array('attributes' => array('discount' => $discount)));
         } else {
             Cart::session($this->editing->code_sale)->update($product->id, array('attributes' => array('discount' => 0)));
-        }
-        $this->updateCartOptions();
-    }
-
-    public function updateDiscountDs(SaleDetail $ds, $discount)
-    {
-        if ($discount > 0) {
-            $ds->update(['discount' => $discount]);
-        } else {
-            $ds->update(['discount' => 0]);
         }
         $this->updateCartOptions();
     }
@@ -229,18 +217,9 @@ class SaleEdit extends Component
         $this->updateCartOptions();
     }
 
-    public function removeItemDs(SaleDetail $ds)
-    {
-        $ds->delete();
-        $this->updateCartOptions();
-    }
-
     public function clearCart()
     {
         Cart::session($this->editing->code_sale)->clear();
-        foreach ($this->dts as $ds) {
-            $ds->delete();
-        }
         $this->editing->date_sale = Carbon::parse($this->editing->date_sale)->format('Y-m-d');
         $this->editing->update(['total' => 0]);
         $this->updateCartOptions();
@@ -256,7 +235,7 @@ class SaleEdit extends Component
 
     public function save()
     {
-        if (count($this->cart) == 0 && count($this->dts) == 0) {
+        if (count($this->cart) == 0) {
             $this->emit('error_alert', 'No hay productos en la venta');
             return;
         } else {
@@ -274,57 +253,45 @@ class SaleEdit extends Component
     {
         $this->totalDiscount = 0;
         $this->cart = Cart::session($this->editing->code_sale)->getContent();
-        $totalDiscountCart = 0;
-        $totalDiscountDp = 0;
-        $totalCartOG = 0;
-        $totalDpOG = 0;
-        $totalDp = 0;
         foreach ($this->cart as $c) {
-            $totalDiscountCart += $c->price * $c->quantity - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
+            $this->totalDiscount += $c->price * $c->quantity - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
         }
-        foreach ($this->dts as $p) {
-            $totalDiscountDp += $p->price * $p->quantity - (($p->quantity * $p->price) * ($p->discount / 100));
-            $totalDp += $p->price * $p->quantity;
-        }
-        $totalCartOG = $totalDiscountCart / 1.18;
-        $totalDpOG = $totalDiscountDp / 1.18;
-        $this->totalOG = $totalCartOG + $totalDpOG;
-        $this->total = $this->totalCart + $totalDp;
-        $this->totalDiscount = $totalDiscountCart + $totalDiscountDp;
+        $this->totalOG = $this->totalDiscount / 1.18;
     }
 
     public function saveLogic()
     {
         $this->validate();
-        if ($this->editing->cash == 0 && $this->editing->method_payment == 'contado') {
-            $this->emit('error_alert', 'Debe ingresar el monto en efectivo');
-        } else {
-            $this->calculeTotal();
-            $this->editing->total = $this->totalDiscount;
-            $this->editing->date_sale = Carbon::parse($this->editing->date_sale)->format('Y-m-d');
-            $this->editing->save();
-            foreach ($this->cart as $item) {
-                SaleDetail::create([
-                    'price' => $item->price,
-                    'quantity' => $item->quantity,
-                    'discount' => $item->attributes['discount'],
-                    'product_id' => $item->id,
-                    'sale_id' => $this->editing->id,
-                ]);
+        $this->calculeTotal();
+        $this->editing->date_sale = Carbon::parse($this->editing->date_sale)->format('Y-m-d');
+        $this->editing->total = $this->totalDiscount;
+        $this->editing->save();
 
-                //update stock of product saled
-                $product = Product::find($item->id);
-                $product->stock -= $item->quantity;
-                $product->save();
-            }
+        $this->editing->saleDetail()->get()->each(function ($item) {
+            $item->product->stock += $item->quantity;
+            $item->product->save();
+        });
 
-            $duepay = DuePay::where('description', $this->editing->code_sale)->first();
-            $duepay->amount_owed = $this->totalDiscount;
-            $duepay->save();
+        $this->editing->saleDetail()->delete();
 
-            Cart::session($this->editing->code_sale)->clear();
-            $this->updateCartOptions();
-            $this->emit('success_alert', 'Venta actualizada');
+        foreach ($this->cart as $item) {
+            SaleDetail::create([
+                'price' => $item->price,
+                'quantity' => $item->quantity,
+                'discount' => $item->attributes['discount'],
+                'product_id' => $item->id,
+                'sale_id' => $this->editing->id,
+            ]);
+
+            //update stock of product saled
+            $product = Product::find($item->id);
+            $product->stock -= $item->quantity;
+            $product->save();
         }
+        DuePay::where('description', $this->editing->code_sale)->update(['amount_owed' => $this->totalDiscount, 'person_owed' => $this->editing->customer->name]);
+
+        Cart::session($this->editing->code_sale)->clear();
+        $this->updateCartOptions();
+        $this->emit('success_alert', 'Venta actualizada');
     }
 }

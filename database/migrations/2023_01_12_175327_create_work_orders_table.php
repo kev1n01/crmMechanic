@@ -21,6 +21,7 @@ return new class extends Migration
             $table->time('arrival_hour')->nullable();
             $table->date('departure_date')->nullable();
             $table->time('departure_hour')->nullable();
+            $table->date('date_emission')->nullable();
             $table->decimal('total', 10, 2)->nullable();
             $table->text('observation')->nullable();
             $table->foreignId('customer')->constrained('customers');

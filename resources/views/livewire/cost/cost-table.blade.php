@@ -84,10 +84,6 @@
                                     <div class="col-lg-3">
                                         <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
-                                    <div class="col-lg-3">
-                                        <x-input.select name="filters.voucher" label="Tipo de comprobante"
-                                            :options="$vouchers" />
-                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -110,8 +106,6 @@
                                 <x-table.heading sortable wire:click="sortBy('total')" :direction="$sortField == 'total' ? $sortDirection : null">Total
                                 </x-table.heading>
 
-                                <x-table.heading>Comprobante</x-table.heading>
-
                                 <x-table.heading>Acción</x-table.heading>
 
                             </x-slot>
@@ -132,12 +126,6 @@
                                         <x-table.cell>{{ $cost->date }}</x-table.cell>
 
                                         <x-table.cell>{{ $cost->total }}</x-table.cell>
-
-                                        <x-table.cell>
-                                            <span class="badge badge-{{ $cost->voucher_color }}-lighten">
-                                                {{ strtoupper($cost->type_voucher) }}
-                                            </span>
-                                        </x-table.cell>
 
                                         <x-table.cell>
 
@@ -180,9 +168,6 @@
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.total" label="Monto" type="text"
                         :error="$errors->first('editing.total')" :required=true />
-
-                    <x-input.select class="col-xl-6" name="editing.type_voucher" label="Tipo de comprobante"
-                        :options="$vouchers" :error="$errors->first('editing.type_voucher')" :required=true />
                 </div>
             </x-slot>
 

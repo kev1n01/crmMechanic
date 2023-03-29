@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Vehicle;
 use App\Models\WorkOrder;
 use App\Models\workOrderDetail;
+use Carbon\Carbon;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -46,6 +47,7 @@ class OtCreate extends Component
             'editing.vehicle' => 'required',
             'editing.type_atention' => 'required',
             'editing.observation' => 'nullable',
+            'editing.date_emission' => 'required',
         ];
     }
 
@@ -57,6 +59,7 @@ class OtCreate extends Component
         'editing.customer.required' => 'El cliente es obligatorio',
         'editing.type_atention.required' => 'El tipo de atención es obligatorio',
         'editing.vehicle.required' => 'El vehiculo es obligatorio',
+        'editing.date_emission.required' => 'La fecha emision es obligatorio',
     ];
 
     public function code_random($lenght, $letter = '')
@@ -71,6 +74,7 @@ class OtCreate extends Component
         $this->editing = $this->makeBlankFields();
         if ($this->editing->getKey()) $this->editing = $this->makeBlankFields(); // para preservar cambios en los inputs for create
         $this->editing->code = $this->code_random(5, 'P');
+        $this->editing->date_emission = Carbon::now()->format('d-m-Y');
         $this->statuses = WorkOrder::STATUSES;
         $this->types  = WorkOrder::TYPES;
         $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
@@ -239,12 +243,12 @@ class OtCreate extends Component
         }
         $this->totalOG = $this->totalDiscount / 1.18;
 
-        // Filtrar los items que son servicios
+        // Filtrar los items que son repuestos
         $cart_replacement = $this->cart->filter(function ($i) {
             return strlen($i->id) > 4;
         });
 
-        // Sumar el total de los items que son servicios
+        // Sumar el total de los items que son repuestos
         foreach ($cart_replacement as $cr) {
             $this->total_replacement += ($cr->price * $cr->quantity) - (($cr->quantity * $cr->price) * ($cr->attributes['discount'] / 100));
         }
@@ -296,6 +300,7 @@ class OtCreate extends Component
         $this->validate();
         $this->calculeTotal();
         $this->editing->total = $this->totalDiscount;
+        $this->editing->date_emission = Carbon::parse($this->editing->date_emission)->format('Y-m-d');
         $vehicle = Vehicle::find($this->editing->vehicle);
         $this->editing->odo = $vehicle->odo;
         $this->editing->is_confirmed = 0;

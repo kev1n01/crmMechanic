@@ -15,8 +15,10 @@ class OtConfModal extends Component
 {
     public $idModal = 'otConfModal';
     public $nameModal;
+    public $method_payment;
     public WorkOrder $editing;
     protected $listeners = ['addDateWo'];
+    public $methods_payment = Sale::METHOD_PAYMENTS;
 
 
     public function rules()
@@ -26,6 +28,8 @@ class OtConfModal extends Component
             'editing.arrival_hour' => 'required',
             'editing.departure_date' => 'nullable|date',
             'editing.departure_hour' => 'nullable',
+            'editing.odo' => 'required',
+            'method_payment' => 'required|in:' . collect(Sale::METHOD_PAYMENTS)->keys()->implode(','),
         ];
     }
     protected $messages = [
@@ -34,6 +38,8 @@ class OtConfModal extends Component
         'editing.arrival_hour.required' => 'La hora de llegada es obligatoria',
         'editing.departure_date.date' => 'No es una fecha valida',
         'editing.arrival_hour.required' => 'La hora de llegada es obligatoria',
+        'editing.odo.required' => 'El odometro es obligatorio',
+        'method_payment.required' => 'El metodo de pago es obligatorio',
     ];
 
     public function code_random($lenght)
@@ -60,15 +66,21 @@ class OtConfModal extends Component
     {
         $this->resetErrorBag();
         $this->resetValidation();
-        $this->nameModal = 'Confirmacion y configuracion de horarios';
+        $this->nameModal = 'Confirmar Orden de Trabajo';
         $this->dispatchBrowserEvent('open-modal-ot-conf');
         $this->editing = $wo;
         if ($this->editing->arrival_date != null) {
             $this->editing->arrival_date = Carbon::parse($this->editing->arrival_date)->format('d-m-Y');
+        } else {
+            $this->editing->arrival_date = Carbon::now()->format('d-m-Y');
         }
+
         if ($this->editing->arrival_hour != null) {
             $this->editing->arrival_hour = $this->editing->arrival_hour;
+        } else {
+            $this->editing->arrival_hour = Carbon::now()->format('H:i');
         }
+
         if ($this->editing->departure_date != null) {
             $this->editing->departure_date = Carbon::parse($this->editing->departure_date)->format('d-m-Y');
         }
@@ -121,13 +133,12 @@ class OtConfModal extends Component
                 'total' => $total_replacement,
                 'cash' => 0,
                 'type_payment' => 'credito',
-                'method_payment' => 'efectivo',
+                'method_payment' => $this->method_payment,
                 'type_sale' => 'vehicular',
                 'date_sale' => Carbon::now()->format('Y-m-d'),
                 'observation' => 'Venta de repuestos para la proforma ' . $this->editing->code,
                 'status' => 'no pagado',
             ]);
-
 
             DuePay::create([
                 'description' => $sale->code_sale,
@@ -158,14 +169,13 @@ class OtConfModal extends Component
                 $product->stock -= $wod->quantity;
                 $product->save();
             }
-
             // update odo of vehicle to work order registeres
             $vehicle = Vehicle::find($this->editing->vehicle);
             $vehicle->odo = $this->editing->odo;
             $vehicle->save();
 
             $this->editing->save();
-            $this->emit('success_alert', 'OT confirmada y configurada');
+            $this->emit('success_alert', 'Orden de trabajo configurada y en progreso');
         } else {
             $this->editing->arrival_date = Carbon::parse($this->editing->arrival_date)->format('Y-m-d');
             $this->editing->arrival_hour = $this->editing->arrival_hour;
@@ -180,14 +190,14 @@ class OtConfModal extends Component
             if ($this->editing->departure_hour == '00:00:00') {
                 $this->editing->departure_hour = null;
             }
-
             $this->editing->save();
+
             // update odo of vehicle to work order registeres
             $vehicle = Vehicle::find($this->editing->vehicle);
             $vehicle->odo = $this->editing->odo;
             $vehicle->save();
 
-            $this->emit('success_alert', 'Configuracion de horarios actualizados');
+            $this->emit('success_alert', 'Configuracion de orden de trabajo actualizada');
         }
     }
 

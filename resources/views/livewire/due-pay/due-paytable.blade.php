@@ -34,7 +34,7 @@
                                         <i class="mdi mdi-filter-outline me-1"></i>
                                     @endif
                                 </button>
-                                <button type="button" wire:click="create" class="btn btn-dark mb-2 me-2"><i
+                                <button type="button" wire:click="$emit('createDuepay')" class="btn btn-dark mb-2 me-2"><i
                                         class="mdi mdi-plus me-1"></i>
                                     Nuevo</button>
 
@@ -162,13 +162,13 @@
                                         <x-table.cell>{{ $d->reason }}</x-table.cell>
 
                                         <x-table.cell>
-                                            {{ \Carbon\Carbon::parse($d->created_at)->format('d-m-Y') }}
-                                            {{ \Carbon\Carbon::parse($d->created_at)->format('g i: a') }}
+                                            {{ \Carbon\Carbon::parse($d->created_at)->format('d-m-Y, g i: a') }}
                                         </x-table.cell>
 
                                         <x-table.cell>
 
-                                            <a class="action-icon" wire:click="edit({{ $d->id }})">
+                                            <a class="action-icon"
+                                                wire:click="$emit('editDuepay',{{ $d->id }})">
                                                 <i class="mdi mdi-credit-card-plus-outline"></i> </a>
                                             <a class="action-icon" onclick="Confirm({{ $d->id }}, 'delete')"><i
                                                     class="mdi mdi-delete"></i></a>
@@ -195,63 +195,6 @@
             </div>
         </div>
     </div>
-    <x-form method="save">
-        <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
-            <x-slot name="body">
-                <div class="row g-2">
-                    @if ($editing->reason === 'otro')
-                        <x-input.input-tooltip-error class="col-xl-12" name="editing.description" label="Descripcion"
-                            type="text" :error="$errors->first('editing.description')" :required=true />
 
-                        <x-input.input-tooltip-error class="col-xl-6" name="editing.person_owed"
-                            label="Nombre deudor" type="text" :error="$errors->first('editing.person_owed')" :required=true />
-
-                        <x-input.input-tooltip-error class="col-xl-6" name="editing.amount_owed"
-                            label="Monto adeudado" type="number" :error="$errors->first('editing.amount_owed')" :required=true />
-
-                        <x-input.input-tooltip-error class="col-xl-6" name="editing.amount_paid" label="Monto pagado"
-                            type="number" :error="$errors->first('editing.amount_paid')" :required=true />
-
-                        <x-input.select class="col-xl-6" name="editing.reason" label="Razon" :options="$reasons"
-                            :error="$errors->first('editing.reason')" :required=true />
-                    @else
-                        <x-input.input-tooltip-error class="col-xl-12" name="editing.description" label="Descripcion"
-                            type="text" :error="$errors->first('editing.description')" :required=true :disabled=true />
-
-                        <x-input.input-tooltip-error class="col-xl-6" name="editing.person_owed"
-                            label="Nombre deudor" type="text" :error="$errors->first('editing.person_owed')" :required=true :disabled=true/>
-
-                        <x-input.input-tooltip-error class="col-xl-6" name="editing.amount_owed"
-                            label="Monto adeudado" type="number" :error="$errors->first('editing.amount_owed')" :required=true :disabled=true/>
-
-                        <x-input.input-tooltip-error class="col-xl-6" name="editing.amount_paid" label="Monto pagado"
-                            type="number" :error="$errors->first('editing.amount_paid')" :required=true />
-
-                        <x-input.select class="col-xl-6" name="editing.reason" label="Razon" :options="$reasons"
-                            :error="$errors->first('editing.reason')" :required=true :disabled=true/>
-                    @endif
-                </div>
-            </x-slot>
-
-            <x-slot name="footer">
-                <button type="button" class="btn btn-secondary" wire:click="closeModal">Cerrar</button>
-
-                <button type="submit" class="btn btn-primary">
-                    <span wire:loading.delay wire:target="save" class="spinner-border spinner-border-sm"></span>
-                    Guardar
-                </button>
-            </x-slot>
-        </x-modal-dialog>
-    </x-form>
 </div>
-
-@push('js')
-    <script>
-        window.addEventListener('close-modal', event => {
-            $('#dueModal').modal('hide');
-        });
-        window.addEventListener('open-modal', event => {
-            $('#dueModal').modal('show');
-        });
-    </script>
-@endpush
+@livewire('due-pay.modal')

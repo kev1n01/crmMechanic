@@ -1,4 +1,4 @@
-@section('title', 'Crear proforma' )
+@section('title', 'Crear proforma')
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -139,13 +139,19 @@
                                                 value="{{ $vf->model_year }}">
                                         </div>
                                     @endif
-
-                                    <x-input.textarea class="col-xl-12" name="editing.observation"
-                                        label="Observaciones" />
                                 </div>
                             </div>
                         </div>
+                        <div class="card">
+                            <div class="row g-2 p-2">
+                                <x-input.textarea class="col-xl-8" name="editing.observation"
+                                    label="Observaciones" />
+                                <x-input.datepicker class="col-xl-4" name="editing.date_emission"
+                                    label="Fecha emision" id="dp1" :error="$errors->first('editing.date_emission')" :required=true />
+                            </div>
+                        </div>
                     </div>
+
                 </div>
 
                 <div class="card">

@@ -1,4 +1,4 @@
-@section('title', 'Ordenes de trabajo' )
+@section('title', 'Ordenes de trabajo')
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -87,7 +87,7 @@
 
                                 <x-table.heading>F H salida</x-table.heading>
 
-                                <x-table.heading>Mantenimiento</x-table.heading>
+                                <x-table.heading>Atencion</x-table.heading>
 
                                 <x-table.heading>Estado</x-table.heading>
 
@@ -147,6 +147,9 @@
                                             <a class="action-icon cursor"
                                                 wire:click="$emit('addDateWo',{{ $wo->id }})">
                                                 <i class="mdi mdi-calendar-clock"></i> </a>
+                                            <a class="action-icon cursor"
+                                                href="{{ route('proforma.orden.editar', $wo->code) }}">
+                                                <i class="mdi mdi-square-edit-outline"></i> </a>
                                             <a class="action-icon cursor"
                                                 href="{{ route('proforma.pdf.view', $wo->id) }}">
                                                 <i class="mdi mdi-file-eye-outline"></i></a>

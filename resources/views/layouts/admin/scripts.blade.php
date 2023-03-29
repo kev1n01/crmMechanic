@@ -50,7 +50,7 @@
     function Confirm(id, event) {
         Swal.fire({
             title: 'CONFIRMAR',
-            text: '¿CONFIRMAS ELIMINAR EL REGISTRO?',
+            text: '¿CONFIRMAS ELIMINAR EL O LOS REGISTROS?',
             icon: 'warning',
             showCancelButton: true,
             cancelButtonText: 'Cerrar',

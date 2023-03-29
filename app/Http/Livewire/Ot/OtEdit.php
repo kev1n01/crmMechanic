@@ -11,6 +11,7 @@ use App\Models\SaleDetail;
 use App\Models\Vehicle;
 use App\Models\WorkOrder;
 use App\Models\workOrderDetail;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Livewire\Component;
@@ -30,11 +31,7 @@ class OtEdit extends Component
     public $vf = [];
     public $cf = [];
     public $cart = [];
-    public $dtw = [];
 
-    public $productNotUpdateStockInEdit = [];
-
-    public $totalCart = 0;
     public $totalOG = 0;
     public $total = 0;
     public $totalDiscount = 0;
@@ -53,6 +50,7 @@ class OtEdit extends Component
             'editing.vehicle' => 'required',
             'editing.type_atention' => 'required',
             'editing.observation' => 'nullable',
+            'editing.date_emission' => 'required',
         ];
     }
 
@@ -65,6 +63,7 @@ class OtEdit extends Component
         'editing.customer.required' => 'El cliente es obligatorio',
         'editing.type_atention.required' => 'El tipo de atención es obligatorio',
         'editing.vehicle.required' => 'El vehiculo es obligatorio',
+        'editing.date_emission.required' => 'La fecha de emision es obligatorio',
     ];
 
     public function mount($code)
@@ -72,11 +71,39 @@ class OtEdit extends Component
         $wo = WorkOrder::where('code', $code)->first();
         $this->editing = $this->makeBlankFields();
         if ($this->editing->isNot($wo)) $this->editing = $wo; // para preservar cambios en los inputs for create
+        $this->editing->date_emission = Carbon::parse($this->editing->date_emission)->format('d-m-Y');
         $this->statuses = WorkOrder::STATUSES;
         $this->types  = WorkOrder::TYPES;
         $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
         $this->cf = Customer::find($this->editing->customer);
         $this->vf = Vehicle::find($this->editing->vehicle);
+
+
+        $this->cart = Cart::session($this->editing->code)->getContent()->sortBy('name');
+
+        $wod = workOrderDetail::where('work_order_id', $this->editing->id)->select('id', 'item', 'price', 'discount', 'quantity')->get()->sortBy('item.code');
+        // dd($wod->toArray());
+        if (count($wod) == 0) {
+            $wod = [];
+        } else {
+            $wod = $wod->map(function ($item, $key) {
+                if (strlen(strval($item->item)) > 4)
+                    $item->item = Product::where('code', strval($item->item))->select('code', 'name')->first();
+                else
+                    $item->item = Concept::where('code', str_pad($item->item, 3, "0", STR_PAD_LEFT))->select('code', 'name')->first();
+                return $item;
+            });
+            // dd($wod->toArray());
+            foreach ($wod as $wodm) {
+                // dd($wodm->item->code);
+                Cart::session($this->editing->code)->add(intval($wodm->item->code), $wodm->item->name, $wodm->price, $wodm->quantity, ['discount' => $wodm->discount]);
+
+                $id = Cart::session($this->editing->code)->get(intval($wodm->item->code))->id;
+
+                $this->updateQuantityCart($id, $wodm->quantity, $wodm->discount);
+            }
+            // dd($this->cart->toArray());
+        }
     }
 
     public function code_random($lenght)
@@ -107,24 +134,6 @@ class OtEdit extends Component
             $this->products = [];
         }
 
-        $this->cart = Cart::session($this->editing->code)->getContent()->sortBy('id');
-        if (count($this->cart) == 0) {
-            $this->cart = [];
-        }
-        $wod = workOrderDetail::where('work_order_id', $this->editing->id)->select('id', 'item', 'price', 'discount', 'quantity')->get()->sortBy('item');
-        // dd($wod->toArray());
-        if (count($wod) == 0) {
-            $this->dtw = [];
-        } else {
-            $this->dtw = $wod->map(function ($item, $key) {
-                if (strlen(strval($item->item)) > 4)
-                    $item->item = Product::where('code', strval($item->item))->select('name')->first();
-                else
-                    $item->item = Concept::where('code', str_pad($item->item, 3, "0", STR_PAD_LEFT))->select('name')->first();
-                return $item;
-            });
-        }
-
         $this->vehicles = Vehicle::where('customer_id', $this->editing->customer)
             ->pluck('license_plate', 'id');
 
@@ -149,7 +158,7 @@ class OtEdit extends Component
 
     public function updateCartOptions()
     {
-        $this->totalCart = Cart::session($this->editing->code)->getTotal();
+        $this->total = Cart::session($this->editing->code)->getTotal();
         $this->calculeTotal();
     }
 
@@ -174,7 +183,13 @@ class OtEdit extends Component
 
     public function addConcept(Concept $concept, $discount = 0)
     {
-        Cart::session($this->editing->code)->add(intval($concept->code), $concept->name, 0, 1, array('discount' => $discount));
+        $item_exist = Cart::session($this->editing->code)->get(intval($concept->code));
+        if ($item_exist != null) {
+            Cart::session($this->editing->code)->add(intval($concept->code), $concept->name, $item_exist->price, 1, ['discount' => $item_exist->attributes['discount']]);
+        } else {
+            Cart::session($this->editing->code)->add(intval($concept->code), $concept->name, 0, 1, array('discount' => $discount));
+        }
+
         $this->searchProductService = '';
         $this->updateCartOptions();
         $this->emit('success_alert', 'Servicio agregado a la proforma');
@@ -190,8 +205,13 @@ class OtEdit extends Component
             $this->emit('error_alert', 'Este producto no tiene suficiento stock');
             return;
         }
+        $item_exist = Cart::session($this->editing->code)->get(intval($product->code));
+        if ($item_exist != null) {
+            Cart::session($this->editing->code)->add(intval($product->code), $product->name, $item_exist->price, 1, ['discount' => $item_exist->attributes['discount']]);
+        } else {
+            Cart::session($this->editing->code)->add(intval($product->code), $product->name, $product->sale_price, 1, array('discount' => $discount));
+        }
 
-        Cart::session($this->editing->code)->add(intval($product->code), $product->name, $product->sale_price, 1, array('discount' => $discount));
         $this->searchProductService = '';
         $this->updateCartOptions();
         $this->emit('success_alert', 'Producto agregado a la proforma');
@@ -199,42 +219,41 @@ class OtEdit extends Component
 
     public function updateQuantityCart($code_id, $cant, $discount = 0)
     {
+        // dd($code_id);
         if (strlen($code_id) > 4) {
             $product = Product::where('code', $code_id)->first();
-            if ($cant > $product->stock) {
-                $this->emit('error_alert', 'No hay suficiente stock para este producto');
-                return;
+            if ($this->editing->is_confirmed == 1) {
+                $saleOt = Sale::where('code_sale', 'like', '%' . $this->editing->code . '%')->first();
+                $sale_detail_quantity = SaleDetail::where('sale_id', $saleOt->id)->where('product_id', $product->id)->first();
+                // dd($sale_detail_quantity);
+                $saleq = $sale_detail_quantity == null ? 0 : $sale_detail_quantity->quantity;
+                // if ($sale_detail_quantity == null) {
+                //     $saleq = 0;
+                // } else {
+                //     $saleq = $sale_detail_quantity->quantity;
+                // }
+                if ($cant > ($product->stock + $saleq)) {
+                    $this->emit('info_alert', 'Este producto no tiene suficiento stock');
+                    return;
+                }
+            } else {
+                if ($cant > $product->stock) {
+                    $this->emit('info_alert', 'Este producto no tiene suficiento stock');
+                    return;
+                }
             }
         }
-        $code = intval($code_id);
-        $item = Cart::session($this->editing->code)->get($code);
+        // $code = intval($code_id);
+
+        $item = Cart::session($this->editing->code)->get($code_id);
+        // dd($item);
         if ($cant > 0) {
-            $this->removeItem($code);
-            Cart::session($this->editing->code)->add($code, $item->name, $item->price, $cant, array('discount' => $discount));
+            $this->removeItem($code_id);
+            Cart::session($this->editing->code)->add($code_id, $item->name, $item->price, $cant, array('discount' => $discount));
         } else {
-            $this->removeItem($code);
+            $this->removeItem($code_id);
         }
         $this->updateCartOptions();
-    }
-
-    public function updateQuantityDot(workOrderDetail $dot, $cant = 0, $discount = 0)
-    {
-        if (strlen($dot->item) > 4) {
-            $product = Product::where('code', $dot->item)->first();
-            //new_stock_cant = (20+3)-23= 0
-            $cant_pass = array($dot->quantity);//3
-            $new_stock_cant = ($product->stock + $dot->quantity) - $cant;
-            if ($new_stock_cant < 0) {
-                $this->emit('error_alert', 'No hay suficiente stock para este producto');
-                return;
-            }
-
-        }
-        if ($cant > 0) {
-            $dot->update(['quantity' => $cant, 'discount' => $discount, 'price' => $dot->price]);
-        } else {
-            $this->removeItemDot($dot->id);
-        }
     }
 
     public function updatePriceCart($code_id, $price = 0)
@@ -248,11 +267,6 @@ class OtEdit extends Component
         $this->updateCartOptions();
     }
 
-    public function updatePriceDot(workOrderDetail $dot, $price = 0)
-    {
-        $dot->update(['price' => $price]);
-    }
-
     public function updateDiscountCart($code_id, $discount = 0)
     {
         $code = intval($code_id);
@@ -264,33 +278,15 @@ class OtEdit extends Component
         $this->updateCartOptions();
     }
 
-    public function updateDiscountDot(workOrderDetail $dot, $discount = 0)
-    {
-        if ($discount > 0) {
-            $dot->update(['discount' => $discount]);
-        } else {
-            $dot->update(['discount' => 0]);
-        }
-    }
-
     public function removeItem($id)
     {
+        // dd($id);
         Cart::session($this->editing->code)->remove($id);
         $this->updateCartOptions();
     }
 
-    public function removeItemDot($id)
-    {
-        $dot = workOrderDetail::find($id);
-        $dot->delete();
-    }
-
     public function clearCart()
     {
-        Cart::session($this->editing->code)->clear();
-        foreach ($this->dtw as $do) {
-            $do->delete();
-        }
         $this->editing->update(['total' => 0]);
         $this->updateCartOptions();
         $this->emit('success_alert', 'Lista de servicios y productos eliminados');
@@ -302,47 +298,15 @@ class OtEdit extends Component
         $this->total_replacement = 0;
         $this->total_service = 0;
         $this->cart = Cart::session($this->editing->code)->getContent();
-        $totalDiscountCart = 0;
-        $totalDiscountDp = 0;
-        $totalCartOG = 0;
-        $totalDpOG = 0;
-        $totalDp = 0;
         foreach ($this->cart as $c) {
-            $totalDiscountCart += $c->price * $c->quantity - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
+            $this->totalDiscount += $c->price * $c->quantity - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
         }
-        foreach ($this->dtw as $p) {
-            $totalDiscountDp += $p->price * $p->quantity - (($p->quantity * $p->price) * ($p->discount / 100));
-            $totalDp += $p->price * $p->quantity;
-        }
-        $totalCartOG = $totalDiscountCart / 1.18;
-        $totalDpOG = $totalDiscountDp / 1.18;
-        $this->totalOG = $totalCartOG + $totalDpOG;
-        $this->total = $this->totalCart + $totalDp;
-        $this->totalDiscount = $totalDiscountCart + $totalDiscountDp;
+        $this->totalOG = $this->totalDiscount / 1.18;
 
-        $wod = workOrderDetail::where('work_order_id', $this->editing->id)->select('id', 'item', 'price', 'discount', 'quantity')->get();
-
-        // Filtrar los items que son servicios
+        // Filtrar los items que son repuestos
         $cart_replacement = $this->cart->filter(function ($i) {
             return strlen($i->id) > 4;
         });
-
-        $dtw_replacement = $wod->filter(function ($i) {
-            return strlen($i->item) > 4;
-        });
-
-        // Sumar el total de los items que son servicios
-        foreach ($dtw_replacement as $dtw) {
-            $this->total_replacement += ($dtw->price * $dtw->quantity) - (($dtw->quantity * $dtw->price) * ($dtw->discount / 100));
-        }
-        $dtw_service = $wod->filter(function ($i) {
-            return strlen($i->item) < 4;
-        });
-
-        // Sumar el total de los items que son servicios
-        foreach ($dtw_service as $dtw) {
-            $this->total_service += ($dtw->price * $dtw->quantity) - (($dtw->quantity * $dtw->price) * ($dtw->discount / 100));
-        }
 
         // Sumar el total de los items que son repuestos
         foreach ($cart_replacement as $cr) {
@@ -369,8 +333,8 @@ class OtEdit extends Component
 
     public function save()
     {
-        if (count($this->cart) == 0 && count($this->dtw) == 0) {
-            $this->emit('error_alert', 'No hay productos en la venta');
+        if (count($this->cart) == 0) {
+            $this->emit('error_alert', 'No hay productos en la proforma');
             return;
         } else {
             $this->saveLogic();
@@ -387,12 +351,17 @@ class OtEdit extends Component
     {
         $this->validate();
         $this->calculeTotal();
-        // update odo of vehicle to work order registeres
-        $vehicle = Vehicle::find($this->editing->vehicle);
-        $vehicle->odo = $this->editing->odo;
-        $vehicle->save();
+        if ($this->editing->is_confirmed == 1) {
+            // update odo of vehicle to work order registeres
+            $vehicle = Vehicle::find($this->editing->vehicle);
+            $vehicle->odo = $this->editing->odo;
+            $vehicle->save();
+        }
+        $this->editing->date_emission = Carbon::parse($this->editing->date_emission)->format('Y-m-d');
         $this->editing->total = $this->totalDiscount;
         $this->editing->save();
+
+        $this->editing->workOrderDetail()->delete();
 
         //added items into work order detail
         foreach ($this->cart as $item) {
@@ -404,11 +373,13 @@ class OtEdit extends Component
                 'work_order_id' => $this->editing->id,
             ]);
         }
+
         if ($this->editing->is_confirmed == 1) {
             //Updating a Sale and DuePay
             $saleOt = Sale::where('code_sale', 'like', '%' . $this->editing->code . '%')->get();
             if (count($saleOt->toArray()) > 0) {
                 //update sale
+
                 $saleOt->first()->update([
                     'total' => $this->total_replacement,
                     'customer_id' => $this->editing->customer,
@@ -416,47 +387,63 @@ class OtEdit extends Component
 
                 $saleOt->first()->saleDetail()->get()->each(function ($item, $key) {
                     //update stock of product saled
-                    $product = Product::find($item->product_id);
-                    $product->stock += $item->quantity;
-                    $product->save();
+                    $item->product->stock += $item->quantity;
+                    $item->product->save();
                 });
 
                 $saleOt->first()->saleDetail()->delete();
 
                 // add new items to saleDetail - products
-                $wod = workOrderDetail::where('work_order_id', $this->editing->id)->select('id', 'item', 'price', 'discount', 'quantity')->get();
-                $dtw_replacement = $wod->filter(function ($i) {
-                    return strlen($i->item) > 4;
+                $this->cart = Cart::session($this->editing->code)->getContent();
+                $cart_replacement = $this->cart->filter(function ($i) {
+                    return strlen($i->id) > 4;
                 });
 
-                foreach ($dtw_replacement as $cr) {
-                    $productCodes = Product::where('code', $cr->item)->get();
+                foreach ($cart_replacement as $cr) {
+                    $productCodes = Product::where('code', $cr->id)->get();
                     foreach ($productCodes as $productCode) {
                         $product_id = $productCode->id;
                     }
                     SaleDetail::create([
                         'price' => $cr->price,
                         'quantity' => $cr->quantity,
-                        'discount' => $cr->discount,
+                        'discount' => $cr->attributes['discount'],
                         'product_id' => $product_id,
                         'sale_id' => $saleOt->first()->id,
                     ]);
                     //update stock of product saled
                     $product = Product::find($product_id);
                     $product->stock -= $cr->quantity;
+                    if ($product->sale_price == 0) {
+                        $product->sale_price = $cr->price;
+                    }
                     $product->save();
                 }
-
-                // update amount_own duepay of ot
-                DuePay::where('description', $saleOt->first()->code_sale)->update([
-                    'amount_owed' => $this->totalDiscount,
-                    'person_owed' => $this->editing->customer,
+            }
+            // update amount_own duepay of ot
+            $due = DuePay::where('description', $saleOt->first()->code_sale)->first();
+            // dd($due);
+            if ($due->amount_paid >= $this->total_replacement) {
+                $saleOt->first()->update([
+                    'cash' => $this->total_replacement,
+                    'status' => 'pagado',
                 ]);
             }
+            if ($due->amount_paid < $this->total_replacement) {
+                $saleOt->first()->update([
+                    'cash' => $due->amount_paid,
+                    'status' => 'no pagado',
+                ]);
+            }
+            $due->update([
+                'amount_owed' => $this->totalDiscount,
+                'person_owed' => $this->editing->customerUser->name,
+            ]);
         }
 
         Cart::session($this->editing->code)->clear();
         $this->updateCartOptions();
-        $this->emit('success_alert', 'Proforma actualizado');
+
+        $this->emit('success_alert', 'Proforma actualizada');
     }
 }

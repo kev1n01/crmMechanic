@@ -29,7 +29,7 @@
                                                 class="uil-user-plus"></i></button>
                                     </div>
                                     <x-input.select class="col-xl-6 mt-2" name="editing.status" label="Estado"
-                                        :required=true :options="$statuses" :error="$errors->first('editing.status')" />
+                                        :required=true :options="$statuses" :error="$errors->first('editing.status')"  :disabled=true/>
 
                                     <x-input.datepicker class="col-xl-6 mt-2" name="editing.date_purchase"
                                         label="Fecha" id="dp1" :error="$errors->first('editing.date_purchase')" :required=true />
@@ -123,38 +123,6 @@
                                     </x-slot>
 
                                     <x-slot name="body">
-                                        @foreach ($dtp as $p)
-                                            <x-table.row>
-                                                <x-table.cell>{{ $p->product->name }}</x-table.cell>
-                                                <x-table.cell>
-                                                    <input type="number" id="p{{ $p->id }}"
-                                                        class="form-control w-auto"
-                                                        wire:change="updatePriceDp({{ $p->id }}, $('#p' + {{ $p->id }}).val())"
-                                                        value="{{ $p->price }}">
-                                                </x-table.cell>
-                                                <x-table.cell>
-                                                    <input type="number" id="r{{ $p->id }}" min="1"
-                                                        wire:change="updateQuantityDp({{ $p->id }}, $('#r' + {{ $p->id }}).val(), $('#d'+{{ $p->id }}).val())"
-                                                        class="form-control text-center" value="{{ $p->quantity }}">
-                                                </x-table.cell>
-                                                <x-table.cell>
-                                                    <input type="number" id="d{{ $p->id }}"
-                                                        wire:change="updateDiscountDp({{ $p->id }}, $('#d'+{{ $p->id }}).val())"
-                                                        class="form-control" value="{{ $p->discount }}"
-                                                        min="0" max="100">
-                                                </x-table.cell>
-                                                <x-table.cell>
-                                                    <input type="text" class="form-control w-auto"
-                                                        value="S/ {{ number_format($p->price * $p->quantity - $p->price * $p->quantity * ($p->discount / 100), 2) }}"
-                                                        disabled>
-                                                </x-table.cell>
-                                                <x-table.cell>
-                                                    <a class="action-icon"
-                                                        wire:click.prevent="removeItemDp({{ $p->id }})"><i
-                                                            class="mdi mdi-delete"></i></a>
-                                                </x-table.cell>
-                                            </x-table.row>
-                                        @endforeach
                                         @foreach ($cart as $c)
                                             <x-table.row>
                                                 <x-table.cell>{{ $c->name }}</x-table.cell>
@@ -187,7 +155,7 @@
                                                 </x-table.cell>
                                             </x-table.row>
                                         @endforeach
-                                        @if (count($dtp) == 0 && count($cart) == 0)
+                                        @if (count($cart) == 0)
                                             <x-table.row>
                                                 <x-table.cell class="text-center" colspan="6">
                                                     No hay productos agregados a la compra

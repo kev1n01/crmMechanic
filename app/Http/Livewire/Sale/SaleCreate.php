@@ -185,6 +185,7 @@ class SaleCreate extends Component
     {
         if ($value == 'credito') {
             $this->editing->status = 'no pagado';
+            $this->editing->cash = 0;
         }
         if ($value == 'contado') {
             $this->editing->status = 'pagado';
@@ -237,8 +238,8 @@ class SaleCreate extends Component
 
     public function save()
     {
-        if (count($this->cart) == 0) {
-            $this->emit('error_alert', 'No hay productos en la venta');
+        if (count($this->cart) == 0 || $this->editing->cash < $this->totalDiscount && $this->editing->type_payment == 'contado') {
+            $this->emit('error_alert', 'No hay productos en la venta o el pago es menor al total');
         } else {
             $this->saveLogic();
             if ($this->another) {
@@ -257,46 +258,45 @@ class SaleCreate extends Component
     public function saveLogic()
     {
         $this->validate();
-        if ($this->editing->cash == 0 && $this->editing->method_payment == 'contado') {
-            $this->emit('error_alert', 'Debe ingresar el monto en efectivo');
-        } else {
-            $this->calculeTotal();
-            $this->editing->total = $this->totalDiscount;
-            $this->editing->type_sale = 'comercial';
-            $this->editing->date_sale = Carbon::parse($this->editing->date_sale)->format('Y-m-d');
-            $this->editing->save();
-            foreach ($this->cart as $item) {
-                SaleDetail::create([
-                    'price' => $item->price,
-                    'quantity' => $item->quantity,
-                    'discount' => $item->attributes['discount'],
-                    'product_id' => $item->id,
-                    'sale_id' => $this->editing->id,
-                ]);
 
-                //update stock of product saled
-                $product = Product::find($item->id);
-                $product->stock -= $item->quantity;
-                $product->save();
+        $this->calculeTotal();
+        $this->editing->total = $this->totalDiscount;
+        $this->editing->type_sale = 'comercial';
+        $this->editing->date_sale = Carbon::parse($this->editing->date_sale)->format('Y-m-d');
+        $this->editing->save();
+        foreach ($this->cart as $item) {
+            SaleDetail::create([
+                'price' => $item->price,
+                'quantity' => $item->quantity,
+                'discount' => $item->attributes['discount'],
+                'product_id' => $item->id,
+                'sale_id' => $this->editing->id,
+            ]);
+
+            //update stock of product saled
+            $product = Product::find($item->id);
+            $product->stock -= $item->quantity;
+            if ($product->sale_price == 0) {
+                $product->sale_price = $item->price;
             }
-
-            if ($this->editing->type_payment == 'credito') {
-                $this->editing->cash = 0;
-                DuePay::create([
-                    'description' => $this->editing->code_sale,
-                    'person_owed' => $this->editing->customer->name,
-                    'amount_owed' => $this->totalDiscount,
-                    'amount_paid' => $this->editing->cash,
-                    'reason' => 'venta',
-                ]);
-            }
-
-            Cart::session($this->editing->customer_id)->clear();
-            $this->updateCartOptions();
-            $this->editing->cash < $this->totalDiscount ?
-                $this->emit('success_alert', 'Venta registrada con deuda')
-                :
-                $this->emit('success_alert', 'Venta registrada y pagada');
+            $product->save();
         }
+
+        if ($this->editing->type_payment == 'credito') {
+            DuePay::create([
+                'description' => $this->editing->code_sale,
+                'person_owed' => $this->editing->customer->name,
+                'amount_owed' => $this->totalDiscount,
+                'amount_paid' => 0,
+                'reason' => 'venta',
+            ]);
+        }
+
+        Cart::session($this->editing->customer_id)->clear();
+        $this->updateCartOptions();
+        $this->editing->cash < $this->totalDiscount ?
+            $this->emit('success_alert', 'Venta registrada con deuda')
+            :
+            $this->emit('success_alert', 'Venta registrada y pagada');
     }
 }

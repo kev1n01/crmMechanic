@@ -5,7 +5,7 @@
         <span class="text-danger">{{ $required ? '*' : '' }}</span>
     </label>
     <input type="{{ $type }}" class="form-control {{ $error ? 'is-invalid' : '' }}" id="{{ $name }}"
-        placeholder="{{ $label }}" wire:model="{{ $name }}" {{ $disabled ? 'disabled' : '' }} maxlength="{{ $max }}"
+        placeholder="{{ $label }}" wire:model="{{ $name }}" {{ $disabled ? 'disabled' : '' }} maxlength="{{ $max }}" min="{{ $max }}"
         size="{{ $max }}">
 
     @unless($error)

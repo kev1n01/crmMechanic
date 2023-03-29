@@ -3,8 +3,14 @@
         <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
             <x-slot name="body">
                 <div class="row g-2">
-                    <x-input.datepicker class="col-xl-6" name="editing.arrival_date" label="Fecha de llegada" id="dp1"
-                        :error="$errors->first('editing.arrival_date')" :required=true/>
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.odo" label="ODO actual" type="text"
+                        :error="$errors->first('editing.odo')" :required=true />
+
+                    <x-input.select class="col-xl-6 mt-2" name="method_payment" label="Metodo de pago"
+                        :required=true :options="$methods_payment" :error="$errors->first('method_payment')" />
+
+                    <x-input.datepicker class="col-xl-6" name="editing.arrival_date" label="Fecha de llegada"
+                        id="dp1" :error="$errors->first('editing.arrival_date')" :required=true />
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.arrival_hour" label="Hora de llegada"
                         type="time" :error="$errors->first('editing.arrival_hour')" :required=true />
