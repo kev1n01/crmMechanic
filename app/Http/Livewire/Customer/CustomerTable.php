@@ -76,7 +76,12 @@ class CustomerTable extends Component
 
     public function delete(Customer $customer)
     {
-        $customer->delete();
+        try {
+            $customer->delete();
+            $this->emit('success_alert', 'Cliente eliminado');
+        } catch (\Throwable $th) {
+            $this->emit('error_alert', 'No se puede eliminar el cliente, ya que tiene asociada una venta o compra ');
+        }
     }
 
     public function exportSelected()

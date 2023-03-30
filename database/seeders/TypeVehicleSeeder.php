@@ -19,14 +19,17 @@ class TypeVehicleSeeder extends Seeder
             [
                 'name' => 'Camioneta',
                 'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'name' => 'Auto',
                 'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'name' => 'Furgoneta',
                 'created_at' => now(),
+                'updated_at' => now(),
             ],
         ];
 

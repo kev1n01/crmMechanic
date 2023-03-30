@@ -98,7 +98,7 @@ class ProductTable extends Component
             $product->delete();
             $this->emit('success_alert', 'Producto eliminado');
         } catch (\Exception $e) {
-            $this->emit('error_alert', 'No se puede eliminar el producto');
+            $this->emit('error_alert', 'El producto no se puede eliminar, ya que se encuentra asociado a una venta y/o compra');
         }
     }
 

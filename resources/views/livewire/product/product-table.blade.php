@@ -134,7 +134,7 @@
                             <x-slot name="body">
                                 @forelse ($products as $product)
                                     <x-table.row wire:key="row-{{ $product->id }}" wire:loading.class="table-light"
-                                        wire:target="search">
+                                        wire:target="search" class=" {{ $product->stock <= 10 ? 'table-danger' : '' }}">
 
                                         <x-table.cell>
                                             <x-input.check-input name="selected" value="{{ $product->id }}" />
@@ -145,9 +145,7 @@
                                         <x-table.cell>{{ $product->code }}</x-table.cell>
 
                                         <x-table.cell class=" text-center">
-                                            <button class="btn btn-{{ $product->stock < 10 ? 'warning' : 'secondary' }} btn-sm">
-                                                {{ $product->stock }}
-                                            </button>
+                                            {{ $product->stock }}
                                         </x-table.cell>
 
                                         <x-table.cell>
@@ -163,12 +161,13 @@
                                         <x-table.cell>{{ $product->brand->name ?? 'N/A' }}</x-table.cell>
 
                                         <x-table.cell>
-                                            <a class="action-icon cursor"
+                                            <a class="btn btn-info btn-sm mb-1"
                                                 wire:click="$emit('editproduct',{{ $product->id }})">
-                                                <i class="mdi mdi-square-edit-outline"></i> </a>
-                                            <a class="action-icon cursor"
-                                                onclick="Confirm({{ $product->id }}, 'delete')"><i
-                                                    class="mdi mdi-delete"></i></a>
+                                                Editar</a>
+
+                                            <a class="btn btn-danger btn-sm mb-1"
+                                                onclick="Confirm({{ $product->id }}, 'delete')">
+                                                Eliminar</a>
                                         </x-table.cell>
                                     </x-table.row>
                                 @empty

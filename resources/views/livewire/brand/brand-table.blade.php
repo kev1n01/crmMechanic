@@ -126,13 +126,13 @@
                                         </x-table.cell>
 
                                         <x-table.cell>
-
-                                            <a class="action-icon cursor"
-                                                wire:click="$emit('editbrand',{{ $brand->id }})">
-                                                <i class="mdi mdi-square-edit-outline"></i> </a>
-                                            <a class="action-icon cursor"
-                                                onclick="Confirm({{ $brand->id }}, 'delete')"><i
-                                                    class="mdi mdi-delete"></i></a>
+                                            <a class="btn btn-info btn-sm mb-1"
+                                            wire:click="$emit('editbrand',{{ $brand->id }})">
+                                            Editar</a>
+                                           
+                                            <a class="btn btn-danger btn-sm mb-1"
+                                            onclick="Confirm({{ $brand->id }}, 'delete')">
+                                            Eliminar</a>
                                         </x-table.cell>
 
                                     </x-table.row>

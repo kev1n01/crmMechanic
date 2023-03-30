@@ -36,7 +36,7 @@ class Modal extends Component
     public function mount()
     {
         $this->editing = $this->makeBlankFields();
-        $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
+        $this->customers = Customer::pluck('name', 'id');
         $this->years = Vehicle::YEARS;
         $this->types = TypeVehicle::pluck('name', 'id');
         $this->brands = BrandVehicle::pluck('name', 'id');

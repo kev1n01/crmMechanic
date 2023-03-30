@@ -235,8 +235,8 @@ class SaleEdit extends Component
 
     public function save()
     {
-        if (count($this->cart) == 0) {
-            $this->emit('error_alert', 'No hay productos en la venta');
+        if (count($this->cart) == 0 || $this->editing->cash < $this->totalDiscount && $this->editing->type_payment == 'contado') {
+            $this->emit('error_alert', 'No hay productos en la venta o el pago es menor al total');
             return;
         } else {
             $this->saveLogic();

@@ -137,47 +137,29 @@
                                                 class="badge badge-{{ $wo->confirmation_color }}-lighten">{{ strtoupper($wo->confirmation_name) }}</span>
                                         </x-table.cell>
 
-                                        <x-table.cell class="btn-group">
+                                        <x-table.cell>
                                             @if ($wo->is_confirmed == 0)
-                                                <a class="action-icon cursor"
+                                                <a class="btn btn-danger btn-sm mb-1"
                                                     wire:click="$emit('addDateWo',{{ $wo->id }})">
+                                                    Confirmar
                                                 </a>
                                             @endif
 
-                                            <a class="btn btn-info btn-sm"
+                                            <a class="btn btn-info btn-sm mb-1"
                                                 href="{{ route('proforma.orden.editar', $wo->code) }}">
                                                 Editar</a>
 
-                                            <a class="btn btn-primary btn-sm"
+                                            <a class="btn btn-primary btn-sm mb-1"
                                                 href="{{ route('proforma.pdf.view', $wo->id) }}">
                                                 Ver</a>
-                                            <a class="btn btn-warning btn-sm"
+                                            <a class="btn btn-warning btn-sm mb-1"
                                                 href="{{ route('proforma.pdf.download', $wo->id) }}">
                                                 Descargar</a>
                                             @if ($wo->is_confirmed == 1)
-                                                <a class="btn btn-secondary btn-sm"
+                                                <a class="btn btn-secondary btn-sm mb-1"
                                                     wire:click="$emit('payDuepay','{{ $wo->code }}')">
                                                     Pagar</a>
                                             @endif
-
-                                            {{-- <a class="action-icon cursor"
-                                                href="{{ route('proforma.orden.editar', $wo->code) }}">
-                                                <i class="mdi mdi-square-edit-outline"></i> </a>
-
-                                            <a class="action-icon cursor"
-                                                onclick="Confirm({{ $wo->id }}, 'delete')"><i
-                                                    class="mdi mdi-delete"></i></a>
-                                            <a class="action-icon cursor"
-                                                href="{{ route('proforma.pdf.view', $wo->id) }}">
-                                                <i class="mdi mdi-file-eye-outline"></i></a>
-                                            <a class="action-icon cursor"
-                                                href="{{ route('proforma.pdf.download', $wo->id) }}">
-                                                <i class="mdi mdi-folder-download-outline"></i></a>
-                                            @if ($wo->is_confirmed == 1)
-                                                <a class="action-icon cursor"
-                                                    wire:click="$emit('payDuepay','{{ $wo->code }}')">
-                                                    <i class="mdi mdi-credit-card-plus-outline"></i> </a>
-                                            @endif --}}
                                         </x-table.cell>
 
                                     </x-table.row>

@@ -11,7 +11,7 @@ class Modal extends Component
     public $idModal = 'brandModal';
     public $nameModal;
     public BrandProduct $editing;
-    protected $listeners = ['createbrand' => 'create', 'createbrand' => 'edit'];
+    protected $listeners = ['createbrand' => 'create', 'editbrand' => 'edit'];
 
     public function mount()
     {

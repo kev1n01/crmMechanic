@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ColorVehicle;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use DB;
@@ -19,26 +20,32 @@ class ColorVehicleSeeder extends Seeder
             [
                 'name' => 'Rojo',
                 'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'name' => 'Blanco',
                 'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'name' => 'Azul',
                 'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'name' => 'Verde',
                 'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'name' => 'Negro',
                 'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'name' => 'Gris',
                 'created_at' => now(),
+                'updated_at' => now(),
             ],
         ];
 

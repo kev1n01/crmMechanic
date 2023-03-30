@@ -92,11 +92,10 @@
                                                 <x-table.cell>S/ {{ number_format($ot->total, 2) }}</x-table.cell>
 
                                                 <x-table.cell>
-                                                    <a class="action-icon"
+                                                    <a class="btn btn-primary btn-sm"
                                                     href="{{ route('proforma.pdf.preview', $ot->id) }}" target="_blank"
                                                         {{-- wire:click="viewDetails({{ $ot->id }})" --}}
-                                                        ><i
-                                                            class="mdi mdi-eye-outline"></i></a>
+                                                        >Ver</a>
                                                 </x-table.cell>
                                             </x-table.row>
                                         @empty

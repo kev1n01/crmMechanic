@@ -110,11 +110,13 @@
                                         </x-table.cell>
 
                                         <x-table.cell>
-                                            <a class="action-icon"
-                                                wire:click="$emit('editconcept',{{ $concept->id }})">
-                                                <i class="mdi mdi-square-edit-outline"></i> </a>
-                                            <a class="action-icon" onclick="Confirm({{ $concept->id }}, 'delete')"><i
-                                                    class="mdi mdi-delete"></i></a>
+                                            <a class="btn btn-info btn-sm mb-1"
+                                            wire:click="$emit('editconcept',{{ $concept->id }})">
+                                            Editar</a>
+                                           
+                                            <a class="btn btn-danger btn-sm mb-1"
+                                            onclick="Confirm({{ $concept->id }}, 'delete')">
+                                            Eliminar</a>
                                         </x-table.cell>
 
                                     </x-table.row>

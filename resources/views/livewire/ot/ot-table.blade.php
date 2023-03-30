@@ -144,18 +144,22 @@
                                         </x-table.cell>
 
                                         <x-table.cell>
-                                            <a class="action-icon cursor"
+                                            <a class="btn btn-danger btn-sm mb-1"
                                                 wire:click="$emit('addDateWo',{{ $wo->id }})">
-                                                <i class="mdi mdi-calendar-clock"></i> </a>
-                                            <a class="action-icon cursor"
-                                                href="{{ route('proforma.orden.editar', $wo->code) }}">
-                                                <i class="mdi mdi-square-edit-outline"></i> </a>
-                                            <a class="action-icon cursor"
-                                                href="{{ route('proforma.pdf.view', $wo->id) }}">
-                                                <i class="mdi mdi-file-eye-outline"></i></a>
-                                            <a class="action-icon cursor"
-                                                href="{{ route('proforma.pdf.download', $wo->id) }}">
-                                                <i class="mdi mdi-folder-download-outline"></i></a>
+                                                Horarios
+                                            </a>
+
+                                        <a class="btn btn-info btn-sm mb-1"
+                                            href="{{ route('proforma.orden.editar', $wo->code) }}">
+                                            Editar</a>
+
+                                        <a class="btn btn-primary btn-sm mb-1"
+                                            href="{{ route('proforma.pdf.view', $wo->id) }}">
+                                            Ver</a>
+                                        <a class="btn btn-warning btn-sm mb-1"
+                                            href="{{ route('proforma.pdf.download', $wo->id) }}">
+                                            Descargar</a>
+                                       
                                         </x-table.cell>
 
                                     </x-table.row>

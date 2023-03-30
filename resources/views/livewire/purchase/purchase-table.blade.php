@@ -131,17 +131,17 @@
                                         </x-table.cell>
 
                                         <x-table.cell>
-                                            <a class="action-icon cursor"
+                                            <a class="btn btn-info btn-sm mb-1"
                                                 href="{{ route('compras.editar', $purchase->code_purchase) }}">
-                                                <i class="mdi mdi-square-edit-outline"></i></a>
-                                            {{-- <a class="action-icon cursor" onclick="Confirm({{ $purchase->id }}, 'delete')"><i
-                                                    class="mdi mdi-delete"></i></a> --}}
-                                            <a class="action-icon cursor"
-                                                href="{{ route('compra.pdf.view', $purchase->id) }}">
-                                                <i class="mdi mdi-file-eye-outline"></i></a>
-                                            <a class="action-icon cursor"
-                                                href="{{ route('compra.pdf.download', $purchase->id) }}">
-                                                <i class="mdi mdi-folder-download-outline"></i></a>
+                                                Editar</a>
+
+                                            <a class="btn btn-primary btn-sm mb-1"
+                                            href="{{ route('compra.pdf.view', $purchase->id) }}">
+                                                Ver</a>
+
+                                            <a class="btn btn-warning btn-sm mb-1"
+                                            href="{{ route('compra.pdf.download', $purchase->id) }}">
+                                                Descargar</a>
                                         </x-table.cell>
                                     </x-table.row>
                                 @empty

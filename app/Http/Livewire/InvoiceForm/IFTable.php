@@ -46,7 +46,7 @@ class IFTable extends Component
     {
         $this->sortField = 'code';
         $this->confirmations = WorkOrder::IS_CONFIRMED;
-        $this->customers = Customer::pluck('name', 'id');
+        $this->customers = Customer::where('status','activo')->pluck('name', 'id');
         $this->vehicles = Vehicle::pluck('license_plate', 'id');
     }
 
@@ -101,7 +101,6 @@ class IFTable extends Component
     {
         $wo->workOrderDetail()->delete();
         $wo->delete();
-
         $this->emit('success_alert', 'La proforma fue eliminado');
     }
 

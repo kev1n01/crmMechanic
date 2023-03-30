@@ -74,7 +74,12 @@ class ProviderTable extends Component
 
     public function delete(Provider $provider)
     {
-        $provider->delete();
+        try {
+            $provider->delete();
+            $this->emit('success_alert', 'Proveedor eliminado');
+        } catch (\Throwable $th) {
+            $this->emit('error_alert', 'No se puede eliminar el proveedor, ya que se encuentra asociado a una compra');
+        }
     }
 
     public function exportSelected()

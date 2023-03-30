@@ -81,9 +81,8 @@
                                                 <x-table.cell>S/ {{ number_format($sale->total, 2) }}</x-table.cell>
 
                                                 <x-table.cell>
-                                                    <a class="action-icon"
-                                                        wire:click.prevent="viewDetails({{ $sale->id }})"><i
-                                                            class="mdi mdi-eye-outline"></i></a>
+                                                    <a class="btn btn-primary btn-sm"
+                                                        wire:click.prevent="viewDetails({{ $sale->id }})">Ver</a>
                                                 </x-table.cell>
                                             </x-table.row>
                                         @empty

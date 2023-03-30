@@ -34,6 +34,9 @@
             <li class="side-nav-item">
                 <a class="side-nav-link" href="{{ route('clientes') }}">
                     <i class=" uil-users-alt"></i>
+                    <span class="badge bg-primary float-end">
+                        {{ \App\Models\Customer::count() }}
+                    </span>
                     <span> Clientes </span>
                 </a>
             </li>
@@ -54,10 +57,17 @@
                             <a href="{{ route('marcas') }}">Marcas</a>
                         </li>
                         <li>
-                            <a href="{{ route('proveedores') }}">Proveedores</a>
+                            <a href="{{ route('proveedores') }}">Proveedores
+                                <span class="badge bg-primary float-end">
+                                    {{ \App\Models\Provider::count() }}
+                                </span></a>
                         </li>
                         <li>
-                            <a href="{{ route('productos') }}">Productos</a>
+                            <a href="{{ route('productos') }}">Productos
+                                <span class="badge bg-primary float-end">
+                                    {{ \App\Models\Product::count() }}
+                                </span>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -73,7 +83,11 @@
                 <div class="collapse" id="compras">
                     <ul class="side-nav-second-level">
                         <li>
-                            <a href="{{ route('compras') }}">Listado</a>
+                            <a href="{{ route('compras') }}">Listado
+                                <span class="badge bg-primary float-end">
+                                    {{ \App\Models\Purchase::count() }}
+                                </span>
+                            </a>
                         </li>
                         <li>
                             <a href="{{ route('compras.crear') }}">Crear compra</a>
@@ -92,7 +106,10 @@
                 <div class="collapse" id="ventas">
                     <ul class="side-nav-second-level">
                         <li>
-                            <a href="{{ route('ventas') }}">Listado</a>
+                            <a href="{{ route('ventas') }}">Listado
+                                <span class="badge bg-primary float-end">
+                                    {{ \App\Models\Sale::count() }}
+                                </span></a>
                         </li>
                         <li>
                             <a href="{{ route('ventas.crear') }}">Crear Venta</a>
@@ -110,7 +127,11 @@
                 <div class="collapse" id="vehiculos">
                     <ul class="side-nav-second-level">
                         <li>
-                            <a href="{{ route('vehiculos') }}">Listado</a>
+                            <a href="{{ route('vehiculos') }}">Listado
+                                <span class="badge bg-primary float-end">
+                                    {{ \App\Models\Vehicle::count() }}
+                                </span>
+                            </a>
                         </li>
                         <li>
                             <a href="{{ route('tipos.vehiculo') }}">Tipo</a>
@@ -157,10 +178,18 @@
                 <div class="collapse" id="ot">
                     <ul class="side-nav-second-level">
                         <li>
-                            <a href="{{ route('ordenes') }}">Listado</a>
+                            <a href="{{ route('ordenes') }}">Listado
+                                <span class="badge bg-primary float-end">
+                                    {{ \App\Models\WorkOrder::where('is_confirmed',1)->count() }}
+                                </span>
+                            </a>
                         </li>
                         <li>
-                            <a href="{{ route('servicios') }}">Servicios</a>
+                            <a href="{{ route('servicios') }}">Servicios
+                                <span class="badge bg-primary float-end">
+                                    {{ \App\Models\Concept::count() }}
+                                </span>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -221,7 +250,11 @@
                 <div class="collapse" id="finanzas">
                     <ul class="side-nav-second-level">
                         <li>
-                            <a href="{{ route('deudas') }}">Deudas por cobrar</a>
+                            <a href="{{ route('deudas') }}">Deudas por cobrar
+                                <span class="badge bg-primary float-end">
+                                    {{ \App\Models\DuePay::count() }}
+                                </span>
+                            </a>
                         </li>
                         <li>
                             <a href="{{ route('gastos') }}">Gastos</a>

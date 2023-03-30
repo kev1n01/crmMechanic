@@ -157,51 +157,31 @@
                                         </x-table.cell>
 
                                         <x-table.cell>
-                                            {{-- <div class="dropdown dropstart">
-                                                <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="mdi mdi-dots-vertical"></i>
-                                                </a>
-                                                <div class="dropdown-menu dropdown-menu-animated ">
-                                                    <!-- item-->
-                                                    <a href="javascript:void(0);" class="dropdown-item">Sales Report</a>
-                                                    <!-- item-->
-                                                    <a href="javascript:void(0);" class="dropdown-item">Export Report</a>
-                                                    <!-- item-->
-                                                    <a href="javascript:void(0);" class="dropdown-item">Profit</a>
-                                                    <!-- item-->
-                                                    <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                                                </div>
-                                            </div> --}}
                                             @if ($sale->type_sale == 'comercial')
-                                                <a class="action-icon cursor"
-                                                    href="{{ route('ventas.editar', $sale->code_sale) }}">
-                                                    <i class="mdi mdi-square-edit-outline"></i> </a>
+                                                    <a class="btn btn-info btn-sm mb-1"
+                                                href="{{ route('ventas.editar', $sale->code_sale) }}">
+                                                Editar</a>
                                                 @if ($sale->status == 'no pagado')
-                                                    <a class="action-icon cursor"
-                                                        wire:click="$emit('payDuepay','{{ $sale->code_sale }}')">
-                                                        <i class="mdi mdi-credit-card-plus-outline"></i> </a>
+                                                    <a class="btn btn-secondary btn-sm mb-1"
+                                                        wire:click="$emit('payDuepay','{{ $sale->code_sale }}')">Pagar </a>
                                                 @endif
                                             @endif
                                             @if ($sale->type_sale == 'vehicular')
-                                                <a class="action-icon cursor"
+                                                <a class="btn btn-info btn-sm mb-1"
                                                     href="{{ route('proforma.orden.editar', substr($sale->code_sale, 9)) }}">
-                                                    <i class="mdi mdi-square-edit-outline"></i> </a>
+                                                    Editar </a>
                                                 @if ($sale->status == 'no pagado')
-                                                    <a class="action-icon cursor"
+                                                    <a class="btn btn-secondary btn-sm mb-1"
                                                         href="{{ route('deudas') }}">
-                                                        <i class="mdi mdi-credit-card-plus-outline"></i> </a>
+                                                       Pagar</a>
                                                 @endif
                                             @endif
 
-                                            {{-- <a class="action-icon cursor"
-                                                onclick="Confirm({{ $sale->id }}, 'delete')"><i
-                                                    class="mdi mdi-delete"></i></a> --}}
-                                            <a class="action-icon cursor"
-                                                href="{{ route('venta.pdf.view', $sale->id) }}">
-                                                <i class="mdi mdi-file-eye-outline"></i></a>
-                                            <a class="action-icon cursor"
+                                            <a class="btn btn-primary btn-sm mb-1"
+                                                href="{{ route('venta.pdf.view', $sale->id) }}">Ver</a>
+                                            <a class="btn btn-warning btn-sm mb-1"
                                                 href="{{ route('venta.pdf.download', $sale->id) }}">
-                                                <i class="mdi mdi-folder-download-outline"></i></a>
+                                                Descargar</a>
                                         </x-table.cell>
                                     </x-table.row>
                                 @empty

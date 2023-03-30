@@ -47,28 +47,38 @@ class Modal extends Component
     public function save()
     {
         $this->validate();
-        $sale = Sale::where('code_sale', $this->editing->description)->first();
-        if ($this->editing->amount_paid >= $this->editing->amount_owed) {
-            $sale->status = 'pagado';
-            if ($sale->type_sale == 'vehicular') {
-                $sale->cash = $sale->total;
-            } else {
-                $sale->cash = $this->editing->amount_paid;
-            }
-            $sale->save();
-            $this->editing->delete();
-        }
-        if ($this->editing->amount_paid < $this->editing->amount_owed) {
-            if ($this->editing->amount_paid >= $sale->total) {
+        if ($this->editing->reason != 'otro') {
+            $sale = Sale::where('code_sale', $this->editing->description)->first();
+            if ($this->editing->amount_paid >= $this->editing->amount_owed) {
                 $sale->status = 'pagado';
-                $sale->cash = $sale->total;
+                if ($sale->type_sale == 'vehicular') {
+                    $sale->cash = $sale->total;
+                } else {
+                    $sale->cash = $this->editing->amount_paid;
+                }
+                $sale->save();
+                $this->editing->delete();
             }
-            if ($this->editing->amount_paid < $sale->total) {
-                $sale->status = 'no pagado';
-                $sale->cash = $this->editing->amount_paid;
+            if ($this->editing->amount_paid < $this->editing->amount_owed) {
+                if ($this->editing->amount_paid >= $sale->total) {
+                    $sale->status = 'pagado';
+                    $sale->cash = $sale->total;
+                }
+                if ($this->editing->amount_paid < $sale->total) {
+                    $sale->status = 'no pagado';
+                    $sale->cash = $this->editing->amount_paid;
+                }
+                $sale->save();
+                $this->editing->save();
             }
-            $sale->save();
-            $this->editing->save();
+        }
+
+        if ($this->editing->reason == 'otro') {
+            if ($this->editing->amount_paid >= $this->editing->amount_owed) {
+                $this->editing->delete();
+            }else{
+                $this->editing->save();
+            }
         }
         $this->nameModal === 'Crear deuda por cobrar' ? $this->emit('success_alert', 'Deuda por cobrar creada') : $this->emit('success_alert', 'Deuda por cobrar actualizada');
         $this->dispatchBrowserEvent('close-modal-duepay');
