@@ -263,23 +263,12 @@
                 </div>
             </li>
 
+            
             <li class="side-nav-item">
-                <a data-bs-toggle="collapse" href="#ajustes" aria-expanded="false" aria-controls="ajustes"
-                    class="side-nav-link">
+                <a class="side-nav-link" href="{{ route('conf.index') }}">
                     <i class="dripicons-gear"></i>
                     <span> Configuración </span>
-                    <span class="menu-arrow"></span>
                 </a>
-                <div class="collapse" id="ajustes">
-                    <ul class="side-nav-second-level">
-                        <li>
-                            <a href="{{ route('conf.compania') }}">Datos de mi empresa</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('conf.sunat') }}">SUNAT</a>
-                        </li>
-                    </ul>
-                </div>
             </li>
         </ul>
 

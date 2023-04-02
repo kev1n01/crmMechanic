@@ -84,19 +84,9 @@ class Modal extends Component
             $data = $response->collect();
             if ($data->count() != 2) {
                 $this->editing->name = $data['nombres'] . ' ' . $data['apellidoPaterno'] . ' ' . $data['apellidoMaterno'];
-                $this->editing->ruc = '10' . $data['dni'] . $data['codVerifica'];
-                $this->searchRuc();
-                // $rucconsult = '10' . $data['dni'] . $data['codVerifica'];
-
-                // $response = Http::get('https://dniruc.apisperu.com/api/v1/ruc/' . $rucconsult . '?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNyYXp5YXJub2xkMDFAZ21haWwuY29tIn0.J8854s4Hy2oclyowM_lWgcGCRoHlXd5i1c6QXLrKORI');
-                // $data2 = $response->collect();
-                // if ($data2->count() != 2) {
-                //     $this->editing->ruc = $rucconsult;
-                // } else {
-                //     $this->editing->ruc = '';
-                //     $this->editing->address = '';
-                //     $this->emit('info_alert', 'El DNI existe pero no esta registrado al RUC');
-                // }
+                // $this->editing->ruc = '10' . $data['dni'] . $data['codVerifica'];
+                // $this->searchRuc();
+                $this->editing->ruc = null;
             } else {
                 $this->emit('error_alert', 'El DNI es invalido');
             }
@@ -114,15 +104,15 @@ class Modal extends Component
             if ($data->count() != 2) {
                 $this->editing->name = $data['razonSocial'];
                 $this->editing->address = $data['direccion'];
-                if ($this->editing->name != '' && substr($this->editing->ruc, 0, 2) == '10')
-                    $this->editing->dni = substr($this->editing->ruc, 2, 8);
-                if ($this->editing->address != '' && substr($this->editing->ruc, 0, 2) == '20')
-                    $this->editing->dni = '';
+                // if ($this->editing->name != '' && substr($this->editing->ruc, 0, 2) == '10')
+                //     $this->editing->dni = substr($this->editing->ruc, 2, 8);
+                // if ($this->editing->address != '' && substr($this->editing->ruc, 0, 2) == '20')
+                //     $this->editing->dni = null;
             } else {
-                if (substr($this->editing->ruc, 0, 2) == '10'){
-                    $this->editing->ruc = '';
-                }
                 $this->emit('error_alert', 'El RUC es invalido');
+                $this->editing->dni = null;
+                $this->editing->name = '';
+                $this->editing->address = '';
             }
         }
     }

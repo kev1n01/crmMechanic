@@ -28,7 +28,7 @@
                         type="text" :error="$errors->first('editing.purchase_price')" :required=true />
 
                     <x-input.input-tooltip-error class="col-12" name="image" label="Imagen de producto" type="file"
-                        :error="$errors->first('image')" />
+                        :error="$errors->first('image')" accept="image/png, image/jpeg, image/jpg"/>
                 </div>
 
                 <div class="col-12 shadow-none bg-secondary rounded text-center mt-2">

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>OT MECANICA FLOPACH</title>
+    <title>OT {{ $company->name ?? '' }}</title>
     <link href="{{ public_path('assets/css/pdf.css') }}" rel="stylesheet" type="text/css">
 </head>
 
@@ -13,19 +13,23 @@
     <div class="border-line">
         <div class="infoHeader">
             <div style="float: left; width: 20%; height: 10%; margin-right: 2mm; margin-left: 4mm; margin-bottom: 2mm;">
-                <img src="{{ public_path('assets/images/newlogo.png') }}" class="logo_img">
+                @if ($company->logo)
+                    <img src="{{ public_path('storage/' . $company->logo) }}" class="logo_img">
+                @else
+                    <img src="https://knowledgehub.adeanet.org/themes/adea/images/no-logo.jpg" class="logo_img">
+                @endif
             </div>
             <div style="float: left; width: 50%; height: 10%; text-align: center; padding-top: 2%;">
-                <p class="fw-b m-0">MECANICA AUTOMOTRIZ FLOPAC</p>
-                <p class="fw-sb m-0">Sector Las Lomas - Chunapampa - Huanuco</p>
-                <p class="fw-sb m-0">Cel: 957235173 / 978610524 / 933865935</p>
+                <p class="fw-b m-0">{{ $company->name ?? 'SIN NOMBRE EMPRESA' }}</p>
+                <p class="fw-sb m-0">{{ $company->address ?? '' }}</p>
+                <p class="fw-sb m-0">Cel: {{ $company->phone ?? '' }}</p>
             </div>
             <div style="float: left; width: 30%; height: 10%;">
                 <div style="border: 2px solid rgb(39, 39, 39); border-radius: 4px; width: 90%;">
                     <div class="text-center" style="padding: 1%">
-                        <p style="margin-bottom: 0%;">R.U.C. N° 20232424231</p>
+                        <p style="margin-bottom: 0%;">R.U.C. N° {{ $company->ruc ?? '' }}</p>
                         <p style="margin-bottom: 0%;"> {{ $wo->is_confirmed === 0 ? 'PROFORMA' : 'ORDEN TRABAJO' }}</p>
-                        <p >{{ $wo->code }}</p>
+                        <p>{{ $wo->code }}</p>
                     </div>
                 </div>
             </div>
@@ -119,7 +123,7 @@
                 <tr>
                     <td class="border-td border-th fw-sb">Dirección</td>
                     <td colspan="3" class="border-td fw-sb">{{ $wo->customerUser->address }}</td>
-                
+
                 </tr>
             </tbody>
         </table>
@@ -222,45 +226,40 @@
             </tfoot>
         </table>
     </div>
-    <div id="footer">
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td class="border-td border-th fw-sb text-center">ENTIDAD FINANCIERA </td>
-                    <td class="border-td border-th fw-sb text-center">CUENTA BANCARIA </td>
-                    <td class="border-td border-th fw-sb text-center">CUENTA INTERBANCARIA </td>
-                </tr>
-                <tr>
-                    <td class="border-td border-th fw-sb text-center">BCP </td>
-                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
-                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
-                </tr>
-                <tr>
-                    <td class="border-td border-th fw-sb text-center">BBVA </td>
-                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
-                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
-                </tr>
-                <tr>
-                    <td class="border-td border-th fw-sb text-center">Interbank </td>
-                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
-                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
-                </tr>
-                <tr>
-                    <td class="border-td border-th fw-sb text-center">La Nacion </td>
-                    <td class="border-td border-th fw-sb text-center">CTA. Soles: 12421242236543</td>
-                    <td class="border-td border-th fw-sb text-center">1242124223654312 </td>
-                </tr>
-            </tbody>
-        </table>
-        <p class="text-footer">
-            En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad a
-            todos nuestros clientes
-        </p>
-        <p class="text-footer">
-            <span class="fw-b">ATENCION:</span> Todo trabajo se realizará con un 50% de adelanto al costo de
-            proforma,
-            y tendrá 7 días hábiles a recoger su vehículo, luego de esto se sumarán costos de una cochera
-        </p>
+    <div class="border-line">
+        <div id="footer">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="border-td border-th fw-sb text-center">ENTIDAD FINANCIERA </th>
+                        <th class="border-td border-th fw-sb text-center">CUENTA BANCARIA </th>
+                        <th class="border-td border-th fw-sb text-center">CUENTA INTERBANCARIA </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($bankacc as $bc)
+                        <tr>
+                            <td class="border-td border-th fw-sb text-center">{{ $bc->name }}</td>
+                            <td class="border-td border-th fw-sb text-center">{{ $bc->cta_bank }}</td>
+                            <td class="border-td border-th fw-sb text-center">{{ $bc->cta_interbank }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td class="border-td border-th fw-sb text-center" colspan="3">No hay cuentas de bancos
+                                registrados</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+            <p class="text-footer">
+                En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad a
+                todos nuestros clientes
+            </p>
+            <p class="text-footer">
+                <span class="fw-b">ATENCION:</span> Todo trabajo se realizará con un 50% de adelanto al costo de
+                proforma, y tendrá 7 días hábiles a recoger su vehículo, luego de esto se sumarán costos de una cochera
+            </p>
+        </div>
     </div>
 
 </body>

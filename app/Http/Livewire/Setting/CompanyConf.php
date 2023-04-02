@@ -30,13 +30,13 @@ class CompanyConf extends Component
         return [
             'editing.name' => ['required', 'min:5'],
             'editing.phone' => 'required|min:9|max:9',
+            'editing.ruc' => 'required|min:11|max:11',
             'editing.ubigeous' => 'required|min:6|max:6',
             'editing.address' => 'required',
             'editing.logo' => ['nullable'],
             'editing.department' => 'required|in:' . collect(Company::DEPARTMENTS)->keys()->implode(','),
             'editing.province' => 'required|in:' . collect(Company::PROVINCES)->keys()->implode(','),
             'editing.district' => 'required|in:' . collect(Company::DISTRICTS)->keys()->implode(','),
-            'logo' => 'required'
         ];
     }
 
@@ -46,26 +46,28 @@ class CompanyConf extends Component
         'editing.phone.required' => 'El telefono es obligatorio',
         'editing.phone.min' => 'El telefono no debe tener menos de 9 caracteres',
         'editing.phone.max' => 'El telefono no debe tener más de 9 caracteres',
+        'editing.ruc.required' => 'El ruc es obligatorio',
+        'editing.ruc.min' => 'El ruc no debe tener menos de 11 caracteres',
+        'editing.ruc.max' => 'El ruc no debe tener más de 11 caracteres',
         'editing.ubigeous.required' => 'El ubigeo es obligatorio',
         'editing.ubigeous.min' => 'El ubigeo no debe tener menos de 6 caracteres',
         'editing.ubigeous.max' => 'El ubigeo no debe tener más de 6 caracteres',
         'editing.address.required' => 'La dirección es obligatorio',
         'editing.department.required' => 'El departamento es obligatorio',
         'editing.department.in' => 'El valor es inválido',
-        'editing.province.required' => 'El provincia es obligatorio',
+        'editing.province.required' => 'La provincia es obligatorio',
         'editing.province.in' => 'El valor es inválido',
-        'editing.province.required' => 'El distrito es obligatorio',
-        'editing.province.in' => 'El valor es inválido',
-        'logo.required' => 'El logo es obligatorio',
+        'editing.district.required' => 'El distrito es obligatorio',
+        'editing.district.in' => 'El valor es inválido',
     ];
 
     public function updatingLogo($value)
     {
         Validator::make(
             ['logo' => $value],
-            ['logo' => 'mimes:png|max:1024'],
+            ['logo' => 'nullable|mimes:png,jpge,jpg|max:1024'],
             [
-                'logo.mimes' => 'Solo se permite imagenes de tipo png',
+                'logo.mimes' => 'Solo se permite imagenes de tipo png, jpge  y jpg',
                 'logo.max' => 'El tamaño máximo de la imagen es 1MB',
             ]
         )->validate();
@@ -112,8 +114,6 @@ class CompanyConf extends Component
 
     public function render()
     {
-        return view('livewire.setting.company-conf')
-            ->extends('layouts.admin.app')
-            ->section('content');
+        return view('livewire.setting.company-conf');
     }
 }

@@ -42,8 +42,8 @@ class Modal extends Component
             'editing.stock' => 'nullable|integer',
             'editing.sale_price' => 'nullable|numeric|regex:/^-?[0-9]+(?:\.[0-9]{1,2})?$/',
             'editing.purchase_price' => 'nullable|numeric|regex:/^-?[0-9]+(?:\.[0-9]{1,2})?$/',
-            'editing.category_products_id' => ['required'],
-            'editing.brand_products_id' => ['required',],
+            'editing.category_products_id' => ['nullable'],
+            'editing.brand_products_id' => ['nullable',],
             'editing.image' => ['nullable'],
             'editing.status' => 'required|in:' . collect(Product::STATUSES)->keys()->implode(','),
         ];
@@ -63,8 +63,8 @@ class Modal extends Component
         'editing.sale_price.regex' => 'El formato decimal de precio es incorrecto',
         'editing.purchase_price.regex' => 'El formato decimal de precio es incorrecto',
         'editing.purchase_price.numeric' => 'El precio compra tiene que ser entero o decimal',
-        'editing.category_products_id.required' => 'La categoria es obligatorio',
-        'editing.brand_products_id.required' => 'La marca es obligatorio',
+        // 'editing.category_products_id.required' => 'La categoria es obligatorio',
+        // 'editing.brand_products_id.required' => 'La marca es obligatorio',
         'editing.status.required' => 'El estado es obligatorio',
         'editing.status.in' => 'El valor es inválido',
     ];

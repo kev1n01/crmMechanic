@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>OT MECANICA FLOPACH</title>
+    <title>OT {{ $company->name ?? '' }}</title>
     <link href="{{ public_path('assets/css/pdf.css') }}" rel="stylesheet" type="text/css">
 </head>
 
@@ -13,17 +13,21 @@
     <div class="border-line">
         <div class="infoHeader">
             <div style="float: left; width: 20%; height: 10%; margin-right: 2mm; margin-left: 4mm; margin-bottom: 2mm;">
-                <img src="{{ public_path('assets/images/newlogo.png') }}" class="logo_img">
+                @if ($company->logo)
+                    <img src="{{ public_path('storage/' . $company->logo) }}" class="logo_img">
+                @else
+                    <img src="https://knowledgehub.adeanet.org/themes/adea/images/no-logo.jpg" class="logo_img">
+                @endif
             </div>
             <div style="float: left; width: 50%; height: 10%; text-align: center; padding-top: 2%;">
-                <p class="fw-b m-0">MECANICA AUTOMOTRIZ FLOPACH</p>
-                <p class="fw-sb m-0">Sector Las Lomas - Chunapampa - Huanuco</p>
-                <p class="fw-sb m-0">Cel: 957235173 / 978610524 / 933865935</p>
+                <p class="fw-b m-0">{{ $company->name ?? 'SIN NOMBRE EMPRESA' }}</p>
+                <p class="fw-sb m-0">{{ $company->address ?? '' }}</p>
+                <p class="fw-sb m-0">Cel: {{ $company->phone ?? '' }}</p>
             </div>
             <div style="float: left; width: 30%; height: 10%;">
                 <div style="border: 2px solid rgb(39, 39, 39); border-radius: 4px; width: 90%;">
                     <div class="text-center" style="padding: 1%">
-                        <p style="margin-bottom: 0%;">R.U.C. N° 2023242423</p>
+                        <p style="margin-bottom: 0%;">R.U.C. N° {{ $company->ruc ?? '' }}</p>
                         <p style="margin-bottom: 0%;">{{ strtoupper($purchase->type_cpe) }} ELECTRONICA</p>
                         <p>{{ $purchase->nro_cpe }}</p>
                     </div>

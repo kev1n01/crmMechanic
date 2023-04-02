@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', 'clientes');
-
 //Rutas de dashboard
 // Route::get('dashboard',\App\Http\Livewire\dashboard\Dashboard::class)->name('dashboard');
 
@@ -45,8 +44,11 @@ Route::get('deudas', \App\Http\Livewire\DuePay\DuePaytable::class)->name('deudas
 Route::get('gastos', \App\Http\Livewire\Cost\CostTable::class)->name('gastos');
 
 //Rutas para configuracion
-Route::get('configuracion/mi-empresa', \App\Http\Livewire\Setting\CompanyConf::class)->name('conf.compania');
-Route::get('configuracion/sunat', \App\Http\Livewire\Setting\SunatConf::class)->name('conf.sunat');
+Route::get('configuracion', function () {
+    return view('configuration-index');
+})->name('conf.index');
+// Route::get('configuracion/mi-empresa', \App\Http\Livewire\Setting\CompanyConf::class)->name('conf.compania');
+// Route::get('configuracion/sunat', \App\Http\Livewire\Setting\SunatConf::class)->name('conf.sunat');
 
 //Rutas para procesos de sunat
 Route::get('sunat/crear-factura', \App\Http\Livewire\Sunat\CreateInvoiceTicket::class)->name('sunat.crear.factura');
