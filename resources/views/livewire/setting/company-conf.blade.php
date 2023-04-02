@@ -34,10 +34,11 @@
                     <span wire:loading wire:target="logo" class="spinner-border text-primary m-4"></span>
                     @if (!$logo && $editing->logo == null)
                         <img src="https://cdn-icons-png.flaticon.com/512/4131/4131814.png"
-                            class="img-fluid m-2 w-25 h-25" wire:loading.remove>
+                            class="img-fluid m-2 w-25 h-25" wire:loading.remove wire:target="logo">
                     @endif
                     @if ($logo)
-                        <img src="{{ $logo->temporaryURL() }}" class="img-fluid m-2 w-25 h-25" wire:loading.remove />
+                        <img src="{{ $logo->temporaryURL() }}" class="img-fluid m-2 w-25 h-25" wire:loading.remove
+                            wire:target="logo" />
                     @else
                         @if ($editing->logo)
                             <img src="{{ asset('storage/' . $editing->logo) }}" class="img-fluid m-4 w-25 h-25"

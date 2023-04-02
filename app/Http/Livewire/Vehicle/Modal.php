@@ -31,7 +31,7 @@ class Modal extends Component
     public $brands = [];
     public $models = [];
     public $colors = [];
-    protected $listeners = ['createvehicle' => 'create', 'editvehicle' => 'edit'];
+    protected $listeners = ['createvehicle' => 'create', 'editvehicle' => 'edit', 'resetmodal' => 'mount'];
 
     public function mount()
     {
@@ -48,11 +48,11 @@ class Modal extends Component
     {
         return [
             'editing.license_plate' => ['required', 'min:7', 'max:7', Rule::unique('vehicles', 'license_plate')->ignore($this->editing)],
-            'editing.customer_id' => 'required',
-            'editing.type_vehicle' => 'required',
-            'editing.brand_vehicle' => 'required',
-            'editing.model_vehicle' => 'required',
-            'editing.color_vehicle' => 'required',
+            'editing.customer_id' => 'nullable',
+            'editing.type_vehicle' => 'nullable',
+            'editing.brand_vehicle' => 'nullable',
+            'editing.model_vehicle' => 'nullable',
+            'editing.color_vehicle' => 'nullable',
             'editing.model_year' => 'in:' . collect(Vehicle::YEARS)->keys()->implode(','),
             'editing.odo' => 'required',
             'editing.image' => 'nullable',
@@ -65,11 +65,11 @@ class Modal extends Component
         'editing.license_plate.max' => 'La placa no debe tener más de 7 caracteres',
         'editing.license_plate.required' => 'La placa es obligatorio',
         'editing.license_plate.unique' => 'Ya existe un vehiculo con esta placa',
-        'editing.customer_id.required' => 'El cliente es obligatorio',
-        'editing.type_vehicle.required' => 'El tipo es obligatorio',
-        'editing.brand_vehicle.required' => 'La marca es obligatorio',
-        'editing.model_vehicle.required' => 'El modelo es obligatorio',
-        'editing.color_vehicle.required' => 'EL color es obligatorio',
+        // 'editing.customer_id.required' => 'El cliente es obligatorio',
+        // 'editing.type_vehicle.required' => 'El tipo es obligatorio',
+        // 'editing.brand_vehicle.required' => 'La marca es obligatorio',
+        // 'editing.model_vehicle.required' => 'El modelo es obligatorio',
+        // 'editing.color_vehicle.required' => 'EL color es obligatorio',
         'editing.model_year.in' => 'El valor es inválido',
         'editing.odo.required' => 'EL kilometraje es obligatorio',
     ];

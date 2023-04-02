@@ -8,7 +8,7 @@
         id="{{ $name }}" {{ $disabled ? 'disabled' : ''}}>
         <option value="">Seleccionar..</option>
         @foreach ($options as $value => $label)
-            <option value="{{ $value }}">{{ $label }}</option>
+            <option value="{{ $value }}">{{ strtoupper($label) }}</option>
         @endforeach
     </select>
     <p class="text-danger mb-0">

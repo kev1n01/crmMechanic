@@ -46,8 +46,8 @@ class AppServiceProvider extends ServiceProvider
 
             return $values->implode("\n");
         });
-        View::share('company', Company::select('name','logo','address','phone','ruc')->first());
+        View::share('company', Company::select('name', 'logo', 'address', 'phone', 'ruc')->first());
         // View::share('sunat', Sunat::select('ruc')->first());
-        View::share('bankacc', BankAcc::select('name','cta_bank','cta_interbank')->get());
+        View::share('bankacc', BankAcc::select('name', 'cta_bank', 'cta_interbank')->get());
     }
 }

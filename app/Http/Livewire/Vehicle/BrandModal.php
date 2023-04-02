@@ -39,6 +39,7 @@ class BrandModal extends Component
         $this->editing->save();
         $this->nameModal === 'Crear nueva marca' ? $this->emit('success_alert', 'Marca creada') : $this->emit('success_alert', 'Marca actualizada');
         $this->emit('refreshList');
+        $this->emit('resetmodal');
         $this->dispatchBrowserEvent('close-modal-brand-vehicle');
     }
 

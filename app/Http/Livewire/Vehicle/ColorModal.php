@@ -36,6 +36,7 @@ class ColorModal extends Component
         $this->editing->save();
         $this->nameModal === 'Crear nuevo color' ? $this->emit('success_alert', 'Color creado') : $this->emit('success_alert', 'Color actualizada');
         $this->emit('refreshList');
+        $this->emit('resetmodal');
         $this->dispatchBrowserEvent('close-modal-color-vehicle');
     }
 

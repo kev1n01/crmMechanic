@@ -39,6 +39,7 @@ class ModelModal extends Component
         $this->editing->save();
         $this->nameModal === 'Crear nueva modelo' ? $this->emit('success_alert', 'Modelo creado') : $this->emit('success_alert', 'Modelo actualizado');
         $this->emit('refreshList');
+        $this->emit('resetmodal');
         $this->dispatchBrowserEvent('close-modal-model-vehicle');
     }
 

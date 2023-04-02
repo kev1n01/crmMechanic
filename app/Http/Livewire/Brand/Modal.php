@@ -35,9 +35,10 @@ class Modal extends Component
     {
         $this->validate();
         $this->editing->save();
+        $this->emit('refreshList');
+        $this->emit('refreshmodal');
         $this->nameModal === 'Crear nueva marca' ? $this->emit('success_alert', 'Marca creada') : $this->emit('success_alert', 'Marca actualizada');
         $this->dispatchBrowserEvent('close-modal-brand');
-        $this->emit('refreshList');
     }
 
     public function updated($label)

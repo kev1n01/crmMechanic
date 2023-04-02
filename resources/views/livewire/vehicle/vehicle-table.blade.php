@@ -147,10 +147,10 @@
                                             <x-input.check-input name="selected" value="{{ $vehicle->id }}" />
                                         </x-table.cell>
                                         <x-table.cell>{{ $vehicle->license_plate }}</x-table.cell>
-                                        <x-table.cell>{{ $vehicle->type->name }}</x-table.cell>
-                                        <x-table.cell>{{ $vehicle->brand->name }}</x-table.cell>
-                                        <x-table.cell>{{ $vehicle->model->name }}</x-table.cell>
-                                        <x-table.cell>{{ $vehicle->color->name }}</x-table.cell>
+                                        <x-table.cell>{{ $vehicle->type->name??'N/A' }}</x-table.cell>
+                                        <x-table.cell>{{ $vehicle->brand->name??'N/A' }}</x-table.cell>
+                                        <x-table.cell>{{ $vehicle->model->name??'N/A' }}</x-table.cell>
+                                        <x-table.cell>{{ $vehicle->color->name??'N/A' }}</x-table.cell>
                                         <x-table.cell>{{ $vehicle->model_year }}</x-table.cell>
                                         <x-table.cell>{{ $vehicle->odo }}</x-table.cell>
 

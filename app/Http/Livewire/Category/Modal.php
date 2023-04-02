@@ -38,6 +38,7 @@ class Modal extends Component
         $this->validate();
         $this->editing->save();
         $this->emit('refreshList');
+        $this->emit('refreshmodal');
         $this->nameModal === 'Crear nueva categoria' ? $this->emit('success_alert', 'Categoría creada') : $this->emit('success_alert', 'categoría actualizada');
         $this->dispatchBrowserEvent('close-modal-category');
     }

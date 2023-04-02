@@ -7,7 +7,7 @@
                         type="text" :error="$errors->first('editing.name')" :required=true />
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.code" label="Código de producto"
-                        type="text" :error="$errors->first('editing.code')" :required=true />
+                        type="number" :error="$errors->first('editing.code')" :required=true />
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.stock" label="Stock" type="number"
                         :error="$errors->first('editing.stock')" :required=true />
@@ -16,29 +16,30 @@
                         :error="$errors->first('editing.status')" />
 
                     <x-input.select class="col-xl-6 " name="editing.category_products_id" label="Categorías"
-                        :options="$categories" :error="$errors->first('editing.category_products_id')" :required=true />
+                        :options="$categories" :error="$errors->first('editing.category_products_id')" />
 
                     <x-input.select class="col-xl-6" name="editing.brand_products_id" label="Marcas" :options="$brands"
-                        :error="$errors->first('editing.brand_products_id')" :required=true />
+                        :error="$errors->first('editing.brand_products_id')" />
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.sale_price" label="Precio venta"
-                        type="text" :error="$errors->first('editing.sale_price')" :required=true />
+                        type="number" :error="$errors->first('editing.sale_price')" />
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.purchase_price" label="Precio compra"
-                        type="text" :error="$errors->first('editing.purchase_price')" :required=true />
+                        type="number" :error="$errors->first('editing.purchase_price')" />
 
                     <x-input.input-tooltip-error class="col-12" name="image" label="Imagen de producto" type="file"
-                        :error="$errors->first('image')" accept="image/png, image/jpeg, image/jpg"/>
+                        :error="$errors->first('image')" accept="image/png, image/jpeg, image/jpg" />
                 </div>
 
                 <div class="col-12 shadow-none bg-secondary rounded text-center mt-2">
                     <span wire:loading wire:target="image" class="spinner-border text-primary m-2"></span>
                     @if ($image)
-                        <img src="{{ $image->temporaryURL() }}" class="img-fluid m-2 w-50 h-50" wire:loading.remove />
+                        <img src="{{ $image->temporaryURL() }}" class="img-fluid m-2 w-50 h-50" wire:loading.remove
+                            wire:target="image" />
                     @else
                         @if ($editing->image)
                             <img src="{{ asset('storage/' . $editing->image) }}" class="img-fluid m-2 w-50 h-50"
-                                wire:loading.remove />
+                                wire:loading.remove wire:target="image" />
                         @endif
                     @endif
                 </div>

@@ -38,6 +38,7 @@ class TypeModal extends Component
         $this->editing->save();
         $this->nameModal === 'Crear nuevo tipo de vehiculo ' ? $this->emit('success_alert', 'Tipo de vehiculo creada') : $this->emit('success_alert', 'Tipo de vehiculo actualizado');
         $this->emit('refreshList');
+        $this->emit('resetmodal');
         $this->dispatchBrowserEvent('close-modal-type-vehicle');
     }
 
