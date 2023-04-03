@@ -7,7 +7,10 @@
                         type="text" :error="$errors->first('editing.name')" :required=true />
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.code" label="Código de producto"
-                        type="number" :error="$errors->first('editing.code')" :required=true />
+                        type="text" :error="$errors->first('editing.code')" :required=true />
+{{-- 
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.sku" label="SKU"
+                        type="text" :error="$errors->first('editing.sku')" :required=true :disabled=true/> --}}
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.stock" label="Stock" type="number"
                         :error="$errors->first('editing.stock')" :required=true />

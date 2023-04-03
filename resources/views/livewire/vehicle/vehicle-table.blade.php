@@ -1,4 +1,4 @@
-@section('title', 'Listado de vehiculos' )
+@section('title', 'Listado de vehiculos')
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -49,7 +49,7 @@
                                     <button wire:click="$emit('createcolor')" class="dropdown-item action-icon">
                                         Color</button>
                                 </div>
-                                
+
                                 <button type="button" class="btn btn-light mb-2 dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones <span
                                         class="{{ count($selected) == 0 ? 'd-none' : '' }} fs-6 badge rounded-pill bg-primary">{{ count($selected) }}</span></button>
@@ -61,6 +61,21 @@
                                         @if ($selected != []) onclick="Confirm(null,'deleteSelected')" @else onclick="ToastErrorAlert('Seleccione algún registro')" @endif><i
                                             class="mdi mdi-delete"></i>
                                         Eliminar</button>
+                                    <button class="dropdown-item action-icon" data-bs-toggle="offcanvas"
+                                        data-bs-target="#offcanvasRight1" aria-controls="offcanvasRight1"><i
+                                            class="mdi mdi-upload"></i>Importar</button>
+                                </div>
+                                
+                                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight1"
+                                    aria-labelledby="offcanvasRight1Label">
+                                    <div class="offcanvas-header text-center">
+                                        <h5 id="offcanvasRight1Label">Importar Vehiculos</h5>
+                                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body">
+                                        @livewire('vehicle.import')
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -147,21 +162,21 @@
                                             <x-input.check-input name="selected" value="{{ $vehicle->id }}" />
                                         </x-table.cell>
                                         <x-table.cell>{{ $vehicle->license_plate }}</x-table.cell>
-                                        <x-table.cell>{{ $vehicle->type->name??'N/A' }}</x-table.cell>
-                                        <x-table.cell>{{ $vehicle->brand->name??'N/A' }}</x-table.cell>
-                                        <x-table.cell>{{ $vehicle->model->name??'N/A' }}</x-table.cell>
-                                        <x-table.cell>{{ $vehicle->color->name??'N/A' }}</x-table.cell>
+                                        <x-table.cell>{{ $vehicle->type->name ?? 'N/A' }}</x-table.cell>
+                                        <x-table.cell>{{ $vehicle->brand->name ?? 'N/A' }}</x-table.cell>
+                                        <x-table.cell>{{ $vehicle->model->name ?? 'N/A' }}</x-table.cell>
+                                        <x-table.cell>{{ $vehicle->color->name ?? 'N/A' }}</x-table.cell>
                                         <x-table.cell>{{ $vehicle->model_year }}</x-table.cell>
                                         <x-table.cell>{{ $vehicle->odo }}</x-table.cell>
 
                                         <x-table.cell>
                                             <a class="btn btn-info btn-sm mb-1"
-                                            wire:click="$emit('editvehicle',{{ $vehicle->id }})">
-                                            Editar</a>
-                                           
+                                                wire:click="$emit('editvehicle',{{ $vehicle->id }})">
+                                                Editar</a>
+
                                             <a class="btn btn-danger btn-sm mb-1"
-                                            onclick="Confirm({{ $vehicle->id }}, 'delete')">
-                                            Eliminar</a>
+                                                onclick="Confirm({{ $vehicle->id }}, 'delete')">
+                                                Eliminar</a>
 
                                         </x-table.cell>
                                     </x-table.row>

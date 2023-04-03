@@ -88,7 +88,7 @@ class OtEdit extends Component
         } else {
             $wod = $wod->map(function ($item, $key) {
                 if (strlen(strval($item->item)) > 4)
-                    $item->item = Product::where('code', strval($item->item))->select('code', 'name')->first();
+                    $item->item = Product::where('code', 'like', '%' . strval($item->item) . '%')->select('code', 'name')->first();
                 else
                     $item->item = Concept::where('code', str_pad($item->item, 3, "0", STR_PAD_LEFT))->select('code', 'name')->first();
                 return $item;
@@ -221,7 +221,7 @@ class OtEdit extends Component
     {
         // dd($code_id);
         if (strlen($code_id) > 4) {
-            $product = Product::where('code', $code_id)->first();
+            $product = Product::where('code', 'like', '%' . $code_id . '%')->first();
             if ($this->editing->is_confirmed == 1) {
                 $saleOt = Sale::where('code_sale', 'like', '%' . $this->editing->code . '%')->first();
                 $sale_detail_quantity = SaleDetail::where('sale_id', $saleOt->id)->where('product_id', $product->id)->first();
@@ -400,7 +400,7 @@ class OtEdit extends Component
                 });
 
                 foreach ($cart_replacement as $cr) {
-                    $productCodes = Product::where('code', $cr->id)->get();
+                    $productCodes = Product::where('code', 'like', '%' . $cr->id . '%')->get();
                     foreach ($productCodes as $productCode) {
                         $product_id = $productCode->id;
                     }

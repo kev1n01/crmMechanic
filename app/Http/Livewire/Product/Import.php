@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Product;
 
 use App\Helpers\Csv;
 use App\Models\Product;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\WithFileUploads;

@@ -29,10 +29,22 @@ class Modal extends Component
     public function mount()
     {
         $this->editing = $this->makeBlankFields();
+        // $this->edtiting->sku = $this->sku_random();
         $this->statuses = Product::STATUSES;
         $this->brands = BrandProduct::pluck('name', 'id');
         $this->categories = CategoryProduct::pluck('name', 'id');
     }
+
+    // public function sku_random()
+    // {
+    //     $sku = random_int(1000, 999942);
+    //     $product = Product::where('sku', $sku)->first();
+    //     if ($product) {
+    //         $this->sku_random();
+    //     }
+    //     dd($sku);
+    //     return $sku;
+    // }
 
     public function rules()
     {

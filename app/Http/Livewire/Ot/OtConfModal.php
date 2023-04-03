@@ -151,7 +151,7 @@ class OtConfModal extends Component
 
             //falta filtrar los productos por su codigo
             foreach ($wod_replacement as $wod) {
-                $productCodes = Product::where('code', $wod->item)->get();
+                $productCodes = Product::where('code', 'like', '%' . $wod->item . '%')->get();
                 foreach ($productCodes as $productCode) {
                     $product_id = $productCode->id;
                 }

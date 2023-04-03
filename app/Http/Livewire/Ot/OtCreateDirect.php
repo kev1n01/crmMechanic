@@ -13,7 +13,7 @@ use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
-class OtCreate extends Component
+class OtCreateDirect extends Component
 {
     public WorkOrder $editing;
 
@@ -113,7 +113,7 @@ class OtCreate extends Component
             $this->vehicles = [];
         }
 
-        return view('livewire.ot.ot-create')
+        return view('livewire.ot.ot-create-direct')
             ->extends('layouts.admin.app')->section('content');
     }
 

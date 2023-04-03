@@ -28,7 +28,7 @@ class PDFController extends Controller
             if (strlen(strval($item->item)) < 4) {
                 $item->item = Concept::where('code', str_pad($item->item, 3, "0", STR_PAD_LEFT))->select('name', 'code')->first();
             } else {
-                $item->item = Product::where('code', strval($item->item))->select('name', 'code')->first();
+                $item->item = Product::where('code', 'like', '%' . strval($item->item) . '%')->select('name', 'code')->first();
             }
         });
 
@@ -48,7 +48,7 @@ class PDFController extends Controller
             if (strlen(strval($item->item)) < 4) {
                 $item->item = Concept::where('code', str_pad($item->item, 3, "0", STR_PAD_LEFT))->select('name', 'code')->first();
             } else {
-                $item->item = Product::where('code', strval($item->item))->select('name', 'code')->first();
+                $item->item = Product::where('code', 'like', '%' . strval($item->item) . '%')->select('name', 'code')->first();
             }
         });
 

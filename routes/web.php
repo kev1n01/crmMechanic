@@ -32,11 +32,13 @@ Route::get('vehiculos', \App\Http\Livewire\Vehicle\VehicleTable::class)->name('v
 
 //Rutas para proforma
 Route::get('proformas', \App\Http\Livewire\InvoiceForm\IFTable::class)->name('proformas');
-Route::get('crear-ot-proforma', \App\Http\Livewire\Ot\OtCreate::class)->name('proforma.orden.crear');
-Route::get('editar-ot-proforma/{code}', \App\Http\Livewire\Ot\OtEdit::class)->name('proforma.orden.editar');
+Route::get('crear-proforma', \App\Http\Livewire\Ot\OtCreate::class)->name('proforma.orden.crear');
+Route::get('editar-proforma/{code}', \App\Http\Livewire\Ot\OtEdit::class)->name('proforma.orden.editar');
 
 //Rutas para Orden de trabajo
 Route::get('ordenes-trabajo', \App\Http\Livewire\Ot\OtTable::class)->name('ordenes');
+Route::get('crear-ot', \App\Http\Livewire\Ot\OtCreateDirect::class)->name('orden.crear');
+Route::get('editar-ot/{code}', \App\Http\Livewire\Ot\OtEditDirect::class)->name('orden.editar');
 Route::get('servicios', \App\Http\Livewire\Ot\ConceptTable::class)->name('servicios');
 
 //Rutas para finanzas
