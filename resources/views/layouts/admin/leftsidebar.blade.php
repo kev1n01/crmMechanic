@@ -184,10 +184,10 @@
                                 </span>
                             </a>
                         </li>
-                        {{-- <li>
+                        <li>
                             <a href="{{ route('orden.crear') }}">Crear OT
                             </a>
-                        </li> --}}
+                        </li>
                         <li>
                             <a href="{{ route('servicios') }}">Servicios
                                 <span class="badge bg-primary float-end">

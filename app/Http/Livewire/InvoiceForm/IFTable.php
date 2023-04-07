@@ -26,7 +26,6 @@ class IFTable extends Component
     public $filters = [
         'fromDate' => null,
         'toDate' => null,
-        'confirmation' => '',
         'customer' => '',
         'vehicle' => '',
     ];
@@ -46,7 +45,7 @@ class IFTable extends Component
     {
         $this->sortField = 'code';
         $this->confirmations = WorkOrder::IS_CONFIRMED;
-        $this->customers = Customer::where('status','activo')->pluck('name', 'id');
+        $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
         $this->vehicles = Vehicle::pluck('license_plate', 'id');
     }
 
@@ -73,6 +72,7 @@ class IFTable extends Component
     public function getWorksProperty()
     {
         return WorkOrder::query()
+            ->where('status', '!=', 'en progreso')
             ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
             $q->whereBetween('arrival_date', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d'), Carbon::parse($this->filters['toDate'])->format('Y-m-d')]))
             ->when(
@@ -82,7 +82,6 @@ class IFTable extends Component
                     ->withWhereHas('customerUser', fn ($q2) => $q2->where('name', 'like', '%' . $search . '%'))
                     ->withWhereHas('vehiclePlate', fn ($q2) => $q2->where('license_plate', 'like', '%' . $search . '%'))
             )
-            ->when($this->filters['confirmation'], fn ($q, $confirmation) => $q->where('is_confirmed', $confirmation))
             ->when($this->filters['customer'], fn ($q, $customer) => $q->where('customer', $customer))
             ->when($this->filters['vehicle'], fn ($q, $vehicle) => $q->where('vehicle', $vehicle))
             ->orderBy($this->sortField, $this->sortDirection)

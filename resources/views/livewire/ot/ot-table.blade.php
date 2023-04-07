@@ -34,8 +34,8 @@
                                         <i class="mdi mdi-filter-outline me-1"></i>
                                     @endif
                                 </button>
-                                <a type="button" href="{{ route('proforma.orden.crear') }}"
-                                    class="btn btn-dark mb-2 me-2"><i class="mdi mdi-plus me-1"></i>
+                                <a type="button" href="{{ route('orden.crear') }}" class="btn btn-dark mb-2 me-2"><i
+                                        class="mdi mdi-plus me-1"></i>
                                     Nuevo</a>
                             </div>
                         </div>
@@ -149,17 +149,17 @@
                                                 Horarios
                                             </a>
 
-                                        <a class="btn btn-info btn-sm mb-1"
-                                            href="{{ route('proforma.orden.editar', $wo->code) }}">
-                                            Editar</a>
+                                            <a class="btn btn-info btn-sm mb-1"
+                                                href="{{ route('orden.editar', $wo->code) }}">
+                                                Editar</a>
 
-                                        <a class="btn btn-primary btn-sm mb-1"
-                                            href="{{ route('proforma.pdf.view', $wo->id) }}">
-                                            Ver</a>
-                                        <a class="btn btn-warning btn-sm mb-1"
-                                            href="{{ route('proforma.pdf.download', $wo->id) }}">
-                                            Descargar</a>
-                                       
+                                            <a class="btn btn-primary btn-sm mb-1"
+                                                href="{{ route('proforma.pdf.view', $wo->id) }}">
+                                                Ver</a>
+                                            <a class="btn btn-warning btn-sm mb-1"
+                                                href="{{ route('proforma.pdf.download', $wo->id) }}">
+                                                Descargar</a>
+
                                         </x-table.cell>
 
                                     </x-table.row>

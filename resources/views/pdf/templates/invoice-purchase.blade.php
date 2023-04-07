@@ -13,7 +13,7 @@
     <div class="border-line">
         <div class="infoHeader">
             <div style="float: left; width: 20%; height: 10%; margin-right: 2mm; margin-left: 4mm; margin-bottom: 2mm;">
-                @if ($company->logo)
+                @if (isset($company->logo))
                     <img src="{{ public_path('storage/' . $company->logo) }}" class="logo_img">
                 @else
                     <img src="https://knowledgehub.adeanet.org/themes/adea/images/no-logo.jpg" class="logo_img">

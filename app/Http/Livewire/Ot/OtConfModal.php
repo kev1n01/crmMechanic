@@ -66,7 +66,7 @@ class OtConfModal extends Component
     {
         $this->resetErrorBag();
         $this->resetValidation();
-        $this->nameModal = 'Confirmar Orden de Trabajo';
+        $this->nameModal = 'Configurar Orden de Trabajo';
         $this->dispatchBrowserEvent('open-modal-ot-conf');
         $this->editing = $wo;
         if ($this->editing->arrival_date != null) {

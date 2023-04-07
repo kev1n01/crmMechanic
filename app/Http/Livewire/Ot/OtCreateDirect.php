@@ -4,7 +4,10 @@ namespace App\Http\Livewire\Ot;
 
 use App\Models\Concept;
 use App\Models\Customer;
+use App\Models\DuePay;
 use App\Models\Product;
+use App\Models\Sale;
+use App\Models\SaleDetail;
 use App\Models\Vehicle;
 use App\Models\WorkOrder;
 use App\Models\workOrderDetail;
@@ -119,6 +122,7 @@ class OtCreateDirect extends Component
 
     public function updatedEditingCustomer($value)
     {
+        $this->editing->odo = '0';
         $this->editing->vehicle = '';
         $this->cf = Customer::find($value);
     }
@@ -126,6 +130,7 @@ class OtCreateDirect extends Component
     public function updatedEditingVehicle($value)
     {
         $this->vf = Vehicle::find($value);
+        $this->editing->odo = $this->vf ? $this->vf->odo : 0;
     }
 
     public function updateCartOptions()
@@ -268,7 +273,7 @@ class OtCreateDirect extends Component
     {
         Cart::session($this->editing->vehicle)->clear();
         $this->updateCartOptions();
-        return redirect()->route('proformas');
+        return redirect()->route('ordenes');
     }
 
     public function changeAnother()
@@ -283,9 +288,9 @@ class OtCreateDirect extends Component
         } else {
             $this->saveLogic();
             if ($this->another) {
-                return redirect()->route('proforma.orden.crear');
+                return redirect()->route('orden.crear');
             } else {
-                return redirect()->route('proformas');
+                return redirect()->route('ordenes');
             }
         }
     }
@@ -301,9 +306,12 @@ class OtCreateDirect extends Component
         $this->calculeTotal();
         $this->editing->total = $this->totalDiscount;
         $this->editing->date_emission = Carbon::parse($this->editing->date_emission)->format('Y-m-d');
-        $vehicle = Vehicle::find($this->editing->vehicle);
-        $this->editing->odo = $vehicle->odo;
-        $this->editing->is_confirmed = 0;
+        $this->editing->arrival_date = null;
+        $this->editing->arrival_hour = null;
+        $this->editing->departure_date = null;
+        $this->editing->departure_hour = null;
+        $this->editing->is_confirmed = 1;
+        $this->editing->status = 'en progreso';
         $this->editing->save();
 
         foreach ($this->cart as $item) {
@@ -316,8 +324,71 @@ class OtCreateDirect extends Component
             ]);
         }
 
+        $total_replacement = 0;
+        $totalwod = 0;
+        // Filtrar los items que son repuestos
+        $wod_replacement = $this->editing->workOrderDetail()->get()->filter(function ($i) {
+            return strlen($i->item) > 4;
+        });
+
+        // Sumar el total de los items que son repuestos
+        foreach ($wod_replacement as $wod) {
+            $total_replacement += ($wod->price * $wod->quantity) - (($wod->quantity * $wod->price) * ($wod->discount / 100));
+        }
+
+        foreach ($this->editing->workOrderDetail()->get() as $wod) {
+            $totalwod += ($wod->price * $wod->quantity) - (($wod->quantity * $wod->price) * ($wod->discount / 100));
+        }
+
+        $sale = Sale::create([
+            'code_sale' => $this->code_random(5, 'V') . ' - ' . $this->editing->code,
+            'customer_id' => $this->editing->customer,
+            'total' => $total_replacement,
+            'cash' => 0,
+            'type_payment' => 'credito',
+            'method_payment' => '',
+            'type_sale' => 'vehicular',
+            'date_sale' => Carbon::now()->format('Y-m-d'),
+            'observation' => 'Venta de repuestos para el ot ' . $this->editing->code,
+            'status' => 'no pagado',
+        ]);
+
+        DuePay::create([
+            'description' => $sale->code_sale,
+            'person_owed' => $this->editing->customerUser->name,
+            'amount_owed' => $totalwod,
+            'amount_paid' => 0,
+            'reason' => 'ot',
+        ]);
+
+
+        //falta filtrar los productos por su codigo
+        foreach ($wod_replacement as $wod) {
+            $productCodes = Product::where('code', 'like', '%' . $wod->item . '%')->get();
+            foreach ($productCodes as $productCode) {
+                $product_id = $productCode->id;
+            }
+
+            SaleDetail::create([
+                'price' => $wod->price,
+                'quantity' => $wod->quantity,
+                'discount' => $wod->discount,
+                'product_id' => $product_id,
+                'sale_id' => $sale->id,
+            ]);
+
+            //update stock of product saled
+            $product = Product::find($product_id);
+            $product->stock -= $wod->quantity;
+            $product->save();
+        }
+        // update odo of vehicle to work order registeres
+        $vehicle = Vehicle::find($this->editing->vehicle);
+        $vehicle->odo = $this->editing->odo;
+        $vehicle->save();
+
         Cart::session($this->editing->vehicle)->clear();
         $this->updateCartOptions();
-        $this->emit('success_alert', 'Proforma registrado');
+        $this->emit('success_alert', 'Orden de trabajo registrado');
     }
 }

@@ -3,11 +3,11 @@
         <x-modal-dialog :id="$idModal" :title="$nameModal" :optionsModal="$modalsize">
             <x-slot name="body">
                 <div class="row g-2">
-                    <x-input.input-tooltip-error class="col-xl-6" name="editing.license_plate"
-                        label="Placa de vehiculo" type="text" :error="$errors->first('editing.license_plate')" :required=true />
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.license_plate" label="Placa de vehiculo"
+                        type="text" :error="$errors->first('editing.license_plate')" :required=true />
 
-                    <x-input.input-tooltip-error class="col-xl-6" name="editing.odo" label="Kilometraje"
-                        type="text" :error="$errors->first('editing.odo')" :required=true />
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.odo" label="Kilometraje" type="text"
+                        :error="$errors->first('editing.odo')" :required=true />
 
                     <x-input.select class="col-xl-6" name="editing.customer_id" label="Cliente" :options="$customers"
                         :error="$errors->first('editing.customer_id')" :required=true />
@@ -28,18 +28,19 @@
                         :error="$errors->first('editing.model_year')" />
 
                     <x-input.textarea class="col-xl-12" name="editing.description" label="Descripción" />
-                    
-                    <x-input.input-tooltip-error class="col-12" name="image" label="Imagen de vehiculo"
-                        type="file" :error="$errors->first('image')" />
+
+                    <x-input.input-tooltip-error class="col-12" name="image" label="Imagen de vehiculo" type="file"
+                        :error="$errors->first('image')" accept="image/png, image/jpeg, image/jpg" />
                 </div>
 
                 <div class="col-12 shadow-none bg-secondary rounded text-center mt-2">
                     <span wire:loading wire:target="image" class="spinner-border text-primary m-2"></span>
                     @if ($image)
-                        <img src="{{ $image->temporaryURL() }}" class="img-fluid m-2 w-50 h-50" wire:loading.remove/>
+                        <img src="{{ $image->temporaryURL() }}" class="img-fluid m-2 w-50 h-50" wire:loading.remove />
                     @else
                         @if ($editing->image)
-                            <img src="{{ asset('storage/' . $editing->image) }}" class="img-fluid m-2 w-50 h-50" wire:loading.remove/>
+                            <img src="{{ asset('storage/' . $editing->image) }}" class="img-fluid m-2 w-50 h-50"
+                                wire:loading.remove />
                         @endif
                     @endif
                 </div>

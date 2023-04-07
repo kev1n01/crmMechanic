@@ -35,10 +35,11 @@ Route::get('proformas', \App\Http\Livewire\InvoiceForm\IFTable::class)->name('pr
 Route::get('crear-proforma', \App\Http\Livewire\Ot\OtCreate::class)->name('proforma.orden.crear');
 Route::get('editar-proforma/{code}', \App\Http\Livewire\Ot\OtEdit::class)->name('proforma.orden.editar');
 
-//Rutas para Orden de trabajo
+//Rutas para Orden de trabajo y servicios
 Route::get('ordenes-trabajo', \App\Http\Livewire\Ot\OtTable::class)->name('ordenes');
 Route::get('crear-ot', \App\Http\Livewire\Ot\OtCreateDirect::class)->name('orden.crear');
 Route::get('editar-ot/{code}', \App\Http\Livewire\Ot\OtEditDirect::class)->name('orden.editar');
+
 Route::get('servicios', \App\Http\Livewire\Ot\ConceptTable::class)->name('servicios');
 
 //Rutas para finanzas
@@ -49,8 +50,6 @@ Route::get('gastos', \App\Http\Livewire\Cost\CostTable::class)->name('gastos');
 Route::get('configuracion', function () {
     return view('configuration-index');
 })->name('conf.index');
-// Route::get('configuracion/mi-empresa', \App\Http\Livewire\Setting\CompanyConf::class)->name('conf.compania');
-// Route::get('configuracion/sunat', \App\Http\Livewire\Setting\SunatConf::class)->name('conf.sunat');
 
 //Rutas para procesos de sunat
 Route::get('sunat/crear-factura', \App\Http\Livewire\Sunat\CreateInvoiceTicket::class)->name('sunat.crear.factura');

@@ -69,10 +69,6 @@
                                         <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
                                     <div class="col-lg-3">
-                                        <x-input.select name="filters.confirmation" label="Confirmacion"
-                                            :options="$confirmations" />
-                                    </div>
-                                    <div class="col-lg-3">
                                         <x-input.select name="filters.customer" label="Cliente" :options="$customers" />
                                     </div>
                                     <div class="col-lg-3">
