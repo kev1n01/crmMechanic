@@ -14,16 +14,16 @@
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.phone" label="Telefono" type="text"
                         :error="$errors->first('editing.phone')" :required=true />
-
-                    <x-input.input-tooltip-error class="col-xl-4" name="editing.department" label="Departamento"
+   
+                    <x-input.select class="col-xl-4" name="editing.department" :options="$departments" label="Departamento"
                         type="text" :error="$errors->first('editing.department')" :required=true />
-
-                    <x-input.input-tooltip-error class="col-xl-4" name="editing.province" label="Provincia"
+   
+                    <x-input.select class="col-xl-4" name="editing.province" :options="$provinces" label="Provincia"
                         type="text" :error="$errors->first('editing.province')" :required=true />
-
-                    <x-input.input-tooltip-error class="col-xl-4" name="editing.district" label="Distrito"
+   
+                    <x-input.select class="col-xl-4" name="editing.district" :options="$districs" label="Distrito"
                         type="text" :error="$errors->first('editing.district')" :required=true />
-
+   
                     <x-input.input-tooltip-error class="col-xl-8" name="editing.address" label="Domicilio Fiscal"
                         type="text" :error="$errors->first('editing.address')" :required=true />
 

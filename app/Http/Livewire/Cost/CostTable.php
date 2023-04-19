@@ -6,7 +6,6 @@ use App\Traits\DataTable;
 use Livewire\Component;
 use App\Models\Cost;
 use Carbon\Carbon;
-use Illuminate\Validation\Rule;
 
 class CostTable extends Component
 {

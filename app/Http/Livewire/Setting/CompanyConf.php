@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Setting;
 
 use App\Models\Company;
+use App\Traits\WithCountries;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
@@ -11,9 +12,14 @@ use Livewire\WithFileUploads;
 
 class CompanyConf extends Component
 {
+    use WithCountries;
     use WithFileUploads;
     public Company $editing;
     public $logo;
+
+    public $departments = [];
+    public $provinces = [];
+    public $districs = [];
 
     public function mount()
     {
@@ -23,6 +29,19 @@ class CompanyConf extends Component
         } else {
             $this->editing = $this->makeBlankFields();
         }
+
+        $this->departments = collect(self::DEPARTMENTS)->pluck('name', 'name')->toArray();
+    }
+
+    public function updatedEditingDepartment($value)
+    {
+        $this->districs = [];
+        $this->provinces = collect(self::PROVINCES)->where('department', $value)->pluck('name', 'name')->toArray();
+    }
+
+    public function updatedEditingProvince($value)
+    {
+        $this->districs = collect(self::DISTRICS)->where('province', $value)->pluck('name', 'name')->toArray();
     }
 
     public function rules()
@@ -34,9 +53,9 @@ class CompanyConf extends Component
             'editing.ubigeous' => 'required|min:6|max:6',
             'editing.address' => 'required',
             'editing.logo' => ['nullable'],
-            'editing.department' => 'required|in:' . collect(Company::DEPARTMENTS)->keys()->implode(','),
-            'editing.province' => 'required|in:' . collect(Company::PROVINCES)->keys()->implode(','),
-            'editing.district' => 'required|in:' . collect(Company::DISTRICTS)->keys()->implode(','),
+            'editing.department' => 'required',
+            'editing.province' => 'required',
+            'editing.district' => 'required',
         ];
     }
 

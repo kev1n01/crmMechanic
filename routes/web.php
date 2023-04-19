@@ -2,12 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', 'clientes');
+Route::redirect('/', 'sunat/crear-factura');
 //Rutas de dashboard
-// Route::get('dashboard',\App\Http\Livewire\dashboard\Dashboard::class)->name('dashboard');
+Route::get('dashboard',\App\Http\Livewire\dashboard\Dashboard::class)->name('dashboard');
 
 //Rutas de cliente
 Route::get('clientes', \App\Http\Livewire\customer\CustomerTable::class)->name('clientes');
+
+//Rutas de informes
+Route::get('informes', \App\Http\Livewire\reminder\ReminderTable::class)->name('informes');
 
 //Rutas de inventario
 Route::get('marcas', \App\Http\Livewire\Brand\BrandTable::class)->name('marcas');

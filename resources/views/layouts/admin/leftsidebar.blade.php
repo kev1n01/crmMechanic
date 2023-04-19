@@ -40,6 +40,12 @@
                     <span> Clientes </span>
                 </a>
             </li>
+            <li class="side-nav-item">
+                <a class="side-nav-link" href="{{ route('informes') }}">
+                    <i class="uil-stopwatch"></i>
+                    <span> Informes </span>
+                </a>
+            </li>
 
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#inventario" aria-expanded="false" aria-controls="inventario"
@@ -203,7 +209,7 @@
                 <a data-bs-toggle="collapse" href="#sunat" aria-expanded="false" aria-controls="sunat"
                     class="side-nav-link">
                     <i class="uil-invoice"></i>
-                    <span> Sunat </span>
+                    <span> Facturacion </span>
                     <span class="menu-arrow"></span>
                 </a>
                 <div class="collapse" id="sunat">

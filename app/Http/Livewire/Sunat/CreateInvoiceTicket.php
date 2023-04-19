@@ -2,51 +2,49 @@
 
 namespace App\Http\Livewire\Sunat;
 
+use App\Models\Comprobant;
+use App\Models\Sale;
 use Livewire\Component;
 
 class CreateInvoiceTicket extends Component
 {
-    //data invoice
-    public $tipoDoc;
-    public $serie;
-    public $correlativo;
-    public $fechaEmision;
-    public $moneda;
-    public $tipo;
+    //data for selects
+    public $typescpe;
+    public $sales = [];
+    public $select_id;
 
-    //data client
-    public $tipoDocClient;
-    public $numDoc;
-    public $rznSocialClient;
-    public $direccionClient;
-    public $provinciaClient;
-    public $departamentoClient;
-    public $distritoClient;
-    public $ubigueoClient;
+    public Comprobant $comprobant;
 
-    //data company
-    public $ruc;
-    public $razonSocialCompany;
-    public $nombreComercialCompany;
-    public $direccionCompany;
-    public $provinciaCompany;
-    public $departamentoCompany;
-    public $distritoCompany;
-    public $ubigueoCompany;
+    public function mount()
+    {
+        $this->comprobant = $this->makeBlankFields();
+        $this->typescpe = Comprobant::TYPE_CPE;
+        $this->sales = Sale::pluck('code_sale', 'id');
+    }
 
-    //data invoice amount
-    public $mtoOperGravadas;
-    public $mtoOperExoneradas;
-    public $mtoIGV;
-    public $totalImpuestos;
-    public $valorVenta;
-    public $subTotal;
-    public $mtoImpVenta;
+    public function makeBlankFields()
+    {
+        return Comprobant::make(); /*para dejar v acios los inpust*/
+    }
 
-    public $value;
+    public function rules()
+    {
+        return [
+            'editing.name' => ['required', 'min:5'],
+            'editing.phone' => 'required|min:9|max:9',
+            'editing.ruc' => 'required|min:11|max:11',
+            'editing.ubigeous' => 'required|min:6|max:6',
+            'editing.address' => 'required',
+            'editing.logo' => ['nullable'],
+            'editing.department' => 'required',
+            'editing.province' => 'required',
+            'editing.district' => 'required',
+        ];
+    }
     
     public function render()
     {
-        return view('livewire.sunat.create-invoice-ticket');
+        return view('livewire.sunat.create-invoice-ticket')
+            ->extends('layouts.admin.app')->section('content');
     }
 }

@@ -9,18 +9,6 @@ class Company extends Model
 {
     use HasFactory;
 
-    const DEPARTMENTS = [
-        'HUANUCO' => 'HUANUCO'
-    ];
-
-    const PROVINCES = [
-        'HUANUCO' => 'HUANUCO'
-    ];
-
-    const DISTRICTS = [
-        'HUANUCO' => 'HUANUCO'
-    ];
-
     protected $fillable = [
         'name',
         'phone',

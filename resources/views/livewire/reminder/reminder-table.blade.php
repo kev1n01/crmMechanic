@@ -1,4 +1,4 @@
-@section('title', 'Mis gastos')
+@section('title', 'Recordatorios')
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -62,7 +62,7 @@
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="offcanvas-body">
-                                        @livewire('cost.import')
+                                        @livewire('r.import')
                                     </div>
                                 </div> --}}
                             </div>
@@ -84,6 +84,12 @@
                                     <div class="col-lg-3">
                                         <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.status" label="Estado" :options="$statuses" />
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <x-input.select name="filters.vehicle_id" label="Vehiculo" :options="$vehicles" />
+                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -100,11 +106,16 @@
                                     Descripción
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('date')" :direction="$sortField == 'date' ? $sortDirection : null">Fecha
+                                <x-table.heading sortable wire:click="sortBy('vehicle_id')" :direction="$sortField == 'vehicle_id' ? $sortDirection : null">Vehiculo
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('total')" :direction="$sortField == 'total' ? $sortDirection : null">Total
+                                <x-table.heading>Cliente</x-table.heading>
+
+                                <x-table.heading sortable wire:click="sortBy('date')" :direction="$sortField == 'date' ? $sortDirection : null">Fecha
+                                    recordatorio
                                 </x-table.heading>
+
+                                <x-table.heading>Estado</x-table.heading>
 
                                 <x-table.heading>Acción</x-table.heading>
 
@@ -113,26 +124,49 @@
 
                             <x-slot name="body">
 
-                                @forelse ($costs as $cost)
-                                    <x-table.row wire:key="row-{{ $cost->id }}" wire:loading.class="bg-light"
+                                @forelse ($reminders as $r)
+                                    <x-table.row wire:key="row-{{ $r->id }}" wire:loading.class="bg-light"
                                         wire:target="search">
 
                                         <x-table.cell>
-                                            <x-input.check-input name="selected" value="{{ $cost->id }}" />
+                                            <x-input.check-input name="selected" value="{{ $r->id }}" />
                                         </x-table.cell>
 
-                                        <x-table.cell>{{ $cost->description }}</x-table.cell>
+                                        <x-table.cell class="text-wrap w-25">{{ $r->description }}</x-table.cell>
 
-                                        <x-table.cell>{{ $cost->date }}</x-table.cell>
+                                        <x-table.cell>{{ $r->vehicle->license_plate }}</x-table.cell>
 
-                                        <x-table.cell>{{ $cost->total }}</x-table.cell>
+                                        <x-table.cell>{{ $r->vehicle->customer->name }}</x-table.cell>
+
+                                        <x-table.cell class="text-center fs-4">
+                                            <span
+                                                class="badge bg-{{ date('Y-m-d') >= $r->date ? 'danger' : 'info' }}">{{ $r->date }}</span>
+                                        </x-table.cell>
 
                                         <x-table.cell>
-                                            <a class="btn btn-info btn-sm mb-1" wire:click="edit({{ $cost->id }})">
+                                            <button
+                                                class="btn btn-outline-{{ $r->status_color }} rounded-pill btn-sm w-100" wire:click="changeStatus({{ $r->id }})"
+                                                type="button">
+                                                {{ strtoupper($r->status) }}
+
+                                                @if (date('Y-m-d') >= $r->date)
+                                                    <span
+                                                        wire:init="addNotificationReminderExpired({{ $r->id }})"></span>
+                                                @endif
+                                            </button>
+                                        </x-table.cell>
+
+                                        <x-table.cell>
+                                            <a class="btn btn-success btn-sm mb-1" target="_blank"
+                                                href="https://api.whatsapp.com/send?phone=51{{ $r->vehicle->customer->phone }}&text={{ $r->description }}">
+                                                Enviar
+                                            <i class="mdi mdi-whatsapp"></i></a>
+
+                                            <a class="btn btn-info btn-sm mb-1" wire:click="edit({{ $r->id }})">
                                                 Editar</a>
 
                                             <a class="btn btn-danger btn-sm mb-1"
-                                                onclick="Confirm({{ $cost->id }}, 'delete')">
+                                                onclick="Confirm({{ $r->id }}, 'delete')">
                                                 Eliminar</a>
                                         </x-table.cell>
 
@@ -140,8 +174,8 @@
 
                                 @empty
                                     <x-table.row>
-                                        <x-table.cell class="text-center" colspan="8">
-                                            No hay gastos encontrados
+                                        <x-table.cell class="text-center" colspan="7">
+                                            No hay informes encontrados
                                         </x-table.cell>
                                     </x-table.row>
                                 @endforelse
@@ -150,7 +184,7 @@
                     </div>
                     <div class="d-flex flex-row-reverse bd-highlight">
                         <div class="p-2 bd-highlight">
-                            {{ $costs->links() }}
+                            {{ $reminders->links() }}
                         </div>
                     </div>
                 </div>
@@ -161,14 +195,22 @@
         <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
             <x-slot name="body">
                 <div class="row g-2">
-                    <x-input.input-tooltip-error class="col-xl-12" name="editing.description" label="Descripción"
-                        type="text" :error="$errors->first('editing.description')" :required=true />
+                    <x-input.textarea class="col-xl-12" name="editing.description" label="Observaciones" rows="3"
+                        :error="$errors->first('editing.description')" :required=true />
 
-                    <x-input.datepicker class="col-xl-6" name="editing.date" label="Fecha" id="dp3"
-                        :error="$errors->first('editing.date')" :required=true />
+                    <x-input.datepicker class="col-xl-6" name="editing.date" label="Fecha recordatorio"
+                        id="dp3" :error="$errors->first('editing.date')" :required=true />
 
-                    <x-input.input-tooltip-error class="col-xl-6" name="editing.total" label="Monto" type="text"
-                        :error="$errors->first('editing.total')" :required=true />
+                    <x-input.select class="col-xl-6" name="editing.status" label="Estado" :options="$statuses"
+                        :error="$errors->first('editing.status')" />
+
+                    <x-input.select class="col-xl-6" name="editing.vehicle_id" label="Vehiculo" :options="$vehicles"
+                        :error="$errors->first('editing.vehicle_id')" />
+
+                    @if ($editing->vehicle_id)
+                        <x-input.input-tooltip-error class="col-xl-6" name="customername" label="Cliente"
+                            type="text" :disabled=true />
+                    @endif
                 </div>
             </x-slot>
 
@@ -186,11 +228,11 @@
 
 @push('js')
     <script>
-        window.addEventListener('close-modal', event => {
-            $('#costModal').modal('hide');
+        window.addEventListener('close-modal-reminder', event => {
+            $('#reminderModal').modal('hide');
         });
-        window.addEventListener('open-modal', event => {
-            $('#costModal').modal('show');
+        window.addEventListener('open-modal-reminder', event => {
+            $('#reminderModal').modal('show');
         });
     </script>
 @endpush

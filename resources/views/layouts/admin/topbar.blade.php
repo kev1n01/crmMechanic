@@ -30,7 +30,8 @@
                 <i class="dripicons-gear noti-icon"></i>
             </a>
         </li> --}}
-      
+       
+        @livewire('components.notificaction')
         @livewire('components.theme-change')
 
         {{-- <li class="dropdown notification-list">
