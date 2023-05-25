@@ -72,7 +72,7 @@ class SunatConf extends Component
 
     public function removeCertificate($certificate)
     {
-        if (!$certificate) return;
+        if ($certificate === '' || $certificate == null) return;
         if (Storage::disk('public')->exists($certificate)) {
             Storage::disk('public')->delete($certificate);
         }
@@ -88,7 +88,7 @@ class SunatConf extends Component
         $this->validate();
 
         if ($this->editing->certificate != null) {
-            $this->removeLogo($this->editing->certificate);
+            $this->removeCertificate($this->editing->certificate);
         }
 
         if ($this->certificate) {

@@ -72,7 +72,6 @@ class IFTable extends Component
     public function getWorksProperty()
     {
         return WorkOrder::query()
-            ->where('status', '!=', 'en progreso')
             ->when($this->filters['fromDate'] && $this->filters['toDate'], fn ($q, $created_at) =>
             $q->whereBetween('arrival_date', [Carbon::parse($this->filters['fromDate'])->format('Y-m-d'), Carbon::parse($this->filters['toDate'])->format('Y-m-d')]))
             ->when(

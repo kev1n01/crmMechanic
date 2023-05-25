@@ -24,12 +24,12 @@
 
         <!--- Sidemenu -->
         <ul class="side-nav">
-            {{-- <li class="side-nav-item">
+            <li class="side-nav-item">
                 <a class="side-nav-link" href="{{ route('dashboard') }}">
                     <i class=" uil-chart-line"></i>
                     <span> Dashboard </span>
                 </a>
-            </li> --}}
+            </li>
 
             <li class="side-nav-item">
                 <a class="side-nav-link" href="{{ route('clientes') }}">
@@ -205,7 +205,7 @@
                 </div>
             </li>
 
-            {{-- <li class="side-nav-item">
+            <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#sunat" aria-expanded="false" aria-controls="sunat"
                     class="side-nav-link">
                     <i class="uil-invoice"></i>
@@ -217,15 +217,15 @@
                         <li>
                             <a href="{{ route('sunat.crear.factura') }}">Facturas</a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('sunat.crear.factura') }}">Boletas</a>
                         </li>
                         <li>
                             <a href="#">Notas de crédito</a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </div>
-            </li> --}}
+            </li>
 
 
             <li class="side-nav-item">

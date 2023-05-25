@@ -18,7 +18,9 @@
 </head>
 
 <body class="loading"
-    data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":true, "leftSidebarScrollable":true,"darkMode":@if ($cookie === 'dark') true @else false @endif, "showRightSidebarOnStart": false}'>
+    data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":true, "leftSidebarScrollable":true,
+    "darkMode":@if ($cookie === 'dark') true @else false @endif
+    , "showRightSidebarOnStart": false}'>
     <!-- Begin page -->
     <div class="wrapper">
         <!-- ========== Left Sidebar Start ========== -->
@@ -59,7 +61,6 @@
     @include('layouts.admin.scripts')
     @stack('js')
     @livewireScripts
-
 </body>
 
 </html>

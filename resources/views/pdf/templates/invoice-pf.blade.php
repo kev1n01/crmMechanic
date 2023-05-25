@@ -257,7 +257,7 @@
             </p>
             <p class="text-footer">
                 <span class="fw-b">ATENCION:</span> Todo trabajo se realizará con un 50% de adelanto al costo de
-                proforma, y tendrá 7 días hábiles a recoger su vehículo, luego de esto se sumarán costos de una cochera
+                proforma, una vez terminado el trabajo tendrá 7 días hábiles a recoger su vehículo, luego de esto se sumarán costos de cochera
             </p>
         </div>
     </div>

@@ -16,6 +16,14 @@ class Comprobant extends Model
         'PEN' => 'PEN',
         'USD' => 'USD',
     ];
+    const TYPE_PAYMENTS = [
+        'Contado' => 'Contado',
+        'Credito' => 'Credito',
+    ];
+    const TYPE_AFECTATION = [
+        10 => 'Gravado - Operacion Onerosa',
+        20 => 'Exonerado - Operacion Onerosa',
+    ];
 
     protected $fillable = [
         'tipoDoc',

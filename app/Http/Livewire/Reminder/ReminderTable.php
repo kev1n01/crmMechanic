@@ -179,7 +179,8 @@ class ReminderTable extends Component
         $this->dispatchBrowserEvent('close-modal-reminder');
     }
 
-    public function changeStatus(Reminder $rm){
+    public function changeStatus(Reminder $rm)
+    {
         $rm->status = 'enviado';
         $rm->save();
     }

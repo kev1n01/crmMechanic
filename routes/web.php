@@ -1,10 +1,14 @@
 <?php
 
+use App\Http\Livewire\User\UserCreate;
+use App\Http\Livewire\User\UserView;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', 'sunat/crear-factura');
+Route::get('/usercreate',  UserCreate::class)->name('user');
+Route::get('/userview',  UserView::class)->name('user.view');
+Route::redirect('/', 'dashboard');
 //Rutas de dashboard
-Route::get('dashboard',\App\Http\Livewire\dashboard\Dashboard::class)->name('dashboard');
+Route::get('dashboard', \App\Http\Livewire\dashboard\Dashboard::class)->name('dashboard');
 
 //Rutas de cliente
 Route::get('clientes', \App\Http\Livewire\customer\CustomerTable::class)->name('clientes');
