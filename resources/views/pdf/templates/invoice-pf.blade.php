@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>OT {{ $company->name ?? '' }}</title>
+    <title>Orden de trabajo - {{ $wo->code ?? '' }}</title>
     <link href="{{ public_path('assets/css/pdf.css') }}" rel="stylesheet" type="text/css">
 </head>
 
@@ -13,7 +13,7 @@
     <div class="border-line">
         <div class="infoHeader">
             <div style="float: left; width: 20%; height: 10%; margin-right: 2mm; margin-left: 4mm; margin-bottom: 2mm;">
-                @if (isset($company->logo))
+                @if (!empty($company->logo))
                     <img src="{{ public_path('storage/' . $company->logo) }}" class="logo_img">
                 @else
                     <img src="https://knowledgehub.adeanet.org/themes/adea/images/no-logo.jpg" class="logo_img">
@@ -35,29 +35,79 @@
             </div>
         </div>
 
-        <p class="fs-2 fw-b text-form">
+        <p class="fs-2 fw-sb text-form" style="margin-bottom: 1%; margin-top: 2%">
             {{ $wo->is_confirmed === 0 ? 'Proforma de mantenimiento' : 'Orden de trabajo' }}
             - {{ $wo->type_atention }}</p>
+        <table class="table-info" style="width: 65%; margin-right: 1%; height: 12%;">
+            <tbody>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Señor(a):</strong></td>
+                    <td class="border-td fw-sb" style="width: 50%;">{{ $wo->customerUser->name }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Celular:</strong></td>
+                    <td class="border-td fw-sb">{{ $wo->customerUser->phone }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>N° documento:</strong></td>
+                    <td class="border-td fw-sb">{{ $wo->customerUser->num_doc }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Dirección:</strong></td>
+                    <td colspan="3" class="border-td fw-sb">{{ $wo->customerUser->address }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table-info" style="width: 34%; margin-right: 1%">
+            <tbody>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Marca:</strong></td>
+                    <td class="border-td fw-sb">{{ $wo->vehiclePlate->brand->name }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Color:</strong></td>
+                    <td class="border-td fw-sb">{{ $wo->vehiclePlate->color->name }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Tipo:</strong></td>
+                    <td class="border-td fw-sb">{{ $wo->vehiclePlate->type->name }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Modelo:</strong></td>
+                    <td class="border-td fw-sb" style="width: 50%;">{{ $wo->vehiclePlate->model->name }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Año:</strong></td>
+                    <td class="border-td fw-sb">{{ $wo->vehiclePlate->model_year }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Kilometraje:</strong></td>
+                    <td class="border-td fw-sb">{{ $wo->odo }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p class="fs-3 fw-sb" style="margin-top:18%"> </p>
         @if ($wo->is_confirmed == 1)
-            <p class="fs-3 fw-sb">Detalle del orden de trabajo</p>
-            <table class="table">
+            <table class="table-info" style="width: 100%">
                 <tbody>
                     <tr>
-                        <td class="border-td border-th fw-sb">Fecha/Hora de llegada</td>
-                        <td class="border-td fw-sb" style="width: 26%;">
+                        <td class="border-td fw-sb"><strong>Fecha/Hora de llegada:</strong></td>
+                        <td class="border-td fw-sb" style="width: 30%;">
                             {{ $wo->arrival_date != null
                                 ? \Carbon\Carbon::parse($wo->arrival_date)->format('d-m-Y') .
                                     ' , ' .
                                     \Carbon\Carbon::parse($wo->arrival_hour)->format('g:i a')
                                 : 'No especificado' }}
                         </td>
-                        <td class="border-td border-th fw-sb">Estado</td>
+                        <td class="border-td fw-sb"><strong>Estado:</strong></td>
                         <td class="border-td fw-sb">{{ $wo->is_confirmed == 1 ? $wo->status : $wo->confirmation_name }}
                         </td>
 
                     </tr>
                     <tr>
-                        <td class="border-td border-th ps-2 fw-sb">Fecha/Hora de salida</td>
+                        <td class="border-td fw-sb"><strong>Fecha/Hora de salida:</strong></td>
                         <td class="border-td fw-sb">
                             {{ $wo->departure_date != null
                                 ? \Carbon\Carbon::parse($wo->departure_date)->format('d-m-Y') .
@@ -65,100 +115,35 @@
                                     \Carbon\Carbon::parse($wo->departure_hour)->format('g:i a ')
                                 : 'No especificado' }}
                         </td>
-                        <td class="border-td border-th ps-2 fw-sb">Código</td>
-                        <td class="border-td fw-sb">{{ $wo->code }}</td>
+                        <td class="border-td fw-sb"><strong>Placa:</strong></td>
+                        <td class="border-td fw-sb">{{ $wo->vehiclePlate->license_plate }}
+                        </td>
                     </tr>
-                    <tr>
-                        <td class="border-td border-th ps-2 fw-sb">Observaciones</td>
-                        <td class="border-td fw-sb" colspan="3">{{ $wo->observation ?? 'Ninguno' }}</td>
-                    </tr>
-
                 </tbody>
             </table>
         @else
-            <p class="fs-3 fw-sb">Detalle de la proforma </p>
-            <table class="table">
+            <table class="table-info" style="width: 100%">
                 <tbody>
                     <tr>
-                        <td class="border-td border-th ps-2 fw-sb">Código</td>
-                        <td class="border-td fw-sb">{{ $wo->code }}</td>
-                        <td class="border-td border-th fw-sb">Estado</td>
-                        <td class="border-td fw-sb">{{ $wo->is_confirmed == 1 ? $wo->status : $wo->confirmation_name }}
-                        </td>
-                        <td class="border-td border-th fw-sb">Fecha/Hora</td>
+                        <td class="border-td fw-sb"><strong>Fecha/Hora:</strong></td>
                         <td class="border-td fw-sb">
                             {{ \Carbon\Carbon::parse($wo->created_at)->format('d-m-Y') .
                                 ' , ' .
                                 \Carbon\Carbon::parse($wo->created_at)->format('g:i a ') }}
                         </td>
-
+                        <td class="border-td fw-sb"><strong>Placa:</strong></td>
+                        <td class="border-td fw-sb">{{ $wo->vehiclePlate->license_plate }}
+                        </td>
                     </tr>
                     <tr>
-                        <td class="border-td border-th ps-2 fw-sb">Observaciones</td>
-                        <td class="border-td fw-sb" colspan="5">{{ $wo->observation ?? 'Ninguno' }}</td>
+                        <td class="border-td fw-sb"><strong>Estado:</strong></td>
+                        <td class="border-td fw-sb">{{ $wo->is_confirmed == 1 ? $wo->status : $wo->confirmation_name }}
+                        </td>
                     </tr>
-                </tbody>
             </table>
         @endif
 
-
-        <p class="fs-3 fw-sb">Informacion del cliente</p>
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td class="border-td border-th fw-sb">Señor(a)</td>
-                    <td class="border-td fw-sb" style="width: 50%;">{{ $wo->customerUser->name }}</td>
-
-                    <td class="border-td border-th ps-2 fw-sb">Telófono</td>
-                    <td class="border-td fw-sb">{{ $wo->customerUser->phone }}</td>
-                </tr>
-                <tr>
-
-                    <td class="border-td border-th ps-2 fw-sb">Dni</td>
-                    <td class="border-td fw-sb">{{ $wo->customerUser->dni }}</td>
-
-                    <td class="border-td border-th ps-2 fw-sb">Ruc</td>
-                    <td class="border-td fw-sb">{{ $wo->customerUser->ruc }}</td>
-                </tr>
-                <tr>
-                    <td class="border-td border-th fw-sb">Dirección</td>
-                    <td colspan="3" class="border-td fw-sb">{{ $wo->customerUser->address }}</td>
-
-                </tr>
-            </tbody>
-        </table>
-
-        <p class="fs-3 fw-sb">Informacion del vehiculo con placa <span
-                class="fw-b">{{ $wo->vehiclePlate->license_plate }}</span></p>
-
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td class="border-td border-th fw-sb" style="width: 15%;">Marca</td>
-                    <td class="border-td fw-sb" style="width: 20%;">{{ $wo->vehiclePlate->brand->name }}</td>
-
-                    <td class="border-td border-th ps-2 fw-sb">Color</td>
-                    <td class="border-td fw-sb">{{ $wo->vehiclePlate->color->name }}</td>
-
-                    <td class="border-td border-th ps-2 fw-sb">Tipo</td>
-                    <td class="border-td fw-sb">{{ $wo->vehiclePlate->type->name }}</td>
-                </tr>
-                <tr>
-                    <td class="border-td border-th ps-1 fw-sb" style="width: 15%;">Modelo</td>
-                    <td class="border-td fw-sb" style="width: 20%;">{{ $wo->vehiclePlate->model->name }}</td>
-
-                    <td class="border-td border-th ps-2 fw-sb">Año</td>
-                    <td class="border-td fw-sb">{{ $wo->vehiclePlate->model_year }}</td>
-
-                    <td class="border-td border-th ps-2 fw-sb">Kilometraje</td>
-                    <td class="border-td fw-sb">{{ $wo->odo }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <p class="fs-3 fw-sb">Lista de servicios y repuestos</p>
-
-        <table class="table-list">
+        <table class="table-list" style="margin-top:9%">
             <thead>
                 <tr>
                     <th>Codigo</th>
@@ -200,65 +185,74 @@
                 @endphp
                 <tr>
                     <td colspan="2"></td>
-                    <td class="fw-sb" colspan="3">Subtotal</td>
-                    <td class="fw-sb">S/ {{ number_format($totalNoDiscount, 2) }}</td>
+                    <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Subtotal</strong></td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($totalNoDiscount, 2) }}</td>
                 </tr>
                 {{-- <tr>
                     <td colspan="2"></td>
-                    <td class="fw-sb" colspan="3">Total Ope. Gravadas</td>
+                    <td class="fw-sb" colspan="2">Total Ope. Gravadas</td>
                     <td class="fw-sb">S/ {{ number_format($totalOG, 2) }}</td>
                 </tr> --}}
                 <tr>
                     <td colspan="2"></td>
-                    <td class="fw-sb" colspan="3">Total Descuentos</td>
-                    <td class="fw-sb">S/ {{ number_format($totalNoDiscount - $wo->total, 2) }}</td>
+                    <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Descuento</strong></td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($totalNoDiscount - $wo->total, 2) }}</td>
                 </tr>
                 {{-- <tr>
                     <td colspan="2"></td>
-                    <td class="fw-sb" colspan="3">Total IGV 18%</td>
+                    <td class="fw-sb" colspan="2">Total IGV 18%</td>
                     <td class="fw-sb">S/ {{ number_format($wo->total - $totalOG, 2) }}</td>
                 </tr> --}}
                 <tr>
                     <td colspan="2"></td>
-                    <td class="text-black fw-sb"colspan="3">TOTAL</td>
-                    <td class="fw-sb">S/ {{ number_format($wo->total, 2) }}</td>
+                    <td class="text-black fw-sb  fs-3 text-wrap w-45"colspan="2"><strong>Total</strong></td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($wo->total, 2) }}</td>
                 </tr>
             </tfoot>
         </table>
     </div>
+    <hr style="width: 97%; border: 0.1mm solid rgb(48, 48, 48);" />
     <div class="border-line">
         <div id="footer">
-            <table class="table">
+            <p class="fw-sb" style="width: 100%;">
+                <strong>Observaciones:</strong> Lorem, ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
+                necessitatibus, aliquam ipsam reprehenderit maxime vel eum, beatae non amet quis consequatur obcaecati
+                sit et cupiditate repellendus omnis doloribus nulla saepe.
+            </p>
+            <table class="table-list" style="float: left; width: 100%; margin-top: 2%">
                 <thead>
                     <tr>
-                        <th class="border-td border-th fw-sb text-center">ENTIDAD FINANCIERA </th>
-                        <th class="border-td border-th fw-sb text-center">CUENTA BANCARIA </th>
-                        <th class="border-td border-th fw-sb text-center">CUENTA INTERBANCARIA </th>
+                        <th>ENTIDAD FINANCIERA </th>
+                        <th>CUENTA BANCARIA </th>
+                        <th>CUENTA INTERBANCARIA </th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($bankacc as $bc)
                         <tr>
-                            <td class="border-td border-th fw-sb text-center">{{ $bc->name }}</td>
-                            <td class="border-td border-th fw-sb text-center">{{ $bc->cta_bank }}</td>
-                            <td class="border-td border-th fw-sb text-center">{{ $bc->cta_interbank }}</td>
+                            <td class="fw-sb fs-3 text-center">{{ $bc->name }}</td>
+                            <td class="fw-sb fs-3 text-center">{{ $bc->cta_bank }}</td>
+                            <td class="fw-sb fs-3 text-center">{{ $bc->cta_interbank }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td class="border-td border-th fw-sb text-center" colspan="3">No hay cuentas de bancos
+                            <td class="fw-sb text-center" colspan="3">No hay cuentas de bancos
                                 registrados</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
-            <p class="text-footer">
-                En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad a
-                todos nuestros clientes
-            </p>
-            <p class="text-footer">
-                <span class="fw-b">ATENCION:</span> Todo trabajo se realizará con un 50% de adelanto al costo de
-                proforma, una vez terminado el trabajo tendrá 7 días hábiles a recoger su vehículo, luego de esto se sumarán costos de cochera
-            </p>
+            <div style="margin-top: 15%">
+                <span class="text-footer fw-sb">
+                    <strong>Atención:</strong> Todo trabajo se realizará con un 50% de adelanto al costo de
+                    proforma, una vez terminado el trabajo tendrá 7 días hábiles a recoger su vehículo, luego de esto se
+                    sumarán costos de cochera
+                </span>
+                <p class="text-footer fw-sb">
+                    En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad a
+                    todos nuestros clientes
+                </p>
+            </div>
         </div>
     </div>
 

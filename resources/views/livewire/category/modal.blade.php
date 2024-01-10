@@ -3,12 +3,8 @@
         <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
             <x-slot name="body">
 
-                <x-input.input-group>
-                    <x-input.input-group>
-                        <x-input.input-tooltip-error class="col-12" name="editing.name" label="Nombre de categoría"
-                            type="text" :error="$errors->first('editing.name')" :required=true />
-                    </x-input.input-group>
-                </x-input.input-group>
+                <x-input.input-tooltip-error class="col-12" name="editing.name" label="Nombre de categoría" type="text"
+                    :error="$errors->first('editing.name')" :required=true />
 
             </x-slot>
 

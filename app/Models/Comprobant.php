@@ -25,6 +25,8 @@ class Comprobant extends Model
         20 => 'Exonerado - Operacion Onerosa',
     ];
 
+    protected $table = 'comprobants';
+
     protected $fillable = [
         'tipoDoc',
         'serie',
@@ -32,29 +34,8 @@ class Comprobant extends Model
         'fechaEmision',
         'moneda',
         'tipoPago',
-        'tipoDocClient',
-        'numDoc',
-        'rznSocialClient',
-        'direccionClient',
-        'provinciaClient',
-        'departamentoClient',
-        'distritoClient',
-        'ubigueoClient',
-        'ruc',
-        'razonSocialCompany',
-        'nombreComercialCompany',
-        'direccionCompany',
-        'provinciaCompany',
-        'departamentoCompany',
-        'distritoCompany',
-        'ubigueoCompany',
-        'mtoOperGravadas',
-        'mtoOperExoneradas',
-        'mtoIGV',
-        'totalImpuestos',
-        'valorVenta',
-        'subTotal',
-        'mtoImpVenta',
-        'value',
+        'cliente',
+        'empresa',
+        'items',
     ];
 }

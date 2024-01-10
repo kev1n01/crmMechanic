@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
+use App\Models\Comprobant;
 use App\Models\Concept;
 use App\Models\Product;
 use App\Models\Purchase;
@@ -10,7 +12,9 @@ use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\WorkOrder;
 use App\Models\workOrderDetail;
+use Luecano\NumeroALetras\NumeroALetras;
 use PDF;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PDFController extends Controller
 {
@@ -26,12 +30,11 @@ class PDFController extends Controller
 
         $dot = $wod->each(function ($item, $key) {
             if (strlen(strval($item->item)) < 4) {
-                $item->item = Concept::where('code', str_pad($item->item, 3, "0", STR_PAD_LEFT))->select('name', 'code')->first();
+                $item->item = Concept::where('code', $item->item)->select('name', 'code')->first();
             } else {
                 $item->item = Product::where('code', 'like', '%' . strval($item->item) . '%')->select('name', 'code')->first();
             }
         });
-
         $pdf = PDF::loadView('pdf.templates.invoice-pf', [
             'wo' => $workOrder, 'dot' => $dot->sortBy('item.code')
         ]);
@@ -46,7 +49,7 @@ class PDFController extends Controller
 
         $dot = $wod->each(function ($item, $key) {
             if (strlen(strval($item->item)) < 4) {
-                $item->item = Concept::where('code', str_pad($item->item, 3, "0", STR_PAD_LEFT))->select('name', 'code')->first();
+                $item->item = Concept::where('code',$item->item )->select('name', 'code')->first();
             } else {
                 $item->item = Product::where('code', 'like', '%' . strval($item->item) . '%')->select('name', 'code')->first();
             }
@@ -109,8 +112,11 @@ class PDFController extends Controller
             $item->product_id = Product::where('id', $item->product_id)->select('name', 'code')->first();
         });
 
+        $value = (new NumeroALetras())->toInvoice($purchase->total, 2, 'soles');
+        $qrcode = base64_encode(QrCode::format('svg')->size(130)->errorCorrection('H')->style('square')->generate($purchase->provider->ruc . '|' .  $purchase->total));
+
         $pdf = PDF::loadView('pdf.templates.invoice-purchase', [
-            'purchase' => $purchase, 'dtp' => $ds->sortBy('product_id.code')
+            'purchase' => $purchase, 'dtp' => $ds->sortBy('product_id.code'), 'value' => strtolower($value), 'qrcode' => $qrcode
         ]);
         return $pdf->setPaper('A4', 'portrait')
             ->stream();
@@ -125,9 +131,94 @@ class PDFController extends Controller
             $item->product_id = Product::where('id', $item->product_id)->select('name', 'code')->first();
         });
 
+        $value = (new NumeroALetras())->toInvoice($purchase->total, 2, 'soles');
+        $qrcode = base64_encode(QrCode::format('svg')->size(130)->errorCorrection('H')->style('square')->generate($purchase->provider->ruc . '|' .  $purchase->total));
+
         $pdf = PDF::loadView('pdf.templates.invoice-purchase', [
-            'purchase' => $purchase, 'dtp' => $ds->sortBy('product_id.code')
+            'purchase' => $purchase, 'dtp' => $ds->sortBy('product_id.code'), 'value' => strtolower($value), 'qrcode' => $qrcode
         ]);
         return $pdf->download($purchase->code_purchase . '/' . $purchase->provider->name . '.pdf');
+    }
+
+    public function previewComprobant($id)
+    {
+        return view('pdf.pdf-comprobant', ['id' => $id]);
+    }
+
+    public function viewComprobant($id)
+    {
+        $comprobant = Comprobant::where('id', $id)->first();
+        $customer = json_decode($comprobant->cliente, true);
+        $items = json_decode($comprobant->items, true);
+        $company = json_decode($comprobant->empresa, true);
+
+        $totalOE = 0;
+        $totalOG = 0;
+        $totaligvgrav = 0;
+        $total = 0;
+        $itemsGrav = collect($items)->filter(function ($i) {
+            return $i['tipAfeIgv'] === 10;
+        })->toArray();
+        $itemsExo = collect($items)->filter(function ($i) {
+            return $i['tipAfeIgv'] === 20;
+        })->toArray();
+
+        foreach ($itemsExo as $i) {
+            $totalOE += $i['mtoValorVenta'];
+        }
+
+        foreach ($itemsGrav as $i) {
+            $totalOG += $i['mtoValorUnitario'] * $i['cantidad'];
+            $totaligvgrav += $i['mtoValorUnitario'] * $i['cantidad'] * 0.18;
+        }
+        $total = $totalOE + $totalOG + $totaligvgrav;
+        $value = (new NumeroALetras())->toInvoice($total, 2, 'soles');
+
+        $qrcode = base64_encode(QrCode::format('svg')->size(130)->errorCorrection('H')->style('square')->generate($company['ruc'] . '|' . $comprobant->tipoDoc . '|' . $comprobant->serie . '|' . $comprobant->correlativo . '|' . $totaligvgrav . '|' . $total . '|' . $comprobant->fechaEmision . '|' . $customer['tipoDoc'] . '|' . $customer['numDoc']));
+
+        $pdf = PDF::loadView('pdf.templates.invoice-comprobant', [
+            'comprobant' => $comprobant, 'customer' => $customer, 'items' => $items, 'totalOE' => $totalOE, 'totalOG' => $totalOG, 'totaligvgrav' => $totaligvgrav, 'value' => strtolower($value), 'qrcode' => $qrcode, 'total' => $total
+        ]);
+
+        return $pdf->setPaper('A4', 'portrait')
+            ->stream();
+    }
+
+    public function downloadComprobant($id)
+    {
+        $comprobant = Comprobant::where('id', $id)->first();
+        $customer = json_decode($comprobant->cliente, true);
+        $items = json_decode($comprobant->items, true);
+        $company = json_decode($comprobant->empresa, true);
+
+        $totalOE = 0;
+        $totalOG = 0;
+        $totaligvgrav = 0;
+        $total = 0;
+        $itemsGrav = collect($items)->filter(function ($i) {
+            return $i['tipAfeIgv'] === 10;
+        })->toArray();
+        $itemsExo = collect($items)->filter(function ($i) {
+            return $i['tipAfeIgv'] === 20;
+        })->toArray();
+
+        foreach ($itemsExo as $i) {
+            $totalOE += $i['mtoValorVenta'];
+        }
+
+        foreach ($itemsGrav as $i) {
+            $totalOG += $i['mtoValorUnitario'] * $i['cantidad'];
+            $totaligvgrav += $i['mtoValorUnitario'] * $i['cantidad'] * 0.18;
+        }
+        $total = $totalOE + $totalOG + $totaligvgrav;
+        $value = (new NumeroALetras())->toInvoice($total, 2, 'soles');
+
+        $qrcode = base64_encode(QrCode::format('svg')->size(130)->errorCorrection('H')->style('square')->generate($company['ruc'] . '|' . $comprobant->tipoDoc . '|' . $comprobant->serie . '|' . $comprobant->correlativo . '|' . $totaligvgrav . '|' . $total . '|' . $comprobant->fechaEmision . '|' . $customer['tipoDoc'] . '|' . $customer['numDoc']));
+
+        $pdf = PDF::loadView('pdf.templates.invoice-comprobant', [
+            'comprobant' => $comprobant, 'customer' => $customer, 'items' => $items, 'totalOE' => $totalOE, 'totalOG' => $totalOG, 'totaligvgrav' => $totaligvgrav, 'value' => strtolower($value), 'qrcode' => $qrcode, 'total' => $total
+        ]);
+
+        return $pdf->download($comprobant->serie . '-' . $comprobant->correlativo . '-' . $company['ruc'] . '-' . $customer['rznSocial'] . '.pdf');
     }
 }

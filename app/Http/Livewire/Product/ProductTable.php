@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Product;
 use App\Models\BrandProduct;
 use App\Models\CategoryProduct;
 use App\Models\Product;
+use App\Models\UnitProduct;
 use App\Traits\DataTable;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -22,13 +23,15 @@ class ProductTable extends Component
 
     public $statuses = [];
     public $brands = [];
+    public $units = [];
     public $categories = [];
     public $filters = [
         'fromDate' => null,
         'toDate' => null,
         'status' => '',
         'category' => '',
-        'brand' => ''
+        'brand' => '',
+        'unit' => ''
     ];
 
     protected $listeners = ['delete', 'deleteSelected', 'exportSelected', 'refreshList' => '$refresh'];
@@ -38,8 +41,9 @@ class ProductTable extends Component
     public function mount()
     {
         $this->search = '';
-        $this->sortField = 'stock';
+        $this->sortField = 'name';
         $this->statuses = Product::STATUSES;
+        $this->units = UnitProduct::pluck('name', 'id');
         $this->brands = BrandProduct::pluck('name', 'id');
         $this->categories = CategoryProduct::pluck('name', 'id');
     }
@@ -79,6 +83,7 @@ class ProductTable extends Component
             ->when($this->filters['status'], fn ($q, $status) => $q->where('status', $status))
             ->when($this->filters['category'], fn ($q, $category) => $q->where('category_products_id', $category))
             ->when($this->filters['brand'], fn ($q, $brand) => $q->where('brand_products_id', $brand))
+            ->when($this->filters['unit'], fn ($q, $unit) => $q->where('unit_products_id', $unit))
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
     }

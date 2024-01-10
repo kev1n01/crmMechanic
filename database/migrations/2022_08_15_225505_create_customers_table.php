@@ -17,8 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('email')->unique()->nullable();
-            $table->string('dni')->unique()->nullable();
-            $table->string('ruc')->unique()->nullable();
+            $table->string('num_doc')->unique()->nullable();
             $table->string('address')->unique()->nullable();
             $table->string('phone')->unique();
             $table->string('status')->nullable();

@@ -17,14 +17,21 @@ class Product extends Model
     protected $fillable = [
         'name',
         'code',
+        'sku',
         'stock',
         'image',
         'sale_price',
         'purchase_price',
         'status',
+        'unit_products_id',
         'category_products_id',
         'brand_products_id',
     ];
+
+    public function unit()
+    {
+        return $this->belongsTo(UnitProduct::class, 'unit_products_id');
+    }
 
     public function category()
     {

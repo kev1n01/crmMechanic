@@ -26,7 +26,7 @@
                         </div>
                         <div class="row col-xl-5">
                             <div class="text-xl-end mt-xl-0 mt-2">
-                                <button wire:click="showFilter" type="button"
+                                <button title="Filtrar información" wire:click="showFilter" type="button"
                                     class="btn btn-outline-dark mb-2 me-2">Filtros
                                     @if ($showFilters)
                                         <i class="mdi mdi-close-circle-outline me-1"></i>
@@ -35,15 +35,17 @@
                                     @endif
                                 </button>
 
-                                <button type="button" class="btn btn-dark mb-2 me-2 dropdown-toggle"
+                                <button title="Crear" type="button" class="btn btn-dark mb-2 me-2 dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Nuevo</button>
                                 <div class="dropdown-menu">
-                                    <button wire:click="$emit('createproduct')" class="dropdown-item action-icon">
+                                    <button title="Crear producto" wire:click="$emit('createproduct')" class="dropdown-item action-icon">
                                         Producto</button>
-                                    <button wire:click="$emit('createcategory')" class="dropdown-item action-icon">
+                                    <button title="Crear categoria de producto" wire:click="$emit('createcategory')" class="dropdown-item action-icon">
                                         Categoria</button>
-                                    <button wire:click="$emit('createbrand')" class="dropdown-item action-icon">
+                                    <button title="Crear marca de producto" wire:click="$emit('createbrand')" class="dropdown-item action-icon">
                                         Marca</button>
+                                    <button title="Crear unidad de producto" wire:click="$emit('createunit')" class="dropdown-item action-icon">
+                                        Unidad</button>
                                 </div>
                                 <button type="button" class="btn btn-light mb-2 dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones <span
@@ -95,6 +97,9 @@
                                         <x-input.select name="filters.status" label="Estado" :options="$statuses" />
                                     </div>
                                     <div class="col-lg-3">
+                                        <x-input.select name="filters.unit" label="Unidad" :options="$units" />
+                                    </div>
+                                    <div class="col-lg-3">
                                         <x-input.select name="filters.category" label="Categoria" :options="$categories" />
                                     </div>
                                     <div class="col-lg-3">
@@ -117,11 +122,13 @@
 
                                 <x-table.heading sortable wire:click="sortBy('code')" :direction="$sortField == 'code' ? $sortDirection : null">Código
                                 </x-table.heading>
-
+                                
                                 <x-table.heading sortable wire:click="sortBy('stock')" :direction="$sortField == 'stock' ? $sortDirection : null">Stock
                                 </x-table.heading>
 
                                 <x-table.heading>Estado</x-table.heading>
+
+                                <x-table.heading>Unidad</x-table.heading>
 
                                 <x-table.heading>Categoría</x-table.heading>
 
@@ -143,18 +150,18 @@
                                         <x-table.cell class="text-wrap w-25">{{ $product->name }}</x-table.cell>
 
                                         <x-table.cell>{{ $product->code }}</x-table.cell>
-
-                                        <x-table.cell class=" text-center">
-                                            {{ $product->stock }}
-                                        </x-table.cell>
+                                        
+                                        <x-table.cell>{{ $product->stock }}</x-table.cell>
 
                                         <x-table.cell>
                                             <button
-                                                class="btn btn-outline-{{ $product->status_color }} rounded-pill btn-sm w-100"
+                                                class="btn btn-{{ $product->status_color }} rounded-pill btn-sm w-100"
                                                 type="button" wire:click="changeStatus({{ $product->id }})">
                                                 {{ $product->status }}
                                             </button>
                                         </x-table.cell>
+
+                                        <x-table.cell>{{ $product->unit->name ?? 'N/A' }}</x-table.cell>
 
                                         <x-table.cell>{{ $product->category->name ?? 'N/A' }}</x-table.cell>
 
@@ -172,7 +179,7 @@
                                     </x-table.row>
                                 @empty
                                     <x-table.row>
-                                        <x-table.cell class="text-center" colspan="8">
+                                        <x-table.cell class="text-center" colspan="10">
                                             No hay productos encontradas
                                         </x-table.cell>
                                     </x-table.row>
@@ -194,4 +201,5 @@
     @livewire('product.modal')
     @livewire('category.modal')
     @livewire('brand.modal')
+    @livewire('product.unit-modal')
 @endpush

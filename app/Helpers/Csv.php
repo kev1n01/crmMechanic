@@ -43,6 +43,7 @@ class Csv
 
     public function openFile($callback)
     {
+        // $handle = fopen("C:\laragon\www\crmmechanic\storage\app\livewire-tmp/qkNrvSxAeUaMUMEA0M9a7ntmbhGGG1-metacHJvZHVjdG9zX2Nzdi5jc3Y=-.csv", "r");
         $handle = fopen($this->file->getRealPath(), "r");
         return $callback($handle);
 

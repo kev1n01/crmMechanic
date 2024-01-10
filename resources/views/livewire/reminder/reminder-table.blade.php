@@ -1,4 +1,4 @@
-@section('title', 'Recordatorios')
+@section('title', 'Informes')
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -26,7 +26,7 @@
                         </div>
                         <div class="row col-xl-5">
                             <div class="text-xl-end mt-xl-0 mt-2">
-                                <button wire:click="showFilter" type="button"
+                                <button title="Filtrar información" wire:click="showFilter" type="button"
                                     class="btn btn-outline-dark mb-2 me-2">Filtros
                                     @if ($showFilters)
                                         <i class="mdi mdi-close-circle-outline me-1"></i>
@@ -34,7 +34,7 @@
                                         <i class="mdi mdi-filter-outline me-1"></i>
                                     @endif
                                 </button>
-                                <button type="button" wire:click="create" class="btn btn-dark mb-2 me-2"><i
+                                <button title="Crear informe" type="button" wire:click="create" class="btn btn-dark mb-2 me-2"><i
                                         class="mdi mdi-plus me-1"></i>
                                     Nuevo</button>
 
@@ -195,7 +195,7 @@
         <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
             <x-slot name="body">
                 <div class="row g-2">
-                    <x-input.textarea class="col-xl-12" name="editing.description" label="Observaciones" rows="3"
+                    <x-input.textarea class="col-xl-12" name="editing.description" label="Descripcion" rows="3"
                         :error="$errors->first('editing.description')" :required=true />
 
                     <x-input.datepicker class="col-xl-6" name="editing.date" label="Fecha recordatorio"

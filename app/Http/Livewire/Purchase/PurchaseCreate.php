@@ -22,6 +22,8 @@ class PurchaseCreate extends Component
     public $types = [];
     public $providers = [];
     public $cart = [];
+    
+    public $pf = [];
 
     public $total;
     public $totalDiscount = 0;
@@ -136,6 +138,10 @@ class PurchaseCreate extends Component
     {
         return Purchase::make(['status' => 'pendiente', 'method_payment' => 'efectivo']);
     } /*para dejar vacios los inpust*/
+
+    public function updatedEditingProviderId($value){
+        $this->pf = Provider::find($value);
+    }
 
     public function updatedEditingTypeCpe($value)
     {

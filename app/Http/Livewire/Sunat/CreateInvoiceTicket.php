@@ -2,12 +2,14 @@
 
 namespace App\Http\Livewire\Sunat;
 
+use App\Http\Requests\RequestComprobant;
 use App\Models\Company;
 use App\Models\Comprobant;
 use App\Models\Concept;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sunat;
+use App\Services\ProductService;
 use App\Traits\WithFacturaSunat;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -17,34 +19,24 @@ use Luecano\NumeroALetras\NumeroALetras;
 class CreateInvoiceTicket extends Component
 {
     use WithFacturaSunat;
-    //data for selects
-    public $typescpe;
-    public $typescurrency;
-    public $typespayments;
 
-    public $company;
-    public $sunat;
-
-    public $customers;
-    public $customer;
-    public $selectCustomer;
-
-    public $json = [];
-
-    public $searchProductService = '';
-    public $concepts = [];
-    public $products = [];
-    public $cart = [];
-
-    public $total;
-    public $totalOG = 0;
-    public $totalOE = 0;
-
-    public $total_replacement = 0;
-    public $total_service = 0;
-    public $totaligvgrav = 0;
-
-    public $listTypeAfectIgv = [];
+    public $typescpe,
+        $typescurrency,
+        $typespayments,
+        $company,
+        $sunat,
+        $customers,
+        $customer,
+        $selectCustomer,
+        $json = [],
+        $searchProductService = '',
+        $concepts = [],
+        $products = [],
+        $cart = [],
+        $total,
+        $totalOG = 0,
+        $totalOE = 0,
+        $totaligvgrav = 0;
 
     public Comprobant $comprobant;
 
@@ -61,14 +53,14 @@ class CreateInvoiceTicket extends Component
 
     public function serieComprobant($lenght, $letter = '')
     {
-        $num_serie = str_pad(1, $lenght, "0", STR_PAD_LEFT);
+        $num_serie = str_pad(1, $lenght, '0', STR_PAD_LEFT);
         return $letter . '' . $num_serie;
     }
 
     public function countComprobant($lenght, $type_cc)
     {
         $cc = Comprobant::where('tipoDoc', $type_cc)->count();
-        $num_serie = str_pad($cc + 1, $lenght, "0", STR_PAD_LEFT);
+        $num_serie = str_pad($cc + 1, $lenght, '0', STR_PAD_LEFT);
         return $num_serie;
     }
 
@@ -77,51 +69,25 @@ class CreateInvoiceTicket extends Component
         return Comprobant::make(['fechaEmision' => Carbon::now()->format('d-m-Y'), 'moneda' => 'PEN', 'tipoPago' => 'Contado']); /*para dejar v acios los inpust*/
     }
 
-    public function rules()
+    public function rules(): array
     {
-        return [
-            'comprobant.tipoDoc' => ['required'],
-            'comprobant.serie' => ['required'],
-            'comprobant.correlativo' => ['required'],
-            'comprobant.fechaEmision' => ['required'],
-            'comprobant.moneda' => ['required'],
-            'comprobant.tipoPago' => ['required'],
-            'comprobant.tipoDocClient' => ['required'],
-            'comprobant.numDoc' => ['required'],
-            'comprobant.rznSocialClient' => ['required'],
-            'comprobant.direccionClient' => ['required'],
-            'comprobant.provinciaClient' => ['required'],
-            'comprobant.departamentoClient' => ['required'],
-            'comprobant.distritoClient' => ['required'],
-            'comprobant.ubigueoClient' => ['required'],
-            'comprobant.ruc' => ['required'],
-            'comprobant.razonSocialCompany' => ['required'],
-            'comprobant.nombreComercialCompany' => ['required'],
-            'comprobant.direccionCompany' => ['required'],
-            'comprobant.provinciaCompany' => ['required'],
-            'comprobant.departamentoCompany' => ['required'],
-            'comprobant.distritoCompany' => ['required'],
-            'comprobant.ubigueoCompany' => ['required'],
-            'comprobant.mtoOperGravadas' => ['required'],
-            'comprobant.mtoOperExoneradas' => ['required'],
-            'comprobant.mtoIGV' => ['required'],
-            'comprobant.totalImpuestos' => ['required'],
-            'comprobant.valorVenta' => ['required'],
-            'comprobant.subTotal' => ['required'],
-            'comprobant.mtoImpVenta' => ['required'],
-            'comprobant.value' => ['required'],
-        ];
+        return (new RequestComprobant())->rules();
+    }
+   
+    public function messages(): array
+    {
+        return (new RequestComprobant())->messages();
     }
 
     public function updatedSelectCustomer($value)
     {
-        $this->customer =  $value > 0 ? Customer::find($value) : [];
+        $this->customer = $value > 0 ? Customer::find($value) : [];
     }
 
     public function updatedComprobantTipoDoc($value)
     {
-        $value == '01' ? $this->comprobant->serie = $this->serieComprobant(3, 'F') : $this->comprobant->serie = $this->serieComprobant(3, 'B');
-        $value == '01' ? $this->comprobant->correlativo = $this->countComprobant(4, '01') : $this->comprobant->correlativo = $this->countComprobant(4, '03');
+        $value == '01' ? ($this->comprobant->serie = $this->serieComprobant(3, 'F')) : ($this->comprobant->serie = $this->serieComprobant(3, 'B'));
+        $value == '01' ? ($this->comprobant->correlativo = $this->countComprobant(4, '01')) : ($this->comprobant->correlativo = $this->countComprobant(4, '03'));
     }
 
     public function updateCartOptions()
@@ -132,7 +98,13 @@ class CreateInvoiceTicket extends Component
 
     public function addConcept(Concept $concept, $porcentIgv = 0, $typeAfectIgv = 20)
     {
-        Cart::session($this->customer->phone)->add(intval($concept->code), $concept->name, 0, 1, array('porcentIgv' => $porcentIgv, 'typeAfectIgv' => $typeAfectIgv));
+        $service_added = Cart::session($this->customer->phone)->get(intval($concept->code));
+
+        if ($service_added) {
+            $this->updateQuantityCart($concept->code, $service_added->quantity + 1);
+        } else {
+            Cart::session($this->customer->phone)->add(intval($concept->code), $concept->name, 0, 1, ['porcentIgv' => $porcentIgv, 'typeAfectIgv' => $typeAfectIgv]);
+        }
         $this->searchProductService = '';
         $this->updateCartOptions();
         $this->emit('success_alert', 'Servicio agregado');
@@ -152,17 +124,17 @@ class CreateInvoiceTicket extends Component
         if ($item_added) {
             $this->updateQuantityCart($product->code, $item_added->quantity + 1);
         } else {
-            Cart::session($this->customer->phone)->add(intval($product->code), $product->name, $product->sale_price, 1, array('porcentIgv' => $porcentIgv, 'typeAfectIgv' => $typeAfectIgv));
-            $this->emit('success_alert', 'Producto agregado');
+            Cart::session($this->customer->phone)->add(intval($product->code), $product->name, $product->sale_price, 1, ['porcentIgv' => $porcentIgv, 'typeAfectIgv' => $typeAfectIgv]);
         }
         $this->searchProductService = '';
         $this->updateCartOptions();
+        $this->emit('success_alert', 'Producto agregado');
     }
 
     public function updateQuantityCart($id, $cant)
     {
         if (strlen($id) > 4) {
-            $product = Product::where('code', 'like', '%' . $id . '%')->first();
+            $product = (new ProductService())->productByCode($id);
             if ($cant > $product->stock) {
                 $this->emit('error_alert', 'No hay suficiente stock para este producto');
                 return;
@@ -172,7 +144,7 @@ class CreateInvoiceTicket extends Component
         $item = Cart::session($this->customer->phone)->get($code);
         if ($cant > 0) {
             $this->removeItem($code);
-            Cart::session($this->customer->phone)->add($code, $item->name, $item->price, $cant, array('porcentIgv' => $item->attributes['porcentIgv'], 'typeAfectIgv' => $item->attributes['typeAfectIgv']));
+            Cart::session($this->customer->phone)->add($code, $item->name, $item->price, $cant, ['porcentIgv' => $item->attributes['porcentIgv'], 'typeAfectIgv' => $item->attributes['typeAfectIgv']]);
         } else {
             $this->removeItem($code);
         }
@@ -183,9 +155,9 @@ class CreateInvoiceTicket extends Component
     {
         $code = intval($id);
         if ($price > 0) {
-            Cart::session($this->customer->phone)->update(intval($code), array('price' => $price));
+            Cart::session($this->customer->phone)->update(intval($code), ['price' => $price]);
         } else {
-            Cart::session($this->customer->phone)->update(intval($code), array('price' => 0));
+            Cart::session($this->customer->phone)->update(intval($code), ['price' => 0]);
         }
         $this->updateCartOptions();
     }
@@ -202,14 +174,12 @@ class CreateInvoiceTicket extends Component
             $typeAfectIgv = 20;
             $porcentIgv = 0;
         }
-        Cart::session($this->customer->phone)->update($code, array('attributes' => array('typeAfectIgv' => $typeAfectIgv, 'porcentIgv' => $porcentIgv)));
+        Cart::session($this->customer->phone)->update($code, ['attributes' => ['typeAfectIgv' => $typeAfectIgv, 'porcentIgv' => $porcentIgv]]);
         $this->updateCartOptions();
     }
 
     public function calculeTotal()
     {
-        $this->total_replacement = 0;
-        $this->total_service = 0;
         $this->totalOE = 0;
         $this->totalOG = 0;
         $this->totaligvgrav = 0;
@@ -224,39 +194,14 @@ class CreateInvoiceTicket extends Component
             return $i->attributes['typeAfectIgv'] === 20;
         });
 
-        // dd($afectExonerada);
-
         foreach ($afectExonerada as $ae) {
             $this->totalOE += $ae->price * $ae->quantity;
         }
 
         foreach ($afectGravada as $ag) {
             $this->totalOG += $ag->price * $ag->quantity;
-            $this->totaligvgrav += ($ag->price * $ag->quantity) * 0.18;
+            $this->totaligvgrav += $ag->price * $ag->quantity * 0.18;
         }
-
-        // dd($this->totaligvgrav);
-
-
-        // Filtrar los items que son repuestos
-        // $cart_replacement = $this->cart->filter(function ($i) {
-        //     return strlen($i->id) > 4;
-        // });
-
-        // // Sumar el total de los items que son repuestos
-        // foreach ($cart_replacement as $cr) {
-        //     $this->total_replacement += $cr->price * $cr->quantity;
-        // }
-
-        // // Filtrar los items que son servicios
-        // $cart_service = $this->cart->filter(function ($i) {
-        //     return strlen($i->id) < 4;
-        // });
-
-        // // Sumar el total de los items que son servicios
-        // foreach ($cart_service as $cs) {
-        //     $this->total_service += $cs->price * $cs->quantity;
-        // }
     }
 
     public function removeItem($id)
@@ -272,10 +217,10 @@ class CreateInvoiceTicket extends Component
         $this->emit('success_alert', 'Lista de servicios y productos eliminados');
     }
 
-    // public function updated($label)
-    // {
-    //     $this->validateOnly($label, $this->rules());
-    // }
+    public function updated($label)
+    {
+        $this->validateOnly($label, $this->rules(), $this->messages());
+    }
 
     public function save()
     {
@@ -285,25 +230,23 @@ class CreateInvoiceTicket extends Component
         if (\collect($this->cart)->count() == 0) {
             return $this->emit('info_alert', 'Selecciona uno o más servicios y/o repuestos');
         }
-        $formatter = new NumeroALetras();
         $products = [];
         $this->calculeTotal();
         foreach ($this->cart as $item) {
-
-            array_push($products, array(
+            array_push($products, [
                 'codProducto' => $item->id,
-                'unidad' => "NIU",
+                'unidad' => 'NIU',
                 'descripcion' => $item->name,
                 'cantidad' => $item->quantity,
                 'mtoValorUnitario' => $item->price,
                 'mtoValorVenta' => $item->quantity * $item->price, //cantidad*mtoValorUnitario
                 'mtoBaseIgv' => $item->quantity * $item->price, //cantidad*mtoValorUnitario
                 'porcentajeIgv' => $item->attributes['porcentIgv'],
-                'igv' => ($item->quantity * $item->price) * ($item->attributes['porcentIgv'] / 100), //mtoValorVenta*(porcentajeIgv/100)
+                'igv' => $item->quantity * $item->price * ($item->attributes['porcentIgv'] / 100), //mtoValorVenta*(porcentajeIgv/100)
                 'tipAfeIgv' => $item->attributes['typeAfectIgv'], //gravada
-                'totalImpuestos' => ($item->quantity * $item->price) * ($item->attributes['porcentIgv'] / 100), //mtoValorVenta*(porcentajeIgv/100)
-                'mtoPrecioUnitario' => $item->price * (1 + ($item->attributes['porcentIgv'] / 100)), //mtoValorUnitario*(1+(porcentajeIgv/100)
-            ));
+                'totalImpuestos' => $item->quantity * $item->price * ($item->attributes['porcentIgv'] / 100), //mtoValorVenta*(porcentajeIgv/100)
+                'mtoPrecioUnitario' => $item->price * (1 + $item->attributes['porcentIgv'] / 100), //mtoValorUnitario*(1+(porcentajeIgv/100)
+            ]);
         }
 
         // dd($products);
@@ -323,7 +266,7 @@ class CreateInvoiceTicket extends Component
             'tipoMoneda' => $this->comprobant->moneda,
             'client' => [
                 'tipoDoc' => '6',
-                'numDoc' => $this->customer->ruc,
+                'numDoc' => $this->customer->num_doc,
                 'rznSocial' => $this->customer->name,
                 'address' => [
                     'direccion' => $this->customer->address,
@@ -356,16 +299,46 @@ class CreateInvoiceTicket extends Component
             'legends' => [
                 0 => [
                     'code' => '1000',
-                    'value' =>  $formatter->toInvoice($this->total + $this->totaligvgrav, 2, 'soles'),
+                    'value' => (new NumeroALetras())->toInvoice($this->total + $this->totaligvgrav, 2, 'soles'),
                 ],
             ],
         ];
 
         if ($this->sendComprobant($this->json)) {
             $this->emit('success_alert', 'Factura validada correctamente');
-            return response()->streamDownload(function () {
-                echo $this->getComprobantPdf($this->json);
-            }, 'invoice.pdf');
+            $this->comprobant->cliente = json_encode([
+                'tipoDoc' => '6',
+                'numDoc' => $this->customer->num_doc,
+                'rznSocial' => $this->customer->name,
+                'address' => [
+                    'direccion' => $this->customer->address,
+                    'provincia' => '',
+                    'departamento' => '',
+                    'distrito' => '',
+                    'ubigueo' => '',
+                ],
+            ]);
+
+            $this->comprobant->empresa = json_encode([
+                'ruc' => $this->sunat->ruc,
+                'razonSocial' => $this->sunat->social_reason,
+                'nombreComercial' => $this->company->name,
+                'address' => [
+                    'direccion' => $this->sunat->address,
+                    'provincia' => $this->company->province,
+                    'departamento' => $this->company->department,
+                    'distrito' => $this->company->district,
+                    'ubigueo' => $this->company->ubigeous,
+                ],
+            ]);
+
+            $this->comprobant->items = json_encode($products);
+            $this->comprobant->fechaEmision = Carbon::parse($this->comprobant->fechaEmision)->format('Y-m-d');
+
+            $this->comprobant->save();
+            // return response()->streamDownload(function () {
+            //     echo $this->getComprobantPdf($this->json);
+            // }, 'invoice.pdf');
         } else {
             $this->emit('error_alert', 'Error al validar la factura');
         }
@@ -374,24 +347,19 @@ class CreateInvoiceTicket extends Component
     public function render()
     {
         if ($this->searchProductService) {
-            $this->concepts = Concept::query()->when(
-                $this->searchProductService,
-                fn ($q, $searchProductService) =>
-                $q->where('name', 'like', '%' . $searchProductService . '%')
-            )->get();
-            $this->products = Product::query()->where('stock', '>', 0)->when(
-                $this->searchProductService,
-                fn ($q, $searchProductService) =>
-                $q->where('name', 'like', '%' . $searchProductService . '%')
-                    ->orwhere('code', 'like', '%' . $searchProductService . '%')
-            )->get();
+            $this->concepts = Concept::query()
+                ->when($this->searchProductService, fn ($q, $searchProductService) => $q->where('name', 'like', '%' . $searchProductService . '%'))
+                ->get();
+            $this->products = (new ProductService())->searchProducts($this->searchProductService);
         } else {
             $this->concepts = [];
             $this->products = [];
         }
 
         if ($this->customer) {
-            $this->cart = Cart::session($this->customer->phone)->getContent()->sortBy('name');
+            $this->cart = Cart::session($this->customer->phone)
+                ->getContent()
+                ->sortBy('name');
             // dd($this->cart->toArray());
             $this->updateCartOptions();
         } else {
@@ -403,3 +371,4 @@ class CreateInvoiceTicket extends Component
             ->section('content');
     }
 }
+

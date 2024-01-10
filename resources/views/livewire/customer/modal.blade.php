@@ -3,31 +3,19 @@
         <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
             <x-slot name="body">
                 <div class="row g-2">
-                    <x-input.input-tooltip-error class="col-xl-5 pe-0" name="editing.dni" label="DNI" type="text"
-                        :error="$errors->first('editing.dni')" max="8" />
-                    <div class="col-xl-1 ps-0">
-                        <button type="button" wire:click.prefetch="searchDni" class="btn btn-primary rounded btn-sm"
-                            style="margin-top:30px;"><i class="uil-search"></i></button>
-                    </div>
+                    <x-input.select class="col-xl-12" name="type_doc" label="Tipo de documentos" :options="$type_documents"
+                        :error="$errors->first('type_doc')" :required=true />
 
-                    <x-input.input-tooltip-error class="col-xl-5 pe-0" name="editing.ruc" label="RUC" type="text"
-                        :error="$errors->first('editing.ruc')" max="11" />
-                    <div class="col-xl-1 ps-0">
-                        <button type="button" wire:click.prefetch="searchRuc" class="btn btn-primary rounded btn-sm"
-                            style="margin-top:30px;"><i class="uil-search"></i></button>
+                    <x-input.input-button class="col-xl-5 pe-0" name="editing.num_doc" label="Numero de documento"
+                        :max="$type_doc === '1' ? '8' : '11'" :error="$errors->first('editing.num_doc')" :required=true :disabled="!$type_doc ? true : false" fnbtn="searchNumDoc"
+                        iconbtn="uil-search"  title="Buscar"/>
+
+                    {{-- @if (strlen($editing->dni) == 8) --}}
+                    <div class="col-xl-12 text-center mt-0">
+                        <span wire:loading wire:target="searchNumDoc" class="text-white m-2">Buscando datos por
+                            {{ $type_doc === '1' ? 'DNI' : 'RUC' }}</span>
                     </div>
-                    @if (strlen($editing->dni) == 8)
-                        <div class="col-xl-12 text-center mt-0">
-                            <span wire:loading wire:target="searchDni" class="text-primary m-2">Buscando datos por
-                                DNI</span>
-                        </div>
-                    @endif
-                    @if (strlen($editing->ruc) == 11)
-                        <div class="col-xl-12 text-center mt-0">
-                            <span wire:loading wire:target="searchRuc" class="text-primary m-2">Buscando datos por
-                                RUC</span>
-                        </div>
-                    @endif
+                    {{-- @endif --}}
 
                     <x-input.input-tooltip-error class="col-xl-12" name="editing.name" label="Nombre de cliente"
                         type="text" :error="$errors->first('editing.name')" :required=true />

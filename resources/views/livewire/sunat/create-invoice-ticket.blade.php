@@ -18,30 +18,26 @@
                             Guardar
                         </button>
                     </div>
-                    <div class="col-xl-6 col-lg-12">
+                    <div class="col-xl-6 col-lg-6 col-md-6">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
-                                    <x-input.select class="col-xl-11 mb-2" name="selectCustomer" :options="$customers"
-                                        label="Cliente" :error="$errors->first('selectCustomer')" :required=true />
-                                    <div class="col-xl-1 ps-1">
-                                        <button type="button" wire:click="$emit('createcustomer')"
-                                            style="margin-top:30px;" class="btn btn-primary rounded btn-sm">
-                                            <i class="uil-user-plus"></i></button>
-                                    </div>
+                                    <x-input.select-button class="col-xl-12 pe-0" name="selectCustomer" label="Cliente"
+                                        :options="$customers" :error="$errors->first('editing.ruc')" :required=true
+                                        fnbtn="$emit('createcustomer')" iconbtn="uil-user-plus" />
                                 </div>
                                 @if ($selectCustomer)
-                                    <div class="">
+                                    <div class="mt-2">
                                         <ul class="mb-0 ms-2 list-inline">
                                             <li class="list-inline-item">
-                                                <h5 class="mb-1 me-4">RUC: {{ $customer->ruc }}</h5>
-                                                <h5 class="mb-1">DNI: {{ $customer->dni }}</h5>
+                                                <h5 class="mb-1">Cel: {{ $customer->phone }}</h5>
+                                                <h5 class="mb-1">N°documento: {{ $customer->num_doc }}</h5>
                                             </li>
-                                            <li class="list-inline-item">
-                                                <h5 class="mb-1">CEL: {{ $customer->phone }}</h5>
+                                            <li class="list-inline-item ps-3">
+                                                <h5 class="mb-1">Dirección: {{ $customer->address }}</h5>
                                                 <h4 class="mb-1">
                                                     <span
-                                                        class="badge badge-info-lighten">{{ $customer->status }}</span>
+                                                        class="badge badge-{{ $customer->status_color }}-lighten">{{ $customer->status }}</span>
                                                 </h4>
                                             </li>
                                         </ul>
@@ -50,28 +46,32 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-6">
+                    <div class="col-xl-6 col-lg-6 col-md-6">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row g-2">
-                                    <x-input.select class="col-xl-5" name="comprobant.tipoDoc" :options="$typescpe"
-                                        label="Tipo de comprobante" :error="$errors->first('comprobant.tipoDoc')" :required=true />
+                                    <x-input.select class="col-xl-5 col-lg-5 col-md-5 col-sm-5"
+                                        name="comprobant.tipoDoc" :options="$typescpe" label="Tipo" :error="$errors->first('comprobant.tipoDoc')"
+                                        :required=true />
 
-                                    <x-input.input-tooltip-error class="col-xl-3" name="comprobant.serie" label="Serie"
-                                        type="text" :error="$errors->first('comprobant.serie')" :required=true :disabled=true />
+                                    <x-input.input-tooltip-error class="col-xl-3 col-lg-3 col-md-3 col-sm-3"
+                                        name="comprobant.serie" label="Serie" type="text" :error="$errors->first('comprobant.serie')"
+                                        :required=true :disabled=true />
 
-                                    <x-input.input-tooltip-error class="col-xl-4" name="comprobant.correlativo"
-                                        label="Correlativo" type="text" :error="$errors->first('comprobant.correlativo')" :required=true
-                                        :disabled=true />
+                                    <x-input.input-tooltip-error class="col-xl-4 col-lg-4 col-md-4 col-sm-4"
+                                        name="comprobant.correlativo" label="Correlativo" type="text"
+                                        :error="$errors->first('comprobant.correlativo')" :required=true :disabled=true />
 
-                                    <x-input.datepicker class="col-xl-5 mt-2" name="comprobant.fechaEmision"
-                                        label="Fecha" id="dp1" :error="$errors->first('comprobant.fechaEmision')" :required=true />
+                                    <x-input.datepicker class="col-xl-5 col-lg-5 col-md-12 col-sm-6 mt-2"
+                                        name="comprobant.fechaEmision" label="Fecha" id="dp1" :error="$errors->first('comprobant.fechaEmision')"
+                                        :required=true />
 
-                                    <x-input.select class="col-xl-3" name="comprobant.moneda" :options="$typescurrency"
-                                        label="Moneda" :error="$errors->first('comprobant.moneda')" :required=true />
+                                    <x-input.select class="col-xl-3 col-lg-3 col-md-6 col-sm-3" name="comprobant.moneda"
+                                        :options="$typescurrency" label="Moneda" :error="$errors->first('comprobant.moneda')" :required=true />
 
-                                    <x-input.select class="col-xl-4" name="comprobant.tipoPago" :options="$typespayments"
-                                        label="Tipo de pago" :error="$errors->first('comprobant.tipoPago')" :required=true />
+                                    <x-input.select class="col-xl-4 col-lg-4 col-md-6 col-sm-3"
+                                        name="comprobant.tipoPago" :options="$typespayments" label="Tipo de pago"
+                                        :error="$errors->first('comprobant.tipoPago')" :required=true />
                                 </div>
                             </div>
                         </div>
@@ -211,7 +211,8 @@
                                             <tr>
                                                 <td colspan="3"></td>
                                                 <td colspan="2">TOTAL</td>
-                                                <td colspan="2">S/ {{ number_format($total + $totaligvgrav, 2) }}</td>
+                                                <td colspan="2">S/ {{ number_format($total + $totaligvgrav, 2) }}
+                                                </td>
                                             </tr>
                                         </x-slot>
                                     </x-table>

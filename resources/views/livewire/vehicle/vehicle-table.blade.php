@@ -45,7 +45,7 @@
                                     <button wire:click="$emit('createbrand')" class="dropdown-item action-icon">
                                         Marca</button>
                                     <button wire:click="$emit('createmodel')" class="dropdown-item action-icon">
-                                        Model</button>
+                                        Modelo</button>
                                     <button wire:click="$emit('createcolor')" class="dropdown-item action-icon">
                                         Color</button>
                                 </div>

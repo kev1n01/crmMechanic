@@ -26,7 +26,7 @@ body {
 }
 
 .logo_img {
-    width: 32mm;
+    width: 30mm;
     padding: 1mm;
 }
 
@@ -55,7 +55,7 @@ body {
 }
 
 .border {
-    border-width: 0.2mm solid rgb(39, 39, 39);
+    border-width: 0.2mm solid rgb(73, 67, 67);
 }
 
 .fw-sb {
@@ -89,12 +89,21 @@ body {
     color: black;
 }
 
-.table-list td,
+.table-info {
+    padding: 1mm;
+    float: left;
+    border-top: 0.2mm solid rgb(48, 48, 48);
+    border-bottom: 0.2mm solid rgb(48, 48, 48);
+    border-right: 0.2mm solid rgb(48, 48, 48);
+    border-left: 0.2mm solid rgb(48, 48, 48);
+}
+
+/* .table-list td,
 .table-list th {
     padding: 1mm;
-    border: 0.2mm solid rgb(48, 48, 48);
+    border-top: 0.2mm solid rgb(48, 48, 48);
     text-align: center;
-}
+} */
 
 .text-center {
     text-align: center;
@@ -106,8 +115,28 @@ body {
     font-size: 3mm;
 }
 
-.text-black {
-    color: black;
+.table-list thead tr {
+    border-left: 0.2mm solid rgb(48, 48, 48);
+    border-top: 0.2mm solid rgb(48, 48, 48);
+    border-bottom: 0.2mm solid rgb(48, 48, 48);
+    border-right: 0.2mm solid rgb(48, 48, 48);
+}
+
+.table-list tbody tr {
+    border-top: 0.2mm solid rgb(48, 48, 48);
+    border-bottom: 0.2mm solid rgb(48, 48, 48);
+    border-right: 0.2mm solid rgb(48, 48, 48);
+    border-left: 0.2mm solid rgb(48, 48, 48);
+    text-align: center;
+}
+.table-list tbody td {
+    padding: 0.7mm;
+}
+
+.table-list tfoot .td_underline{
+    padding: 1mm;
+    text-align: center;
+    border-bottom: 0.2mm solid rgb(48, 48, 48);
 }
 
 .ps-2 {

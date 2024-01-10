@@ -65,7 +65,7 @@
         </li> --}}
     </ul>
     <button class="button-menu-mobile open-left">
-        <i class="mdi mdi-record-circle-outline"></i>
+        <i class="mdi mdi-menu"></i>
     </button>
     {{-- <div class="app-search dropdown d-none d-lg-block">
         <form>

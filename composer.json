@@ -10,6 +10,7 @@
     "require": {
         "php": "^8.0.2",
         "ext-zip": "*",
+        "arielmejiadev/larapex-charts": "^6.0",
         "barryvdh/laravel-dompdf": "^2.0",
         "darryldecode/cart": "^4.2",
         "guzzlehttp/guzzle": "^7.2",
@@ -19,6 +20,7 @@
         "livewire/livewire": "^2.10",
         "luecano/numero-a-letras": "^3.0",
         "masbug/flysystem-google-drive-ext": "^2.2",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-backup": "^8.1"
     },
     "require-dev": {

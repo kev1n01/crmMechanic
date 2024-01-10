@@ -19,8 +19,7 @@ class CustomerFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->safeEmail(),
-            'dni' => fake()->randomNumber(8),
-            'ruc' => random_int(10000000000, 99999999999),
+            'num_doc' => random_int(10000000000, 99999999999),
             'address' => fake()->streetAddress(),
             'phone' => fake()->phoneNumber(9),
             'status' => fake()->randomElement(['activo', 'inactivo']),

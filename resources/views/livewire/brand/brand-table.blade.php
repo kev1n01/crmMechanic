@@ -26,7 +26,7 @@
                         </div>
                         <div class="row col-xl-5">
                             <div class="text-xl-end mt-xl-0 mt-2">
-                                <button wire:click="showFilter" type="button"
+                                <button title="Filtrar información" wire:click="showFilter" type="button"
                                     class="btn btn-outline-dark mb-2 me-2">Filtros
                                     @if ($showFilters)
                                         <i class="mdi mdi-close-circle-outline me-1"></i>
@@ -34,7 +34,7 @@
                                         <i class="mdi mdi-filter-outline me-1"></i>
                                     @endif
                                 </button>
-                                <button type="button" wire:click="$emit('createbrand')"
+                                <button title="Crear marca" type="button" wire:click="$emit('createbrand')"
                                     class="btn btn-dark mb-2 me-2"><i class="mdi mdi-plus me-1"></i>
                                     Nuevo</button>
 

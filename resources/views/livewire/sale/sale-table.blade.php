@@ -62,29 +62,29 @@
                                     </div>
                                 </div>
                                 <div class="row m-1 mt-2">
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-3 mb-1 mb-1">
                                         <x-input.datepicker name="filters.fromDate" label="Desde" id="dp1" />
                                     </div>
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-3 mb-1">
                                         <x-input.datepicker name="filters.toDate" label="Hasta" id="dp2" />
                                     </div>
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-3 mb-1">
                                         <x-input.select name="filters.status" label="Estado" :options="$statuses" />
                                     </div>
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-3 mb-1">
                                         <x-input.select name="filters.method_payment" label="Metodo de pago"
                                             :options="$method_payments" />
                                     </div>
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-3 mb-1">
                                         <x-input.select name="filters.type_payment" label="Tipo de pago"
                                             :options="$type_payments" />
                                     </div>
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-3 mb-1">
                                         <x-input.select name="filters.type_sale" label="Tipo de venta"
                                             :options="$type_sales" />
                                     </div>
 
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-3 mb-1">
                                         <x-input.select name="filters.customer" label="Cliente" :options="$customers" />
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
                                 <x-table.heading sortable wire:click="sortBy('total')" :direction="$sortField == 'total' ? $sortDirection : null">Total
                                 </x-table.heading>
 
-                                <x-table.heading class="text-center">Estado</x-table.heading>
+                                <x-table.heading class="text-center">Estado / Tipo</x-table.heading>
 
                                 <x-table.heading>Acción</x-table.heading>
 
@@ -151,9 +151,9 @@
 
                                         <x-table.cell class="text-center">
                                             <span
-                                                class="badge badge-{{ $sale->status_color }}-lighten">{{ strtoupper($sale->status) }}</span>
+                                                class="badge badge-{{ $sale->status_color }}-lighten fs-6">{{ strtoupper($sale->status) }}</span>
                                             <span
-                                                class="badge badge-{{ $sale->type_color }}-lighten">{{ strtoupper($sale->type_sale) }}</span>
+                                                class="badge badge-{{ $sale->type_color }}-lighten fs-6">{{ strtoupper($sale->type_sale) }}</span>
                                         </x-table.cell>
 
                                         <x-table.cell>

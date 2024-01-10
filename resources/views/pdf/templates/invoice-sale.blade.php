@@ -13,7 +13,7 @@
     <div class="border-line">
         <div class="infoHeader">
             <div style="float: left; width: 20%; height: 10%; margin-right: 2mm; margin-left: 4mm; margin-bottom: 2mm;">
-                @if (isset($company->logo))
+                @if (!empty($company->logo))
                     <img src="{{ public_path('storage/' . $company->logo) }}" class="logo_img">
                 @else
                     <img src="https://knowledgehub.adeanet.org/themes/adea/images/no-logo.jpg" class="logo_img">
@@ -34,65 +34,60 @@
                 </div>
             </div>
         </div>
-        <p class="fs-2 fw-b text-form">
+        <p class="fs-2 fw-sb text-form" style="margin-bottom: 1%; margin-top: 2%">
             {{ $sale->type_sale === 'vehicular' ? 'Venta Vehicular' : 'Venta Comercial' }}</p>
-
-        <p class="fs-3 fw-sb">Detalle de la venta</p>
-        <table class="table">
+        <table class="table-info" style="width: 60%; margin-right: 1%; height: 9%">
             <tbody>
                 <tr>
-                    <td class="border-td border-th fw-sb">Fecha y Hora</td>
-                    <td class="border-td fw-sb" style="width: 26%;">
-                        {{ \Carbon\Carbon::parse($sale->date_sale)->format('d-m-Y') .
-                            ' , ' .
-                            \Carbon\Carbon::parse($sale->created_at)->format('g:i a') }}
-                    </td>
-                    <td class="border-td border-th fw-sb">Estado</td>
-                    <td class="border-td fw-sb">{{ $sale->status }}</td>
-
+                    <td class="border-td fw-sb"><strong>Señor(a):</strong> </td>
+                    <td class="border-td fw-sb" style="width: 70%;">{{ strtolower($sale->customer->name) }}</td>
                 </tr>
                 <tr>
-                    <td class="border-td border-th ps-2 fw-sb">Tipo de pago</td>
-                    <td class="border-td fw-sb">
-                        {{ $sale->type_payment }}
-                    </td>
-                    <td class="border-td border-th ps-2 fw-sb">Metodo de pago</td>
-                    <td class="border-td fw-sb">{{ $sale->method_payment }}</td>
-                </tr>
-                <tr>
-                    <td class="border-td border-th ps-2 fw-sb">Observaciones</td>
-                    <td class="border-td fw-sb" colspan="3">{{ $sale->observation ?? 'Ninguno' }}</td>
-                </tr>
-
-            </tbody>
-        </table>
-
-        <p class="fs-3 fw-sb">Informacion del cliente</p>
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td class="border-td border-th fw-sb">Señor(a)</td>
-                    <td class="border-td fw-sb" style="width: 50%;">{{ $sale->customer->name }}</td>
-
-                    <td class="border-td border-th ps-2 fw-sb">Telófono</td>
+                    <td class="border-td fw-sb"><strong>Celular:</strong> </td>
                     <td class="border-td fw-sb">{{ $sale->customer->phone }}</td>
                 </tr>
                 <tr>
-                    <td class="border-td border-th ps-2 fw-sb">Dni</td>
+                    <td class="border-td fw-sb"><strong>Dni:</strong> </td>
                     <td class="border-td fw-sb">{{ $sale->customer->dni }}</td>
-
-                    <td class="border-td border-th ps-2 fw-sb">Ruc</td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Ruc:</strong> </td>
                     <td class="border-td fw-sb">{{ $sale->customer->ruc }}</td>
                 </tr>
                 <tr>
-                    <td class="border-td border-th fw-sb">Dirección</td>
+                    <td class="border-td fw-sb"><strong>Dirección:</strong> </td>
                     <td colspan="3" class="border-td fw-sb">{{ $sale->customer->address }}</td>
                 </tr>
             </tbody>
         </table>
+        <table class="table-info" style="width: 39%">
+            <tbody>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Fecha y Hora:</strong></td>
+                    <td class="border-td fw-sb" style="width: 60%;">
+                        {{ \Carbon\Carbon::parse($sale->date_sale)->format('d-m-Y') .
+                            ' , ' .
+                            \Carbon\Carbon::parse($sale->created_at)->format('g:i a') }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Estado:</strong></td>
+                    <td class="border-td fw-sb">{{ $sale->status }}</td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Tipo de pago:</strong></td>
+                    <td class="border-td fw-sb">
+                        {{ $sale->type_payment }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="border-td fw-sb"><strong>Metodo de pago:</strong></td>
+                    <td class="border-td fw-sb">{{ $sale->method_payment }}</td>
+                </tr>
+            </tbody>
+        </table>
 
-        <p class="fs-3 fw-sb">Lista de repuestos y/o productos</p>
-
+        <p class="fs-3 fw-sb" style="margin-top:15%"></p>
         <table class="table-list">
             <thead>
                 <tr>
@@ -135,61 +130,96 @@
                 @endphp
                 <tr>
                     <td colspan="2"></td>
-                    <td class="fw-sb" colspan="3">Subtotal</td>
-                    <td class="fw-sb">S/ {{ number_format($totalNoDiscount, 2) }}</td>
+                    <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Subtotal</strong></td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($totalNoDiscount, 2) }}</td>
                 </tr>
-                {{-- <tr>
-                    <td colspan="2"></td>
-                    <td class="fw-sb" colspan="3">Total Ope. Gravadas</td>
-                    <td class="fw-sb">S/ {{ number_format($totalOG, 2) }}</td>
-                </tr> --}}
                 <tr>
-                    <td class="fw-sb" colspan="2">Pago con: S/ {{ $sale->cash }}</td>
-                    <td class="fw-sb" colspan="3">Total Descuentos</td>
-                    <td class="fw-sb">S/ {{ number_format($totalNoDiscount - $sale->total, 2) }}</td>
+                    <td colspan="2"></td>
+                    <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Descuento</strong></td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/
+                        {{ number_format($totalNoDiscount - $sale->total, 2) }}</td>
                 </tr>
-                {{-- <tr>
-                    <td colspan="2"></td>
-                    <td class="fw-sb" colspan="3">Total IGV 18%</td>
-                    <td class="fw-sb">S/ {{ number_format($sale->total - $totalOG, 2) }}</td>
-                </tr> --}}
+
                 <tr>
-                    <td class="fw-sb" colspan="2">Vuelto: S/ {{ number_format($sale->cash - $sale->total, 2) }}
+                    <td colspan="2"></td>
+                    <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Total</strong></td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($sale->total, 2) }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Pagó con</strong></td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($sale->cash, 2) }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Vuelto</strong>
                     </td>
-                    <td class="text-black fw-sb"colspan="3">TOTAL</td>
-                    <td class="fw-sb">S/ {{ number_format($sale->total, 2) }}</td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/
+                        {{ number_format($sale->cash - $sale->total, 2) }}</td>
                 </tr>
             </tfoot>
         </table>
     </div>
 
+    <hr style="width: 97%; border: 0.1mm solid rgb(48, 48, 48);" />
     <div class="border-line">
         <div id="footer">
-            <table class="table">
+            <p class="fw-sb" style="width: 100%;">
+                <strong>Observaciones:</strong> {{ $sale->observation }}
+            </p>
+            <table class="table-list" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th class="border-td border-th fw-sb text-center">ENTIDAD FINANCIERA </th>
-                        <th class="border-td border-th fw-sb text-center">CUENTA BANCARIA </th>
-                        <th class="border-td border-th fw-sb text-center">CUENTA INTERBANCARIA </th>
+                        <th>NRO CUOTA </th>
+                        <th>FECHA</th>
+                        <th>MONTO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="fw-sb fs-3 text-center">cuota1</td>
+                        <td class="fw-sb fs-3 text-center">14/6/2023</td>
+                        <td class="fw-sb fs-3 text-center">942.22</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-list" style="float: left; width: 100%; margin-top: 2%">
+                <thead>
+                    <tr>
+                        <th>ENTIDAD FINANCIERA </th>
+                        <th>CUENTA BANCARIA </th>
+                        <th>CUENTA INTERBANCARIA </th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($bankacc as $bc)
                         <tr>
-                            <td class="border-td border-th fw-sb text-center">{{ $bc->name }}</td>
-                            <td class="border-td border-th fw-sb text-center">{{ $bc->cta_bank }}</td>
-                            <td class="border-td border-th fw-sb text-center">{{ $bc->cta_interbank }}</td>
+                            <td class="fw-sb fs-3 text-center">{{ $bc->name }}</td>
+                            <td class="fw-sb fs-3 text-center">{{ $bc->cta_bank }}</td>
+                            <td class="fw-sb fs-3 text-center">{{ $bc->cta_interbank }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td class="border-td border-th fw-sb text-center" colspan="3">No hay cuentas de bancos
+                            <td class="fw-sb text-center" colspan="3">No hay cuentas de bancos
                                 registrados</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
+        <div style="margin-top: 15%">
+            <span class="text-footer fw-sb">
+                <strong>Atención:</strong> Todo trabajo se realizará con un 50% de adelanto al costo de
+                proforma, una vez terminado el trabajo tendrá 7 días hábiles a recoger su vehículo, luego de esto se
+                sumarán costos de cochera
+            </span>
+            <p class="text-footer fw-sb">
+                En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad a
+                todos nuestros clientes
+            </p>
+        </div>
     </div>
+
 </body>
 
 </html>

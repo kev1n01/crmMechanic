@@ -27,7 +27,7 @@
                         </div>
                         <div class="row col-xl-5">
                             <div class="text-xl-end mt-xl-0 mt-2">
-                                <button wire:click="showFilter" type="button"
+                                <button title="Filtrar información" wire:click="showFilter" type="button"
                                     class="btn btn-outline-dark mb-2 me-2">Filtros
                                     @if ($showFilters)
                                         <i class="mdi mdi-close-circle-outline me-1"></i>
@@ -35,7 +35,7 @@
                                         <i class="mdi mdi-filter-outline me-1"></i>
                                     @endif
                                 </button>
-                                <button type="button" wire:click="$emit('createcustomer')"
+                                <button title="Crear cliente" type="button" wire:click="$emit('createcustomer')"
                                     class="btn btn-dark mb-2 me-2"><i class="mdi mdi-plus me-1"></i>
                                     Nuevo</button>
                                 <button type="button" class="btn btn-light mb-2 dropdown-toggle"
@@ -96,11 +96,9 @@
                                 <x-table.heading sortable wire:click="sortBy('address')" :direction="$sortField == 'address' ? $sortDirection : null">Dirección
                                 </x-table.heading>
 
-                                <x-table.heading>Dni | Ruc
-                                </x-table.heading>
+                                <x-table.heading>N° Documento</x-table.heading>
 
-                                <x-table.heading>Estado
-                                </x-table.heading>
+                                <x-table.heading>Estado</x-table.heading>
 
                                 <x-table.heading>Acción</x-table.heading>
 
@@ -119,12 +117,10 @@
 
                                         <x-table.cell>{{ $customer->phone }}</x-table.cell>
 
-                                        <x-table.cell class="text-wrap">
+                                        <x-table.cell class="text-wrap w-25">
                                             {{ $customer->address ? $customer->address : 'N/D' }}</x-table.cell>
 
-                                        <x-table.cell>{{ $customer->dni ? $customer->dni : 'N/D' }} |
-                                            {{ $customer->ruc ? $customer->ruc : 'N/D' }}
-                                        </x-table.cell>
+                                        <x-table.cell>{{ $customer->num_doc ?? 'N/D' }}</x-table.cell>
 
                                         <x-table.cell>
                                             <button
@@ -136,12 +132,12 @@
 
                                         <x-table.cell>
                                             <a class="btn btn-info btn-sm mb-1"
-                                            wire:click="$emit('editcustomer',{{ $customer->id }})">
-                                            Editar</a>
-                                           
+                                                wire:click="$emit('editcustomer',{{ $customer->id }})">
+                                                Editar</a>
+
                                             <a class="btn btn-danger btn-sm mb-1"
-                                            onclick="Confirm({{ $customer->id }}, 'delete')">
-                                            Eliminar</a>
+                                                onclick="Confirm({{ $customer->id }}, 'delete')">
+                                                Eliminar</a>
                                         </x-table.cell>
                                     </x-table.row>
                                 @empty

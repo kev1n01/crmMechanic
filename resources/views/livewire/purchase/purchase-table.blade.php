@@ -26,7 +26,7 @@
                         </div>
                         <div class="row col-xl-5">
                             <div class="text-xl-end mt-xl-0 mt-2">
-                                <button wire:click="showFilter" type="button"
+                                <button title="Filtrar información" wire:click="showFilter" type="button"
                                     class="btn btn-outline-dark mb-2 me-2">Filtros
                                     @if ($showFilters)
                                         <i class="mdi mdi-close-circle-outline me-1"></i>
@@ -34,7 +34,7 @@
                                         <i class="mdi mdi-filter-outline me-1"></i>
                                     @endif
                                 </button>
-                                <a type="button" href="{{ route('compras.crear') }}" class="btn btn-dark mb-2 me-2"><i
+                                <a title="Crear compra" type="button" href="{{ route('compras.crear') }}" class="btn btn-dark mb-2 me-2"><i
                                         class="mdi mdi-plus me-1"></i>
                                     Nuevo</a>
                                 <button type="button" class="btn btn-light mb-2 dropdown-toggle"
@@ -124,9 +124,9 @@
 
                                         <x-table.cell class="text-center">
                                             <button
-                                                class="btn btn-outline-{{ $purchase->status_color }} rounded-pill btn-sm w-100"
-                                                type="button" wire:click="changeStatus({{ $purchase->id }})">
-                                                {{ strtoupper($purchase->status) }}
+                                                class="btn btn-{{ $purchase->status_color }} rounded-pill btn-sm w-100 fw-bolder"
+                                                type="button" wire:click="changeStatus({{ $purchase->id }})" {{ $purchase->status === 'recibido' ? 'disabled' : '' }}>
+                                                {{ strtoupper($purchase->status) }}  
                                             </button>
                                         </x-table.cell>
 

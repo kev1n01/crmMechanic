@@ -1,19 +1,22 @@
 <div>
     <x-form method="save">
-        <x-modal-dialog :id="$idModal" :title="$nameModal">
+        <x-modal-dialog :id="$idModal" :title="$nameModal" optionsModal="modal-lg">
             <x-slot name="body">
                 <div class="row g-2">
                     <x-input.input-tooltip-error class="col-xl-12" name="editing.name" label="Nombre de producto"
                         type="text" :error="$errors->first('editing.name')" :required=true />
 
-                    <x-input.input-tooltip-error class="col-xl-6" name="editing.code" label="Código de producto"
-                        type="text" :error="$errors->first('editing.code')" :required=true />
-{{-- 
-                    <x-input.input-tooltip-error class="col-xl-6" name="editing.sku" label="SKU"
-                        type="text" :error="$errors->first('editing.sku')" :required=true :disabled=true/> --}}
+                    <x-input.input-tooltip-error class="col-xl-4" name="editing.code" label="Código de producto"
+                        type="text" :error="$errors->first('editing.code')" :required=true :disabled=true />
 
-                    <x-input.input-tooltip-error class="col-xl-6" name="editing.stock" label="Stock" type="number"
+                    {{-- <x-input.input-span-text class="col-xl-4" name="editing.sku" label="SKU" type="text"
+                        :required=true :span="strtoupper(substr($editing->name, 0, 3)) . '-' . $editing->stock . '-'" /> --}}
+
+                    <x-input.input-tooltip-error class="col-xl-4" name="editing.stock" label="Stock" type="number"
                         :error="$errors->first('editing.stock')" :required=true />
+
+                    <x-input.select class="col-xl-6" name="editing.unit_products_id" label="Unidades" :options="$units"
+                        :error="$errors->first('editing.unit_products_id')" />
 
                     <x-input.select class="col-xl-6" name="editing.status" label="Estado" :options="$statuses"
                         :error="$errors->first('editing.status')" />
@@ -25,10 +28,10 @@
                         :error="$errors->first('editing.brand_products_id')" />
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.sale_price" label="Precio venta"
-                        type="number" :error="$errors->first('editing.sale_price')" />
+                        type="number" :error="$errors->first('editing.sale_price')" :required=true/>
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.purchase_price" label="Precio compra"
-                        type="number" :error="$errors->first('editing.purchase_price')" />
+                        type="number" :error="$errors->first('editing.purchase_price')" :required=true/>
 
                     <x-input.input-tooltip-error class="col-12" name="image" label="Imagen de producto" type="file"
                         :error="$errors->first('image')" accept="image/png, image/jpeg, image/jpg" />

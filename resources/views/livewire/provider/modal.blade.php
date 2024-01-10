@@ -3,12 +3,8 @@
         <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
             <x-slot name="body">
                 <div class="row g-2">
-                    <x-input.input-tooltip-error class="col-xl-11 pe-0" name="editing.ruc" label="Ruc" type="text"
-                        :error="$errors->first('editing.ruc')" :required=true max="11" />
-                    <div class="col-xl-1 ps-0">
-                        <button type="button" wire:click.prevent="searchRuc" class="btn btn-primary rounded btn-sm"
-                            style="margin-top:30px;"><i class="uil-search"></i></button>
-                    </div>
+                    <x-input.input-button class="col-xl-12 pe-0" name="editing.ruc" label="Ruc" :error="$errors->first('editing.ruc')"
+                        :required=true max="11" fnbtn="searchRuc" iconbtn="uil-search" title="Buscar"/>
 
                     @if (strlen($editing->ruc) == 11)
                         <div class="col-xl-12 text-center mt-0">

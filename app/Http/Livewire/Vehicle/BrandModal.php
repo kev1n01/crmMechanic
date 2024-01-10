@@ -8,7 +8,6 @@ use Livewire\Component;
 
 class BrandModal extends Component
 {
-    
     /* FOR MODAL */
     public $idModal = 'brandVehicleModal';
     public $nameModal;

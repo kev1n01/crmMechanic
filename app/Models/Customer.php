@@ -13,13 +13,17 @@ class Customer extends Model
         'inactivo' => 'Inactivo',
     ];
 
+    const TYPE_DOCUMENTS = [
+        '6' => 'RUC',
+        '1' => 'DNI',
+    ];
+
     use HasFactory;
 
     protected $fillable = [
         'email',
         'name',
-        'dni',
-        'ruc',
+        'num_doc',
         'address',
         'phone',
         'status',

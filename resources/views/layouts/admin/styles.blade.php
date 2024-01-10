@@ -151,4 +151,7 @@
     .side-nav-item {
         border-bottom: 2px solid rgb(61, 65, 73);
     }
+    .datepicker table tr td.today{
+        background-color: #c24660 !important;
+    }
 </style>

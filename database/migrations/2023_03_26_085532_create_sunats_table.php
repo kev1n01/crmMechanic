@@ -15,13 +15,13 @@ return new class extends Migration
     {
         Schema::create('sunats', function (Blueprint $table) {
             $table->id();
-            $table->string('ruc');
-            $table->string('social_reason');
-            $table->string('user_sol_secondary');
-            $table->string('password_sol_secondary');
-            $table->string('address');
-            $table->string('certificate');
-            $table->string('certificate_password');
+            $table->string('ruc')->nullable();
+            $table->string('social_reason')->nullable();
+            $table->string('user_sol_secondary')->nullable();
+            $table->string('password_sol_secondary')->nullable();
+            $table->string('address')->nullable();
+            $table->string('certificate')->nullable();
+            $table->string('certificate_password')->nullable();
             $table->timestamps();
         });
     }

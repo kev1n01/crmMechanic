@@ -23,34 +23,11 @@ return new class extends Migration
             $table->string('moneda');
             $table->string('tipoPago');
             //data client
-            $table->string('tipoDocClient');
-            $table->string('numDoc');
-            $table->string('rznSocialClient');
-            $table->string('direccionClient');
-            $table->string('provinciaClient');
-            $table->string('departamentoClient');
-            $table->string('distritoClient');
-            $table->string('ubigueoClient');
+            $table->json('cliente');
             //data company
-            $table->string('ruc');
-            $table->string('razonSocialCompany');
-            $table->string('nombreComercialCompany');
-            $table->string('direccionCompany');
-            $table->string('provinciaCompany');
-            $table->string('departamentoCompany');
-            $table->string('distritoCompany');
-            $table->string('ubigueoCompany');
-            //data invoice amount
-            $table->decimal('mtoOperGravadas', 10, 2);
-            $table->decimal('mtoOperExoneradas', 10, 2);
-            $table->integer('mtoIGV');
-            $table->string('totalImpuestos');
-            $table->decimal('valorVenta', 10, 2);
-            $table->decimal('subTotal', 10, 2);
-            $table->decimal('mtoImpVenta', 10, 2);
-            //data legend
-            $table->string('code');
-            $table->string('value');
+            $table->json('empresa');
+            //data items
+            $table->json('items');
             $table->timestamps();
         });
     }

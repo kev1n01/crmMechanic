@@ -63,6 +63,7 @@ class Sale extends Model
             'cancelado' => 'danger',
         ][$this->status] ?? 'secondary';
     }
+    
     public function getTypeColorAttribute()
     {
         return [

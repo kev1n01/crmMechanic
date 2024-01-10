@@ -18,8 +18,7 @@ class CustomerSeeder extends Seeder
             [
                 'name' => 'Julio',
                 'email' => 'Julio@gmail.com',
-                'dni' => '41234567',
-                'ruc' => '12312312312',
+                'num_doc' => '12312312312',
                 'address' => 'Jr Miraglores 123',
                 'phone' => '987654321',
                 'status' => 'activo',
@@ -28,8 +27,7 @@ class CustomerSeeder extends Seeder
             [
                 'name' => 'Cesar',
                 'email' => 'Cesar@gmail.com',
-                'dni' => '51234567',
-                'ruc' => '42312312312',
+                'num_doc' => '42312312312',
                 'address' => 'Jr flores 1243',
                 'phone' => '982654321',
                 'status' => 'activo',
@@ -38,8 +36,7 @@ class CustomerSeeder extends Seeder
             [
                 'name' => 'Juancho',
                 'email' => 'Juancho@gmail.com',
-                'dni' => '41234565',
-                'ruc' => '12312314312',
+                'num_doc' => '12312314312',
                 'address' => 'Jr rosas 123',
                 'phone' => '987654322',
                 'status' => 'inactivo',
@@ -48,8 +45,7 @@ class CustomerSeeder extends Seeder
             [
                 'name' => 'Lucas',
                 'email' => 'Lucas@gmail.com',
-                'dni' => '41236567',
-                'ruc' => '12377312312',
+                'num_doc' => '12377312312',
                 'address' => 'Jr juuu 123',
                 'phone' => '98765432',
                 'status' => 'activo',

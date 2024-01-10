@@ -2,12 +2,13 @@
 
 namespace App\Http\Livewire\Product;
 
+use App\Http\Requests\RequestProduct;
 use App\Models\BrandProduct;
 use App\Models\CategoryProduct;
 use App\Models\Product;
+use App\Models\UnitProduct;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
@@ -22,6 +23,7 @@ class Modal extends Component
     public $image;
 
     public $statuses = [];
+    public $units = [];
     public $brands = [];
     public $categories = [];
     protected $listeners = ['createproduct' => 'create', 'editproduct' => 'edit', 'refreshmodal' => 'mount'];
@@ -29,60 +31,37 @@ class Modal extends Component
     public function mount()
     {
         $this->editing = $this->makeBlankFields();
-        // $this->edtiting->sku = $this->sku_random();
         $this->statuses = Product::STATUSES;
+        $this->units = UnitProduct::pluck('name', 'id');
+        $this->editing->unit_products_id = 1;
         $this->brands = BrandProduct::pluck('name', 'id');
         $this->categories = CategoryProduct::pluck('name', 'id');
     }
 
-    // public function sku_random()
+    public function code_random()
+    {
+        $code = random_int(1000, 99999);
+        $product = Product::where('code', $code)->first();
+        if ($product) {
+            $this->code_random();
+        }
+        return $code;
+    }
+
+    // public function updatedEditingSku($value)
     // {
-    //     $sku = random_int(1000, 999942);
-    //     $product = Product::where('sku', $sku)->first();
-    //     if ($product) {
-    //         $this->sku_random();
-    //     }
-    //     dd($sku);
-    //     return $sku;
+    //     $this->editing->sku = strtoupper($value);
     // }
 
     public function rules()
     {
-        return [
-            'editing.name' => ['required', 'min:4', 'max:50', Rule::unique('products', 'name')->ignore($this->editing)],
-            'editing.code' => ['required', 'min:4', 'max:15', Rule::unique('products', 'code')->ignore($this->editing)],
-            'editing.stock' => 'required|integer',
-            'editing.sale_price' => 'required|numeric|regex:/^-?[0-9]+(?:\.[0-9]{1,2})?$/',
-            'editing.purchase_price' => 'required|numeric|regex:/^-?[0-9]+(?:\.[0-9]{1,2})?$/',
-            'editing.category_products_id' => ['nullable'],
-            'editing.brand_products_id' => ['nullable'],
-            'editing.image' => ['nullable'],
-            'editing.status' => 'required|in:' . collect(Product::STATUSES)->keys()->implode(','),
-        ];
+        return (new RequestProduct())->rules($this->editing);
     }
 
-    protected $messages = [
-        'editing.name.min' => 'El nombre no debe tener menos de 4 caracteres',
-        'editing.name.max' => 'El nombre no debe tener más de 50 caracteres',
-        'editing.name.required' => 'El nombre es obligatorio',
-        'editing.name.unique' => 'Ya existe un producto con el mismo nombre',
-        'editing.stock.integer' => 'El stock tiene que ser un número entero',
-        'editing.stock.required' => 'El stock es obligatorio',
-        'editing.code.min' => 'El código no debe tener menos de 4 caracteres',
-        'editing.code.max' => 'El código no debe tener más de 15 caracteres',
-        'editing.code.required' => 'El código es obligatorio',
-        'editing.code.unique' => 'Ya existe un producto con este código',
-        'editing.sale_price.numeric' => 'El precio venta tiene que ser entero o decimal',
-        'editing.sale_price.regex' => 'El formato decimal de precio es incorrecto',
-        'editing.sale_price.required' => 'El precio de venta es obligatorio',
-        'editing.purchase_price.regex' => 'El formato decimal de precio es incorrecto',
-        'editing.purchase_price.required' => 'El precio de compra es obligatorio',
-        'editing.purchase_price.numeric' => 'El precio compra tiene que ser entero o decimal',
-        // 'editing.category_products_id.required' => 'La categoria es obligatorio',
-        // 'editing.brand_products_id.required' => 'La marca es obligatorio',
-        'editing.status.required' => 'El estado es obligatorio',
-        'editing.status.in' => 'El valor es inválido',
-    ];
+    public function messages()
+    {
+        return (new RequestProduct())->messages();
+    }
 
     public function updatingImage($value)
     {
@@ -107,7 +86,7 @@ class Modal extends Component
         if ($this->image) {
             $this->editing->image = $this->loadImage($this->image);
         }
-
+        // $this->editing->sku = strtoupper(substr($this->editing->name, 0, 3)) . '-' . $this->editing->stock . '-' . $this->editing->sku;
         $this->editing->save();
         $this->nameModal === 'Crear nuevo producto' ? $this->emit('success_alert', 'Producto creado') : $this->emit('success_alert', 'Producto actualizado');
         $this->dispatchBrowserEvent('close-modal-product');
@@ -117,7 +96,7 @@ class Modal extends Component
 
     public function updated($label)
     {
-        $this->validateOnly($label, $this->rules(), $this->messages);
+        $this->validateOnly($label, $this->rules(), $this->messages());
     }
 
     public function loadImage(TemporaryUploadedFile $image)
@@ -145,17 +124,20 @@ class Modal extends Component
         $this->image = '';
         $this->nameModal = 'Crear nuevo producto';
         if ($this->editing->getKey()) $this->editing = $this->makeBlankFields(); // para preservar cambios en los inputs
+        $this->editing->code = $this->code_random();
         $this->dispatchBrowserEvent('open-modal-product');
     }
 
-    public function edit(Product $produc)
+    public function edit(Product $product)
     {
         $this->resetErrorBag();
         $this->resetValidation();
         $this->image = '';
         $this->nameModal = 'Editar producto';
         $this->dispatchBrowserEvent('open-modal-product');
-        if ($this->editing->isNot($produc)) $this->editing = $produc; // para preservar cambios en los inputs
+        if ($this->editing->isNot($product)) $this->editing = $product; // para preservar cambios en los inputs
+        
+        // $this->editing->sku = $this->editing->sku === '' ? explode('-', $this->editing->sku)[2] : '';
         $this->emit('refreshList');
     }
 

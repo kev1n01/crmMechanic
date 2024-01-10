@@ -23,7 +23,8 @@ class SaleCreate extends Component
     public $methods_payment = [];
     public $types_payment = [];
     public $customers = [];
-
+    public $cf = [];
+    
     public $total = 0;
     public $totalDiscount = 0;
     public $totalOG = 0;
@@ -179,6 +180,11 @@ class SaleCreate extends Component
     {
         $this->editing->cash = 0;
         $this->change = 0;
+    }
+
+    
+    public function updatedEditingCustomerId($value){
+        $this->cf = Customer::find($value);
     }
 
     public function updatedEditingTypePayment($value)

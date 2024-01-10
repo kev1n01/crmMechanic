@@ -2,9 +2,9 @@
 
 namespace App\Http\Livewire\Provider;
 
+use App\Http\Requests\RequestProvider;
 use App\Models\Provider;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Modal extends Component
@@ -22,38 +22,13 @@ class Modal extends Component
 
     public function rules()
     {
-        return [
-            'editing.name' => ['required', 'min:4', 'max:50', Rule::unique('providers', 'name')->ignore($this->editing)],
-            'editing.phone' => ['required', 'min:9', 'max:9', Rule::unique('providers', 'phone')->ignore($this->editing)],
-            'editing.address' => ['nullable', 'min:5', 'max:100', Rule::unique('providers', 'address')->ignore($this->editing)],
-            'editing.ruc' => ['required', 'min:11', 'max:11', Rule::unique('providers', 'ruc')->ignore($this->editing)],
-            'editing.status' => 'required|in:' . collect(Provider::STATUSES)->keys()->implode(','),
-        ];
+        return (new RequestProvider)->rules($this->editing);
     }
 
-    protected $messages = [
-        'editing.name.required' => 'El nombre es obligatorio',
-        'editing.name.min' => 'El nombre debe tener al menos 4 caracteres',
-        'editing.name.max' => 'El nombre no debe tener más de 50 caracteres',
-        'editing.name.unique' => 'Este nombre ya fue registrado',
-
-        'editing.phone.required' => 'El celular es obligatorio',
-        'editing.phone.min' => 'El celular debe tener al menos 9 caracteres',
-        'editing.phone.max' => 'El celular no debe tener más de 9 caracteres',
-        'editing.phone.unique' => 'El celular ya fue registrado',
-
-        'editing.address.min' => 'La dirección debe tener al menos 5 caracteres',
-        'editing.address.max' => 'La dirección no debe tener más de 100 caracteres',
-        'editing.address.unique' => 'La dirección ya fue registrado',
-
-        'editing.ruc.required' => 'El ruc es obligatorio',
-        'editing.ruc.min' => 'El ruc debe tener al menos 11 caracteres',
-        'editing.ruc.max' => 'El ruc no debe tener más de 11 caracteres',
-        'editing.ruc.unique' => 'El ruc ya fue registrado',
-
-        'editing.status.required' => 'El estado es obligatorio',
-        'editing.status.in' => 'El valor es inválido',
-    ];
+    public function messages()
+    {
+        return (new RequestProvider)->messages();
+    }
 
     public function save()
     {
@@ -86,7 +61,7 @@ class Modal extends Component
 
     public function updated($label)
     {
-        $this->validateOnly($label, $this->rules(), $this->messages);
+        $this->validateOnly($label, $this->rules(), $this->messages());
     }
 
     public function makeBlankFields()

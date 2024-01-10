@@ -1,4 +1,4 @@
-<div class="leftside-menu position-fixed">
+a<div class="leftside-menu position-fixed">
 
     <!-- LOGO -->
     <a href="#" class="logo text-center logo-light">
@@ -7,16 +7,6 @@
         </span>
         <span class="logo-sm fs-4">
             <p class="mb-0"><strong class="text-white">F</strong><strong class="text-primary">P</strong></p>
-        </span>
-    </a>
-
-    <!-- LOGO -->
-    <a href="#" class="logo text-center logo-dark">
-        <span class="logo-lg fs-3">
-            <p class="mb-0 "><strong class="text-secondary">FLO</strong><strong class="text-primary">PACH</strong></p>
-        </span>
-        <span class="logo-sm fs-4">
-            <p class="mb-0"><strong class="text-secondary">F</strong><strong class="text-primary">P</strong></p>
         </span>
     </a>
 
@@ -56,6 +46,9 @@
                 </a>
                 <div class="collapse" id="inventario">
                     <ul class="side-nav-second-level">
+                        <li>
+                            <a href="{{ route('unidades') }}">Unidades</a>
+                        </li>
                         <li>
                             <a href="{{ route('categorias') }}">Categorias</a>
                         </li>
@@ -186,7 +179,7 @@
                         <li>
                             <a href="{{ route('ordenes') }}">Listado
                                 <span class="badge bg-primary float-end">
-                                    {{ \App\Models\WorkOrder::where('is_confirmed',1)->count() }}
+                                    {{ \App\Models\WorkOrder::where('is_confirmed', 1)->count() }}
                                 </span>
                             </a>
                         </li>
@@ -209,17 +202,18 @@
                 <a data-bs-toggle="collapse" href="#sunat" aria-expanded="false" aria-controls="sunat"
                     class="side-nav-link">
                     <i class="uil-invoice"></i>
-                    <span> Facturacion </span>
+                    <span>Facturación</span>
                     <span class="menu-arrow"></span>
                 </a>
                 <div class="collapse" id="sunat">
                     <ul class="side-nav-second-level">
                         <li>
-                            <a href="{{ route('sunat.crear.factura') }}">Facturas</a>
+                            <a href="{{ route('comprobantes') }}">Listado</a>
                         </li>
-                        {{-- <li>
-                            <a href="{{ route('sunat.crear.factura') }}">Boletas</a>
+                        <li>
+                            <a href="{{ route('sunat.crear.comprobante') }}">Emitir</a>
                         </li>
+                        {{-- 
                         <li>
                             <a href="#">Notas de crédito</a>
                         </li> --}}
@@ -273,7 +267,6 @@
                 </div>
             </li>
 
-            
             <li class="side-nav-item">
                 <a class="side-nav-link" href="{{ route('conf.index') }}">
                     <i class="dripicons-gear"></i>

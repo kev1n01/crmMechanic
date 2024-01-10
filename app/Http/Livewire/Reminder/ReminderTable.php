@@ -43,6 +43,7 @@ class ReminderTable extends Component
         $this->vehicles = Vehicle::pluck('license_plate', 'id');
         $this->statuses = Reminder::STATUSES;
         $this->editing = $this->makeBlankFields();
+        $this->editing->date = Carbon::now()->format('d-m-Y');
     }
 
     public function updatedEditingVehicleId()
@@ -147,7 +148,7 @@ class ReminderTable extends Component
 
     public function makeBlankFields()
     {
-        return Reminder::make(['date' => Carbon::now()->format('d-m-Y'), 'status' => 'no enviado']); /*para dejar vacios los inpust*/
+        return Reminder::make(['status' => 'no enviado']); /*para dejar vacios los inpust*/
     }
 
     public function create()

@@ -3,15 +3,11 @@
         <x-modal-dialog :id="$idModal" title="{{ $nameModal }}">
             <x-slot name="body">
 
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12 mb-2" name="editingconcept.code" label="Codigo" type="text"
-                        :error="$errors->first('editingconcept.code')" :required=true :disabled=true />
-                </x-input.input-group>
+                <x-input.input-tooltip-error class="col-12 mb-2" name="editingconcept.code" label="Codigo" type="text"
+                    :error="$errors->first('editingconcept.code')" :required=true :disabled=true />
 
-                <x-input.input-group>
-                    <x-input.input-tooltip-error class="col-12" name="editingconcept.name" label="Nombre del concepto"
-                        type="text" :error="$errors->first('editingconcept.name')" :required=true />
-                </x-input.input-group>
+                <x-input.input-tooltip-error class="col-12" name="editingconcept.name" label="Nombre del concepto"
+                    type="text" :error="$errors->first('editingconcept.name')" :required=true />
 
             </x-slot>
 

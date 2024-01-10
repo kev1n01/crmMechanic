@@ -90,7 +90,7 @@ class OtEdit extends Component
                 if (strlen(strval($item->item)) > 4)
                     $item->item = Product::where('code', 'like', '%' . strval($item->item) . '%')->select('code', 'name')->first();
                 else
-                    $item->item = Concept::where('code', str_pad($item->item, 3, "0", STR_PAD_LEFT))->select('code', 'name')->first();
+                    $item->item = Concept::where('code', $item->item )->select('code', 'name')->first();
                 return $item;
             });
             // dd($wod->toArray());

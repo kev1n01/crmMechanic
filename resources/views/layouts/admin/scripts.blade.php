@@ -3,6 +3,7 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="{{ asset('assets/js/pages/demo.timepicker.js') }}"></script>
+{{-- <script src="{{ asset('vendor/larapex-charts/apexcharts.js') }}"></script> --}}
 
 <script>
     const Toast = Swal.mixin({
