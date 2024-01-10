@@ -19,50 +19,73 @@ class BrandVehicleSeeder extends Seeder
             [
                 'name' => 'TOYOTA',
                 'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'name' => 'NISSAN',
                 'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'name' => 'HINO',
                 'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'name' => 'FORD',
                 'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'name' => 'CHEVROLET',
                 'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'name' => 'HONDA',
                 'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'name' => 'AUDI',
                 'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'name' => 'DAEWOO',
                 'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'name' => 'HYUNDAI',
                 'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'name' => 'KIA',
                 'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'name' => 'MAZDA',
                 'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'name' => 'SUZUKI',
                 'created_at' => now(),
+                'updated_at' => now(),
+
             ],
         ];
 
