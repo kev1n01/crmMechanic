@@ -42,6 +42,20 @@
                 @enderror
             </div>
             <div class="col-4 text-start">
+                <label for="code" class="col-form-label">Sku</label>
+            </div>
+            <div class="col-8">
+                <select class="form-select w-100" name="sku" id="sku" wire:model="fieldColumnMap.sku">
+                    <option value="">Selecciona columna</option>
+                    @foreach ($columns as $c)
+                        <option>{{ $c }}</option>
+                    @endforeach
+                </select>
+                @error('fieldColumnMap.sku')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="col-4 text-start">
                 <label for="stock" class="col-form-label">Stock</label>
             </div>
             <div class="col-8">

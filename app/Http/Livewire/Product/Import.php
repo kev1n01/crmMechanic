@@ -15,6 +15,7 @@ class Import extends Component
     public $fieldColumnMap = [
         'name' => '',
         'code' => '',
+        'sku' => '',
         'stock' => '',
         'sale_price' => '',
         'purchase_price' => '',
@@ -24,6 +25,7 @@ class Import extends Component
     protected $rules = [
         'fieldColumnMap.name' => 'required',
         'fieldColumnMap.code' => 'required',
+        'fieldColumnMap.sku' => 'required',
         'fieldColumnMap.stock' => 'required',
         'fieldColumnMap.sale_price' => 'required',
         'fieldColumnMap.purchase_price' => 'required',
@@ -33,6 +35,7 @@ class Import extends Component
     protected $messages = [
         'fieldColumnMap.name.required' => 'El campo nombre es obligatorio',
         'fieldColumnMap.code.required' => 'El campo codigo es obligatorio',
+        'fieldColumnMap.sku.required' => 'El campo sku es obligatorio',
         'fieldColumnMap.stock.required' => 'El campo stock es obligatorio',
         'fieldColumnMap.sale_price.required' => 'El campo precio venta es obligatorio',
         'fieldColumnMap.purchase_price.required' => 'El campo precio compra es obligatorio',
@@ -42,6 +45,7 @@ class Import extends Component
     protected $customAttributes = [
         'fieldColumnMap.name' => 'nombre',
         'fieldColumnMap.code' => 'codigo',
+        'fieldColumnMap.sku' => 'sku',
         'fieldColumnMap.stock' => 'stock',
         'fieldColumnMap.sale_price' => 'precio venta',
         'fieldColumnMap.purchase_price' => 'precio compra',
@@ -71,6 +75,7 @@ class Import extends Component
         $this->fieldColumnMap = [
             'name' => '',
             'code' => '',
+            'sku' => '',
             'stock' => '',
             'sale_price' => '',
             'purchase_price' => '',
@@ -129,6 +134,7 @@ class Import extends Component
         $guesses = [
             'name' => ['name', 'name'],
             'code' => ['code', 'code'],
+            'sku' => ['sku', 'sku'],
             'stock' => ['stock', 'stock'],
             'sale_price' => ['sale_price', 'sale_price'],
             'purchase_price' => ['purchase_price', 'purchase_price'],

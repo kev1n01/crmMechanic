@@ -1,2 +1,2 @@
-code,name,stock,sale_price,purchase_price,status
-,,0,0.00,0.00,activo
+code,sku,name,stock,sale_price,purchase_price,status
+,,,0,0.00,0.00,activo
