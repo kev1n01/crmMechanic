@@ -9,8 +9,8 @@
                     <x-input.input-tooltip-error class="col-xl-4" name="editing.code" label="Código de producto"
                         type="text" :error="$errors->first('editing.code')" :required=true :disabled=true />
 
-                    {{-- <x-input.input-span-text class="col-xl-4" name="editing.sku" label="SKU" type="text"
-                        :required=true :span="strtoupper(substr($editing->name, 0, 3)) . '-' . $editing->stock . '-'" /> --}}
+                    <x-input.input-tooltip-error class="col-xl-4" name="editing.sku" label="SKU de producto"
+                        type="text" :error="$errors->first('editing.sku')" :required=true />
 
                     <x-input.input-tooltip-error class="col-xl-4" name="editing.stock" label="Stock" type="number"
                         :error="$errors->first('editing.stock')" :required=true />

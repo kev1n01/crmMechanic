@@ -32,7 +32,7 @@ class PDFController extends Controller
             if (strlen(strval($item->item)) < 4) {
                 $item->item = Concept::where('code', $item->item)->select('name', 'code')->first();
             } else {
-                $item->item = Product::where('code', 'like', '%' . strval($item->item) . '%')->select('name', 'code')->first();
+                $item->item = Product::where('code', 'like', '%' . strval($item->item) . '%')->select('name', 'sku', 'code')->first();
             }
         });
         $pdf = PDF::loadView('pdf.templates.invoice-pf', [
@@ -49,9 +49,9 @@ class PDFController extends Controller
 
         $dot = $wod->each(function ($item, $key) {
             if (strlen(strval($item->item)) < 4) {
-                $item->item = Concept::where('code',$item->item )->select('name', 'code')->first();
+                $item->item = Concept::where('code', $item->item)->select('name', 'code')->first();
             } else {
-                $item->item = Product::where('code', 'like', '%' . strval($item->item) . '%')->select('name', 'code')->first();
+                $item->item = Product::where('code', 'like', '%' . strval($item->item) . '%')->select('name', 'sku', 'code')->first();
             }
         });
 
@@ -72,7 +72,7 @@ class PDFController extends Controller
         $dts = SaleDetail::where('sale_id', $sale->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get();
 
         $ds = $dts->each(function ($item, $key) {
-            $item->product_id = Product::where('id', $item->product_id)->select('name', 'code')->first();
+            $item->product_id = Product::where('id', $item->product_id)->select('name', 'sku')->first();
         });
 
         $pdf = PDF::loadView('pdf.templates.invoice-sale', [
@@ -88,7 +88,7 @@ class PDFController extends Controller
         $dts = SaleDetail::where('sale_id', $sale->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get();
 
         $ds = $dts->each(function ($item, $key) {
-            $item->product_id = Product::where('id', strval($item->product_id))->select('name', 'code')->first();
+            $item->product_id = Product::where('id', strval($item->product_id))->select('name', 'sku')->first();
         });
 
         // dd($ds->toArray());
@@ -109,7 +109,7 @@ class PDFController extends Controller
         $dtp = PurchaseDetail::where('purchase_id', $purchase->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get();
 
         $ds = $dtp->each(function ($item, $key) {
-            $item->product_id = Product::where('id', $item->product_id)->select('name', 'code')->first();
+            $item->product_id = Product::where('id', $item->product_id)->select('name', 'sku')->first();
         });
 
         $value = (new NumeroALetras())->toInvoice($purchase->total, 2, 'soles');
@@ -128,7 +128,7 @@ class PDFController extends Controller
         $dtp = PurchaseDetail::where('purchase_id', $purchase->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get();
 
         $ds = $dtp->each(function ($item, $key) {
-            $item->product_id = Product::where('id', $item->product_id)->select('name', 'code')->first();
+            $item->product_id = Product::where('id', $item->product_id)->select('name', 'sku')->first();
         });
 
         $value = (new NumeroALetras())->toInvoice($purchase->total, 2, 'soles');

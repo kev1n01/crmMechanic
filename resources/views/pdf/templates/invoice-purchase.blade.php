@@ -28,7 +28,6 @@
                 <div style="border: 2px solid rgb(39, 39, 39); border-radius: 4px; width: 90%;">
                     <div class="text-center" style="padding: 1%">
                         <p style="margin-bottom: 0%;">R.U.C. {{ $company->ruc ?? '' }}</p>
-                        <p style="margin-bottom: 0%;">{{ $purchase->type_cpe }} electrónica</p>
                         <p>{{ $purchase->code_purchase }}</p>
                     </div>
                 </div>
@@ -95,7 +94,7 @@
             <tbody>
                 @forelse ($dtp as $w)
                     <tr>
-                        <td class="fs-3 fw-sb">{{ $w->product_id->code }}</td>
+                        <td class="fs-3 fw-sb">{{ $w->product_id->sku }}</td>
                         <td class="fs-3 fw-sb text-wrap w-45">{{ $w->product_id->name }}</td>
                         <td class="fs-3 fw-sb">{{ $w->price }}</td>
                         <td class="fs-3 fw-sb">{{ $w->quantity }}</td>
@@ -129,19 +128,17 @@
                 <tr>
                     <td class="fw-sb fs-3 text-wrap w-45" colspan="2"> <strong>Son:</strong> {{ $value }}
                     </td>
-                    <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Ope. Gravadas</strong></td>
-                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($totalOG, 2) }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
                     <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Descuento</strong></td>
-                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($totalNoDiscount - $purchase->total, 2) }}</td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/
+                        {{ number_format($totalNoDiscount - $purchase->total, 2) }}</td>
+                    {{-- <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Ope. Gravadas</strong></td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($totalOG, 2) }}</td> --}}
                 </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>IGV 18%</strong></td>
-                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($purchase->total - $totalOG, 2) }}</td>
-                </tr>
+                {{-- <tr> --}}
+                {{-- <td colspan="2"></td> --}}
+                {{-- <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>IGV 18%</strong></td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($purchase->total - $totalOG, 2) }}</td> --}}
+                {{-- </tr> --}}
                 <tr>
                     <td colspan="2"></td>
                     <td class="text-black fw-sb"colspan="2"><strong>Total</strong></td>
@@ -150,7 +147,7 @@
             </tfoot>
         </table>
     </div>
-    
+
     <hr style="width: 97%; border: 0.1mm solid rgb(48, 48, 48);" />
     <div class="border-line">
         <div id="footer">
@@ -158,7 +155,7 @@
             <p class="fw-sb" style="width: 100%;">
                 <strong>Observaciones:</strong> {{ $purchase->observation }}
             </p>
-            <table class="table-list" style="width: 55%;">
+            {{-- <table class="table-list" style="width: 55%;">
                 <thead>
                     <tr>
                         <th>NRO CUOTA </th>
@@ -196,8 +193,7 @@
                         </tr>
                     @endforelse
                 </tbody>
-            </table>
-
+            </table> --}}
         </div>
     </div>
 </body>

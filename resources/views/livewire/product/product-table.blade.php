@@ -120,7 +120,7 @@
                                 <x-table.heading sortable wire:click="sortBy('name')" :direction="$sortField == 'name' ? $sortDirection : null">Nombre
                                 </x-table.heading>
 
-                                <x-table.heading sortable wire:click="sortBy('code')" :direction="$sortField == 'code' ? $sortDirection : null">Código
+                                <x-table.heading sortable wire:click="sortBy('code')" :direction="$sortField == 'code' ? $sortDirection : null">SKU
                                 </x-table.heading>
                                 
                                 <x-table.heading sortable wire:click="sortBy('stock')" :direction="$sortField == 'stock' ? $sortDirection : null">Stock
@@ -149,7 +149,7 @@
 
                                         <x-table.cell class="text-wrap w-25">{{ $product->name }}</x-table.cell>
 
-                                        <x-table.cell>{{ $product->code }}</x-table.cell>
+                                        <x-table.cell>{{ $product->sku }}</x-table.cell>
                                         
                                         <x-table.cell>{{ $product->stock }}</x-table.cell>
 

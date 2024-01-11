@@ -47,13 +47,10 @@
                     <td class="border-td fw-sb">{{ $sale->customer->phone }}</td>
                 </tr>
                 <tr>
-                    <td class="border-td fw-sb"><strong>Dni:</strong> </td>
-                    <td class="border-td fw-sb">{{ $sale->customer->dni }}</td>
+                    <td class="border-td fw-sb"><strong>N° documento:</strong> </td>
+                    <td class="border-td fw-sb">{{ $sale->customer->num_doc }}</td>
                 </tr>
-                <tr>
-                    <td class="border-td fw-sb"><strong>Ruc:</strong> </td>
-                    <td class="border-td fw-sb">{{ $sale->customer->ruc }}</td>
-                </tr>
+
                 <tr>
                     <td class="border-td fw-sb"><strong>Dirección:</strong> </td>
                     <td colspan="3" class="border-td fw-sb">{{ $sale->customer->address }}</td>
@@ -102,7 +99,7 @@
             <tbody>
                 @forelse ($dts as $w)
                     <tr>
-                        <td class="fs-3 fw-sb">{{ $w->product_id->code }}</td>
+                        <td class="fs-3 fw-sb">{{ $w->product_id->sku }}</td>
                         <td class="fs-3 fw-sb text-wrap w-45">{{ $w->product_id->name }}</td>
                         <td class="fs-3 fw-sb">{{ $w->price }}</td>
                         <td class="fs-3 fw-sb">{{ $w->quantity }}</td>
@@ -145,18 +142,21 @@
                     <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Total</strong></td>
                     <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($sale->total, 2) }}</td>
                 </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Pagó con</strong></td>
-                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($sale->cash, 2) }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Vuelto</strong>
-                    </td>
-                    <td class="fw-sb fs-3 td_underline" colspan="2">S/
-                        {{ number_format($sale->cash - $sale->total, 2) }}</td>
-                </tr>
+                @if ($sale->type_payment != 'credito')
+                    <tr>
+                        <td colspan="2"></td>
+                        <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Pagó con</strong></td>
+                        <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($sale->cash, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"></td>
+                        <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Vuelto</strong>
+                        </td>
+                        <td class="fw-sb fs-3 td_underline" colspan="2">S/
+                            {{ number_format($sale->cash - $sale->total, 2) }}</td>
+                    </tr>
+                @endif
+
             </tfoot>
         </table>
     </div>
@@ -167,7 +167,7 @@
             <p class="fw-sb" style="width: 100%;">
                 <strong>Observaciones:</strong> {{ $sale->observation }}
             </p>
-            <table class="table-list" style="width: 100%;">
+            {{-- <table class="table-list" style="width: 100%;">
                 <thead>
                     <tr>
                         <th>NRO CUOTA </th>
@@ -182,7 +182,7 @@
                         <td class="fw-sb fs-3 text-center">942.22</td>
                     </tr>
                 </tbody>
-            </table>
+            </table> --}}
             <table class="table-list" style="float: left; width: 100%; margin-top: 2%">
                 <thead>
                     <tr>
@@ -208,11 +208,6 @@
             </table>
         </div>
         <div style="margin-top: 15%">
-            <span class="text-footer fw-sb">
-                <strong>Atención:</strong> Todo trabajo se realizará con un 50% de adelanto al costo de
-                proforma, una vez terminado el trabajo tendrá 7 días hábiles a recoger su vehículo, luego de esto se
-                sumarán costos de cochera
-            </span>
             <p class="text-footer fw-sb">
                 En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad a
                 todos nuestros clientes

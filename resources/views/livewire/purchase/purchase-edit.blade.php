@@ -169,21 +169,21 @@
                                             <td colspan="2">Subtotal</td>
                                             <td>S/ {{ number_format($total, 2) }}</td>
                                         </tr>
-                                        <tr>
+                                        {{-- <tr>
                                             <td colspan="2"></td>
                                             <td colspan="2">Total Ope. Gravadas</td>
                                             <td>S/ {{ number_format($totalOG, 2) }}</td>
-                                        </tr>
+                                        </tr> --}}
                                         <tr>
                                             <td colspan="2"></td>
                                             <td colspan="2">Total Descuentos</td>
                                             <td>S/ {{ number_format($total - $totalDiscount, 2) }}</td>
                                         </tr>
-                                        <tr>
+                                        {{-- <tr>
                                             <td colspan="2"></td>
                                             <td colspan="2">Total IGV 18%</td>
                                             <td>S/ {{ number_format($totalDiscount - $totalOG, 2) }}</td>
-                                        </tr>
+                                        </tr> --}}
                                         <tr>
                                             <td colspan="2"></td>
                                             <td colspan="2">TOTAL</td>

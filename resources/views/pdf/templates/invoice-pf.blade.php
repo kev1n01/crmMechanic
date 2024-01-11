@@ -157,7 +157,13 @@
             <tbody>
                 @forelse ($dot as $w)
                     <tr>
-                        <td class="fs-3 fw-sb">{{ $w->item->code }}</td>
+                        <td class="fs-3 fw-sb">
+                            @if (strlen(strval($w->item->code)) < 4)
+                                {{ $w->item->code }}
+                            @else
+                                {{ $w->item->sku }}
+                            @endif
+                        </td>
                         <td class="fs-3 fw-sb text-wrap w-45">{{ $w->item->name }}</td>
                         <td class="fs-3 fw-sb">{{ $w->price }}</td>
                         <td class="fs-3 fw-sb">{{ $w->quantity }}</td>
@@ -196,7 +202,8 @@
                 <tr>
                     <td colspan="2"></td>
                     <td class="fw-sb fs-3 text-wrap w-45" colspan="2"><strong>Descuento</strong></td>
-                    <td class="fw-sb fs-3 td_underline" colspan="2">S/ {{ number_format($totalNoDiscount - $wo->total, 2) }}</td>
+                    <td class="fw-sb fs-3 td_underline" colspan="2">S/
+                        {{ number_format($totalNoDiscount - $wo->total, 2) }}</td>
                 </tr>
                 {{-- <tr>
                     <td colspan="2"></td>
@@ -215,9 +222,7 @@
     <div class="border-line">
         <div id="footer">
             <p class="fw-sb" style="width: 100%;">
-                <strong>Observaciones:</strong> Lorem, ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-                necessitatibus, aliquam ipsam reprehenderit maxime vel eum, beatae non amet quis consequatur obcaecati
-                sit et cupiditate repellendus omnis doloribus nulla saepe.
+                <strong>Observaciones:</strong> {{ $wo->observation }}
             </p>
             <table class="table-list" style="float: left; width: 100%; margin-top: 2%">
                 <thead>
@@ -249,7 +254,8 @@
                     sumarán costos de cochera
                 </span>
                 <p class="text-footer fw-sb">
-                    En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad a
+                    En caso de emergencias contactanos que estamos para ayudarlo, profesionalismo y servicio de calidad
+                    a
                     todos nuestros clientes
                 </p>
             </div>

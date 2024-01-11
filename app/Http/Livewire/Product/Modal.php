@@ -48,10 +48,10 @@ class Modal extends Component
         return $code;
     }
 
-    // public function updatedEditingSku($value)
-    // {
-    //     $this->editing->sku = strtoupper($value);
-    // }
+    public function updatedEditingSku($value)
+    {
+        $this->editing->sku = strtoupper($value);
+    }
 
     public function rules()
     {
@@ -86,7 +86,6 @@ class Modal extends Component
         if ($this->image) {
             $this->editing->image = $this->loadImage($this->image);
         }
-        // $this->editing->sku = strtoupper(substr($this->editing->name, 0, 3)) . '-' . $this->editing->stock . '-' . $this->editing->sku;
         $this->editing->save();
         $this->nameModal === 'Crear nuevo producto' ? $this->emit('success_alert', 'Producto creado') : $this->emit('success_alert', 'Producto actualizado');
         $this->dispatchBrowserEvent('close-modal-product');
@@ -137,7 +136,6 @@ class Modal extends Component
         $this->dispatchBrowserEvent('open-modal-product');
         if ($this->editing->isNot($product)) $this->editing = $product; // para preservar cambios en los inputs
         
-        // $this->editing->sku = $this->editing->sku === '' ? explode('-', $this->editing->sku)[2] : '';
         $this->emit('refreshList');
     }
 
