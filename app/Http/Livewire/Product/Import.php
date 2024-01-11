@@ -24,7 +24,7 @@ class Import extends Component
 
     protected $rules = [
         'fieldColumnMap.name' => 'required',
-        'fieldColumnMap.code' => 'required',
+        'fieldColumnMap.code' => 'nullable',
         'fieldColumnMap.sku' => 'required',
         'fieldColumnMap.stock' => 'required',
         'fieldColumnMap.sale_price' => 'required',
@@ -34,7 +34,6 @@ class Import extends Component
 
     protected $messages = [
         'fieldColumnMap.name.required' => 'El campo nombre es obligatorio',
-        'fieldColumnMap.code.required' => 'El campo codigo es obligatorio',
         'fieldColumnMap.sku.required' => 'El campo sku es obligatorio',
         'fieldColumnMap.stock.required' => 'El campo stock es obligatorio',
         'fieldColumnMap.sale_price.required' => 'El campo precio venta es obligatorio',
