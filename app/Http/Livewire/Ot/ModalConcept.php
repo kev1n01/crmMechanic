@@ -14,17 +14,16 @@ class ModalConcept extends Component
     public Concept $editingconcept;
     protected $listeners = ['editconcept' => 'edit', 'createconcept' => 'create'];
 
-    public function code_random($lenght, $letter = '')
+    public function code_random()
     {
         $cc = Concept::count();
-        // $code = str_pad($cc + 1, $lenght, "0", STR_PAD_LEFT);
-        return $letter . '' . $cc + 1;
+        return $cc + 1;
     }
 
     public function mount()
     {
         $this->editingconcept = $this->makeBlankFields();
-        $this->editingconcept->code = $this->code_random(3);
+        $this->editingconcept->code = $this->code_random();
     }
 
     public function rules()
@@ -68,6 +67,7 @@ class ModalConcept extends Component
     public function create()
     {
         if ($this->editingconcept->getKey()) $this->editingconcept = $this->makeBlankFields(); // para preservar cambios en los inputs
+        $this->editingconcept->code = $this->code_random();
         $this->nameModal = 'Crear nuevo servicio';
         $this->resetErrorBag();
         $this->resetValidation();
