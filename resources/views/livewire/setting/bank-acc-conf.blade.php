@@ -11,6 +11,9 @@
 
                     <x-input.input-tooltip-error class="col-xl-6" name="editing.cta_interbank"
                         label="Cuenta interbancaria" type="text" :error="$errors->first('editing.cta_interbank')" :required=true />
+
+                    <x-input.input-tooltip-error class="col-xl-6" name="editing.nro" label="Número de billetera"
+                        type="text" :error="$errors->first('editing.nro')" :required=true max="9" />
                 </div>
             </div>
             <div class="d-flex flex-row-reverse bd-highlight mt-1 mb-3">
@@ -28,10 +31,7 @@
                 <x-table.heading sortable wire:click="sortBy('name')" :direction="$sortField == 'name' ? $sortDirection : null">Nombre
                 </x-table.heading>
 
-                <x-table.heading sortable wire:click="sortBy('cta_bank')" :direction="$sortField == 'cta_bank' ? $sortDirection : null">Cuenta bancaria
-                </x-table.heading>
-
-                <x-table.heading sortable wire:click="sortBy('cta_interbank')" :direction="$sortField == 'cta_interbank' ? $sortDirection : null">Cuenta interbancaria
+                <x-table.heading sortable wire:click="sortBy('cta_bank')" :direction="$sortField == 'cta_bank' ? $sortDirection : null">Numero de referencia
                 </x-table.heading>
 
                 <x-table.heading>Acción</x-table.heading>
@@ -43,9 +43,13 @@
                     <x-table.row>
                         <x-table.cell class="text-wrap w-25">{{ $bc->name }}</x-table.cell>
 
-                        <x-table.cell>{{ $bc->cta_bank }}</x-table.cell>
-
-                        <x-table.cell>{{ $bc->cta_interbank }}</x-table.cell>
+                        <x-table.cell>
+                            @if ($bc->cta_bank)
+                                {{ $bc->cta_bank }} <br> {{ $bc->cta_interbank }}
+                            @else    
+                                {{ $bc->nro }}
+                            @endif
+                        </x-table.cell>
 
                         <x-table.cell>
                             <a class="btn btn-info btn-sm mb-1" wire:click="edit({{ $bc->id }})">

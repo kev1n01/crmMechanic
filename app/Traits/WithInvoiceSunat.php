@@ -4,7 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\Http;
 
-trait WithFacturaSunat
+trait WithInvoiceSunat
 {
     public function getTokenLoginApi()
     {

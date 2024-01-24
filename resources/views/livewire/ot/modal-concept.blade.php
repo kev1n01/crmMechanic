@@ -9,6 +9,9 @@
                 <x-input.input-tooltip-error class="col-12" name="editingconcept.name" label="Nombre del concepto"
                     type="text" :error="$errors->first('editingconcept.name')" :required=true />
 
+                <x-input.input-tooltip-error class="col-12" name="editingconcept.price" label="Precio"
+                    type="number" :error="$errors->first('editingconcept.price')" :required=true />
+
             </x-slot>
 
             <x-slot name="footer">

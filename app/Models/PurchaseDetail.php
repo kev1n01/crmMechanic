@@ -13,6 +13,7 @@ class PurchaseDetail extends Model
         'purchase_id',
         'product_id',
         'discount',
+        'typeAfectIgv',
         'quantity',
         'price',
     ];

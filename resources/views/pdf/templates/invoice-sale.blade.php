@@ -187,16 +187,20 @@
                 <thead>
                     <tr>
                         <th>ENTIDAD FINANCIERA </th>
-                        <th>CUENTA BANCARIA </th>
-                        <th>CUENTA INTERBANCARIA </th>
+                        <th>NUMERO DE REFERENCIA </th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($bankacc as $bc)
                         <tr>
                             <td class="fw-sb fs-3 text-center">{{ $bc->name }}</td>
-                            <td class="fw-sb fs-3 text-center">{{ $bc->cta_bank }}</td>
-                            <td class="fw-sb fs-3 text-center">{{ $bc->cta_interbank }}</td>
+                            <td class="fw-sb fs-3 text-center">
+                                @if ($bc->cta_bank)
+                                    {{ $bc->cta_bank }} <br> CCI: {{ $bc->cta_interbank }}
+                                @else
+                                    {{ $bc->nro }}
+                                @endif
+                            </td>
                         </tr>
                     @empty
                         <tr>

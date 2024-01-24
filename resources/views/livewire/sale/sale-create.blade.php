@@ -145,7 +145,7 @@
                                         <th width="40%">Producto</th>
                                         <th width="25%">Precio U.</th>
                                         <th width="15%">Cantidad</th>
-                                        <th width="15%">Descuento</th>
+                                        <th width="15%">Descuento %</th>
                                         <th width="20%">Subtotal</th>
                                         <th width="10%">Acción</th>
                                     </x-slot>

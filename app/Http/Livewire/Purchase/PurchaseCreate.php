@@ -22,12 +22,14 @@ class PurchaseCreate extends Component
     public $types = [];
     public $providers = [];
     public $cart = [];
-    
+
     public $pf = [];
 
     public $total;
     public $totalDiscount = 0;
     public $totalOG = 0;
+    public $totalOE = 0;
+    public $totaligvgrav = 0;
 
     public $serial = '';
     public $correlative = '';
@@ -112,6 +114,7 @@ class PurchaseCreate extends Component
 
         if ($this->editing->provider_id > 0) {
             $this->cart = Cart::session($this->editing->provider->name)->getContent()->sortBy('name');
+            // dd($this->cart);
             $this->updateCartOptions();
         } else {
             $this->cart = [];
@@ -139,16 +142,17 @@ class PurchaseCreate extends Component
         return Purchase::make(['status' => 'pendiente', 'method_payment' => 'efectivo']);
     } /*para dejar vacios los inpust*/
 
-    public function updatedEditingProviderId($value){
+    public function updatedEditingProviderId($value)
+    {
         $this->pf = Provider::find($value);
     }
 
     public function updatedEditingTypeCpe($value)
     {
         if ($value == 'boleta') {
-            $this->serial = 'B00';
+            $this->serial = 'B';
         } else {
-            $this->serial = 'F00';
+            $this->serial = 'F';
         }
     }
 
@@ -162,14 +166,18 @@ class PurchaseCreate extends Component
         $this->editing->nro_cpe = $this->serial . ' - ' . $value;
     }
 
-    public function addProduct(Product $product, $cant = 1, $discount = 0)
+    public function addProduct(Product $product, $discount = 0, $typeAfectIgv = 20)
     {
         if ($product->status == 'inactivo') {
             $this->emit('error_alert', 'Este producto está inactivo');
             return;
         }
-
-        Cart::session($this->editing->provider->name)->add($product->id, $product->name, $product->purchase_price, $cant, ['discount' => $discount]);
+        $item = Cart::session($this->editing->provider->name)->get($product->id);
+        if ($item) {
+            $this->updateQuantityCart($product->id, $item->quantity + 1);
+        } else {
+            Cart::session($this->editing->provider->name)->add($product->id, $product->name, $product->purchase_price, 1, ['typeAfectIgv' => $typeAfectIgv, 'discount' => $discount]);
+        }
         $this->searchProduct = '';
         $this->updateCartOptions();
         $this->emit('success_alert', 'Producto agregado a la compra');
@@ -183,22 +191,24 @@ class PurchaseCreate extends Component
 
     public function updateQuantityCart(Product $product, $cant, $discount = 0)
     {
+        $item = Cart::session($this->editing->provider->name)->get($product->id);
         if ($cant > 0) {
             $price_cart_exist = Cart::session($this->editing->provider->name)->get($product->id)->price;
             $this->removeItem($product->id);
-            Cart::session($this->editing->provider->name)->add($product->id, $product->name, $price_cart_exist, $cant, ['discount' => $discount]);
-            $this->updateCartOptions();
+            Cart::session($this->editing->provider->name)->add($product->id, $product->name, $price_cart_exist, $cant, ['typeAfectIgv' => $item->attributes['typeAfectIgv'], 'discount' => $discount]);
         } else {
             $this->removeItem($product->id);
         }
+        $this->updateCartOptions();
     }
 
     public function updateDiscountCart(Product $product, $discount)
     {
+        $item = Cart::session($this->editing->provider->name)->get($product->id);
         if ($discount > 0) {
-            Cart::session($this->editing->provider->name)->update($product->id, ['attributes' => ['discount' => $discount]]);
+            Cart::session($this->editing->provider->name)->update($product->id, ['attributes' => ['discount' => $discount, 'typeAfectIgv' => $item->attributes['typeAfectIgv']]]);
         } else {
-            Cart::session($this->editing->provider->name)->update($product->id, ['attributes' => ['discount' => 0]]);
+            Cart::session($this->editing->provider->name)->update($product->id, ['attributes' => ['discount' => $discount = 0, 'typeAfectIgv' => $item->attributes['typeAfectIgv']]]);
         }
         $this->updateCartOptions();
     }
@@ -216,14 +226,50 @@ class PurchaseCreate extends Component
         $this->emit('success_alert', 'Lista de productos reiniciado');
     }
 
+    public function updateAfectIgvCart($id, $af)
+    {
+        $code = intval($id);
+        if ($af == 20) {
+            $typeAfectIgv = 10;
+        }
+
+        if ($af == 10) {
+            $typeAfectIgv = 20;
+        }
+        
+        $item = Cart::session($this->editing->provider->name)->get($code);
+        Cart::session($this->editing->provider->name)->update($code, ['attributes' => ['typeAfectIgv' => $typeAfectIgv, 'discount' => $item->attributes['discount']]]);
+        $this->updateCartOptions();
+    }
+
     public function calculeTotal()
     {
+        $this->totalOE = 0;
+        $this->totalOG = 0;
+        $this->totaligvgrav = 0;
         $this->totalDiscount = 0;
+
         $this->cart = Cart::session($this->editing->provider->name)->getContent();
+        $afectGravada = $this->cart->filter(function ($i) {
+            return $i->attributes['typeAfectIgv'] === 10;
+        });
+
+        $afectExonerada = $this->cart->filter(function ($i) {
+            return $i->attributes['typeAfectIgv'] === 20;
+        });
+
+        foreach ($afectExonerada as $ae) {
+            $this->totalOE += $ae->price * $ae->quantity - (($ae->quantity * $ae->price) * ($ae->attributes['discount'] / 100));
+        }
+
+        foreach ($afectGravada as $ag) {
+            $this->totalOG += $ag->price * $ag->quantity - (($ag->quantity * $ag->price) * ($ag->attributes['discount'] / 100));
+            $this->totaligvgrav += $ag->price * $ag->quantity * 0.18 - (($ag->quantity * $ag->price) * ($ag->attributes['discount'] / 100)) * 0.18;
+        }
+
         foreach ($this->cart as $c) {
             $this->totalDiscount += $c->price * $c->quantity - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
         }
-        $this->totalOG = $this->totalDiscount / 1.18;
     }
 
     public function cancel()
@@ -261,7 +307,7 @@ class PurchaseCreate extends Component
     {
         $this->validate();
         $this->calculeTotal();
-        $this->editing->total = $this->totalDiscount;
+        $this->editing->total = $this->totalDiscount + $this->totaligvgrav;
         $this->editing->date_purchase = Carbon::parse($this->editing->date_purchase)->format('Y-m-d');
         $this->editing->save();
         foreach ($this->cart as $item) {
@@ -269,6 +315,7 @@ class PurchaseCreate extends Component
                 'price' => $item->price,
                 'quantity' => $item->quantity,
                 'discount' => $item->attributes['discount'],
+                'typeAfectIgv' => $item->attributes['typeAfectIgv'],
                 'product_id' => $item->id,
                 'purchase_id' => $this->editing->id,
             ]);

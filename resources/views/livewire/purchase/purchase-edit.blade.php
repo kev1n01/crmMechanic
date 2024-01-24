@@ -1,4 +1,4 @@
-@section('title', 'Editar compra '.$editing->code_purchase )
+@section('title', 'Editar compra ' . $editing->code_purchase)
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -13,50 +13,63 @@
                             Guardar
                         </button>
                     </div>
-                    <div class="col-lg-7">
+                    <div class="col-xl-6 col-lg-6 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <x-input.select-button class="col-xl-9" name="editing.provider_id" label="Proveedor"
+                                        :options="$providers" :error="$errors->first('editing.provider_id')" :required=true
+                                        fnbtn="$emit('createprovider')" iconbtn="uil-user-plus"
+                                        title="Crear nuevo proveedor" />
+                                </div>
+                                @if ($editing->provider_id > 0)
+                                    <div class="mt-2">
+                                        <ul class="mb-0 ms-2 list-inline">
+                                            <li class="list-inline-item">
+                                                <h5 class="mb-1">Cel: {{ $pf->phone }}</h5>
+                                                <h5 class="mb-1">Ruc: {{ $pf->ruc }}</h5>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <h5 class="mb-1">Dirección: {{ $pf->address }}</h5>
+                                                <h4 class="mb-1">
+                                                    <span
+                                                        class="badge badge-{{ $pf->status_color }}-lighten">{{ $pf->status }}</span>
+                                                </h4>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-body">
                                 <div class="row g-2">
                                     <x-input.input-tooltip-error class="col-xl-3" name="editing.code_purchase"
                                         label="Código" type="text" :error="$errors->first('editing.code_purchase')" :required=true :disabled=true />
 
-                                    <x-input.select class="col-xl-8" name="editing.provider_id" label="Proveedor"
-                                        :required=true :options="$providers" :error="$errors->first('editing.provider_id')" />
+                                    <x-input.select class="col-xl-4 mt-2" name="editing.status" label="Estado"
+                                        :required=true :options="$statuses" :error="$errors->first('editing.status')" />
 
-                                    <div class="col-xl-1">
-                                        <button type="button" wire:click="$emit('createprovider')"
-                                            class="btn btn-primary rounded btn-md" style="margin-top:30px;"><i
-                                                class="uil-user-plus"></i></button>
-                                    </div>
-                                    <x-input.select class="col-xl-6 mt-2" name="editing.status" label="Estado"
-                                        :required=true :options="$statuses" :error="$errors->first('editing.status')"  :disabled=true/>
-
-                                    <x-input.datepicker class="col-xl-6 mt-2" name="editing.date_purchase"
+                                    <x-input.datepicker class="col-xl-5 mt-2" name="editing.date_purchase"
                                         label="Fecha" id="dp1" :error="$errors->first('editing.date_purchase')" :required=true />
 
                                     <x-input.select class="col-xl-3 mt-2" name="editing.type_cpe" label="Tipo de CPE"
                                         :required=true :options="$types" :error="$errors->first('editing.type_cpe')" />
 
-                                    @if ($editing->type_cpe)
+                                    <x-input.input-tooltip-error class="col-xl-2" name="serial" label="Serie"
+                                        type="text" :error="$errors->first('serial')" :required=true />
 
-                                        <x-input.input-tooltip-error class="col-xl-2" name="serial" label="Serie"
-                                            type="text" :error="$errors->first('serial')" :required=true />
+                                    <x-input.input-tooltip-error class="col-xl-3" name="correlative" label="Correlativo"
+                                        type="text" :error="$errors->first('correlative')" :required=true />
 
-                                        <x-input.input-tooltip-error class="col-xl-3" name="correlative"
-                                            label="Correlativo" type="text" :error="$errors->first('correlative')" :required=true />
+                                    <x-input.select class="col-xl-4 mt-2" name="editing.method_payment"
+                                        label="Metodo de pago" :required=true :options="$methods" :error="$errors->first('editing.method_payment')" />
 
-                                        <x-input.select class="col-xl-4 mt-2" name="editing.method_payment"
-                                            label="Metodo de pago" :required=true :options="$methods"
-                                            :error="$errors->first('editing.method_payment')" />
-                                    @endif
-
-                                    <x-input.textarea class="col-xl-12 mt-2 " name="editing.observation"
-                                        label="Observaciones" />
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-5">
+                    <div class="col-xl-6 col-lg-6 col-md-6">
                         <div class="card">
                             <div class="card-body">
                                 <div class="p-1 mt-4 mt-lg-0 rounded">
@@ -66,12 +79,14 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="fs-2 text-center" colspan="2">
-                                                        S/{{ number_format($totalDiscount, 2) }}</td>
+                                                        S/{{ number_format($totalDiscount + $totaligvgrav , 2) }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
+                                <x-input.textarea class="col-xl-12 mt-2 " name="editing.observation"
+                                    label="Observaciones" rows="2" />
                             </div>
                         </div>
                     </div>
@@ -112,13 +127,14 @@
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <x-table footer class="table-striped table-bordered">
+                                <x-table footer class="table-striped">
                                     <x-slot name="head">
                                         <th width="40%">Producto</th>
                                         <th width="20%">Precio U.</th>
                                         <th width="15%">Cantidad</th>
-                                        <th width="15%">Descuento</th>
-                                        <th width="10%">Subtotal</th>
+                                        <th width="15%">Descuento %</th>
+                                        <th width="20%">Subtotal</th>
+                                        <th width="20%">Gravado/Exonerado</th>
                                         <th width="10%">Acción</th>
                                     </x-slot>
 
@@ -149,6 +165,16 @@
                                                         disabled>
                                                 </x-table.cell>
                                                 <x-table.cell>
+                                                    <input type="checkbox" id="af{{ $c->id }}"
+                                                        {{ $c->attributes['typeAfectIgv'] === 10 ? 'checked' : '' }}
+                                                        wire:change="updateAfectIgvCart({{ $c->id }}, $('#af' + {{ $c->id }}).val())"
+                                                        data-switch="success"
+                                                        value="{{ $c->attributes['typeAfectIgv'] }}">
+
+                                                    <label for="af{{ $c->id }}" data-on-label="Grav"
+                                                        data-off-label="Exon"></label>
+                                                </x-table.cell>
+                                                <x-table.cell>
                                                     <a class="action-icon"
                                                         wire:click.prevent="removeItem({{ $c->id }})"><i
                                                             class="mdi mdi-delete"></i></a>
@@ -157,7 +183,7 @@
                                         @endforeach
                                         @if (count($cart) == 0)
                                             <x-table.row>
-                                                <x-table.cell class="text-center" colspan="6">
+                                                <x-table.cell class="text-center" colspan="7">
                                                     No hay productos agregados a la compra
                                                 </x-table.cell>
                                             </x-table.row>
@@ -165,29 +191,29 @@
                                     </x-slot>
                                     <x-slot name="foot">
                                         <tr>
-                                            <td colspan="2"></td>
-                                            <td colspan="2">Subtotal</td>
-                                            <td>S/ {{ number_format($total, 2) }}</td>
-                                        </tr>
-                                        {{-- <tr>
-                                            <td colspan="2"></td>
+                                            <td colspan="3"></td>
                                             <td colspan="2">Total Ope. Gravadas</td>
-                                            <td>S/ {{ number_format($totalOG, 2) }}</td>
-                                        </tr> --}}
-                                        <tr>
-                                            <td colspan="2"></td>
-                                            <td colspan="2">Total Descuentos</td>
-                                            <td>S/ {{ number_format($total - $totalDiscount, 2) }}</td>
+                                            <td colspan="2">S/ {{ number_format($totalOG, 2) }}</td>
                                         </tr>
-                                        {{-- <tr>
-                                            <td colspan="2"></td>
-                                            <td colspan="2">Total IGV 18%</td>
-                                            <td>S/ {{ number_format($totalDiscount - $totalOG, 2) }}</td>
-                                        </tr> --}}
                                         <tr>
-                                            <td colspan="2"></td>
+                                            <td colspan="3"></td>
+                                            <td colspan="2">Total Ope. Exoneradas</td>
+                                            <td colspan="2">S/ {{ number_format($totalOE, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"></td>
+                                            <td colspan="2">Total Descuentos</td>
+                                            <td colspan="2">S/ {{ number_format($total - $totalDiscount, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"></td>
+                                            <td colspan="2">Total IGV 18%</td>
+                                            <td colspan="2">S/ {{ number_format($totaligvgrav, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"></td>
                                             <td colspan="2">TOTAL</td>
-                                            <td>S/ {{ number_format($totalDiscount, 2) }}</td>
+                                            <td colspan="2">S/ {{ number_format($totalDiscount + $totaligvgrav, 2) }}</td>
                                         </tr>
                                     </x-slot>
                                 </x-table>

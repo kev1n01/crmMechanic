@@ -22,22 +22,23 @@ class BankAccConf extends Component
     {
         return [
             'editing.name' => ['required', Rule::unique('bank_accs', 'name')->ignore($this->editing)],
-            'editing.cta_bank' => ['required', 'max:18', 'min:18', Rule::unique('bank_accs', 'cta_bank')->ignore($this->editing)],
+            'editing.cta_bank' => ['nullable', 'max:18', 'min:18', Rule::unique('bank_accs', 'cta_bank')->ignore($this->editing)],
             'editing.cta_interbank' => ['nullable', 'max:20', 'min:20', Rule::unique('bank_accs', 'cta_interbank')->ignore($this->editing)],
-
+            'editing.nro' => ['nullable', 'max:9', 'min:9'],
         ];
     }
 
     protected $messages = [
         'editing.name.required' => 'El nombre del banco es obligatorio',
         'editing.name.unique' => 'El nombre del banco ya esta registrado',
-        'editing.cta_bank.required' => 'La cuenta bancaria es obligatorio',
         'editing.cta_bank.unique' => 'La cuenta bancaria ya esta registrada',
         'editing.cta_bank.max' => 'La cuenta bancaria no debe tener más de 18 caracteres',
         'editing.cta_bank.min' => 'La cuenta bancaria no debe tener menos de 18 caracteres',
         'editing.cta_interbank.unique' => 'La cuenta interbancaria ya esta registrada',
         'editing.cta_interbank.max' => 'La cuenta interbancaria no debe tener más de 20 caracteres',
         'editing.cta_interbank.min' => 'La cuenta interbancaria no debe tener menos de 20 caracteres',
+        'editing.nro.max' => 'La número de billetera  no debe tener más de 9 caracteres',
+        'editing.nro.min' => 'La número de billetera  no debe tener menos de 9 caracteres',
     ];
 
     public function updated($label)

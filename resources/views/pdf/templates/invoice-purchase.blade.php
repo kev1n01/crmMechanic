@@ -78,7 +78,7 @@
             </tbody>
         </table>
 
-        <p class="fs-3 fw-sb" style="margin-top:10%"></p>
+        <p class="fs-3 fw-sb" style="margin-top:12%"></p>
 
         <table class="table-list">
             <thead>

@@ -31,6 +31,7 @@ class ModalConcept extends Component
         return [
             'editingconcept.name' => ['required', 'min:5', 'max:50', Rule::unique('concepts', 'name')->ignore($this->editingconcept)],
             'editingconcept.code' => ['required', 'min:1', 'max:3', Rule::unique('concepts', 'code')->ignore($this->editingconcept)],
+            'editingconcept.price' => 'required|numeric|regex:/^-?[0-9]+(?:\.[0-9]{1,2})?$/',
         ];
     }
     protected $messages = [
@@ -42,6 +43,7 @@ class ModalConcept extends Component
         'editingconcept.code.min' => 'El codigo debe tener al menos 1 caracteres',
         'editingconcept.code.max' => 'El codigo no debe tener más de 3 caracteres',
         'editingconcept.code.unique' => 'El codigo ya fue registrado',
+        'editingconcept.price.required' => 'El precio es obligatorio',
     ];
 
     public function save()
@@ -56,7 +58,7 @@ class ModalConcept extends Component
 
     public function makeBlankFields()
     {
-        return Concept::make(); /*para dejar vacios los inpust*/
+        return Concept::make(['price' => 0]); /*para dejar vacios los inpust*/
     }
 
     public function updated($label)

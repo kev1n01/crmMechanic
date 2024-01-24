@@ -33,7 +33,7 @@
                                                 <h5 class="mb-1">Cel: {{ $pf->phone }}</h5>
                                                 <h5 class="mb-1">Ruc: {{ $pf->ruc }}</h5>
                                             </li>
-                                            <li class="list-inline-item ps-3">
+                                            <li class="list-inline-item">
                                                 <h5 class="mb-1">Dirección: {{ $pf->address }}</h5>
                                                 <h4 class="mb-1">
                                                     <span
@@ -83,7 +83,7 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="fs-2 text-center" colspan="2">
-                                                        S/{{ number_format($totalDiscount, 2) }}</td>
+                                                        S/{{ number_format($totalDiscount + $totaligvgrav , 2) }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -120,7 +120,7 @@
                                             <span class="dropdown-item notify-item"
                                                 wire:click.prevent="addProduct({{ $p->id }})">
                                                 <span>📦
-                                                    {{ $p->name . ' - ' . $p->code . ' - ' . $p->stock . ' - ' . $p->status }}</span>
+                                                    {{ $p->name . ' - ' . $p->code . ' - ' . $p->stock . ' - ' . $p->status  . ' - precio venta: ' . $p->sale_price . ' - precio compra: ' . $p->purchase_price}}</span>
                                             </span>
                                         @empty
                                             <a class="dropdown-item notify-item">
@@ -132,13 +132,14 @@
                             </div>
 
                             <div class="table-responsive">
-                                <x-table footer class="table-striped table-bordered">
+                                <x-table footer class="table-striped">
                                     <x-slot name="head">
                                         <th width="40%">Producto</th>
                                         <th width="20%">Precio U.</th>
                                         <th width="15%">Cantidad</th>
-                                        <th width="15%">Descuento</th>
-                                        <th width="10%">Importe</th>
+                                        <th width="15%">Descuento %</th>
+                                        <th width="20%">Subtotal</th>
+                                        <th width="20%">Gravado/Exonerado</th>
                                         <th width="10%">Acción</th>
                                     </x-slot>
 
@@ -169,6 +170,16 @@
                                                         disabled>
                                                 </x-table.cell>
                                                 <x-table.cell>
+                                                    <input type="checkbox" id="af{{ $c->id }}"
+                                                        {{ $c->attributes['typeAfectIgv'] === 10 ? 'checked' : '' }}
+                                                        wire:change="updateAfectIgvCart({{ $c->id }}, $('#af' + {{ $c->id }}).val())"
+                                                        data-switch="success"
+                                                        value="{{ $c->attributes['typeAfectIgv'] }}">
+
+                                                    <label for="af{{ $c->id }}" data-on-label="Grav"
+                                                        data-off-label="Exon"></label>
+                                                </x-table.cell>
+                                                <x-table.cell>
                                                     <a class="action-icon"
                                                         wire:click.prevent="removeItem({{ $c->id }})"><i
                                                             class="mdi mdi-delete"></i></a>
@@ -176,7 +187,7 @@
                                             </x-table.row>
                                         @empty
                                             <x-table.row>
-                                                <x-table.cell class="text-center" colspan="6">
+                                                <x-table.cell class="text-center" colspan="7">
                                                     No hay productos agregados a la compra
                                                 </x-table.cell>
                                             </x-table.row>
@@ -184,29 +195,29 @@
                                     </x-slot>
                                     <x-slot name="foot">
                                         <tr>
-                                            <td colspan="2"></td>
-                                            <td colspan="2">Subtotal</td>
-                                            <td>S/ {{ number_format($total, 2) }}</td>
-                                        </tr>
-                                        {{-- <tr>
-                                            <td colspan="2"></td>
+                                            <td colspan="3"></td>
                                             <td colspan="2">Total Ope. Gravadas</td>
-                                            <td>S/ {{ number_format($totalOG, 2) }}</td>
-                                        </tr> --}}
-                                        <tr>
-                                            <td colspan="2"></td>
-                                            <td colspan="2">Total Descuentos</td>
-                                            <td>S/ {{ number_format($total - $totalDiscount, 2) }}</td>
+                                            <td colspan="2">S/ {{ number_format($totalOG, 2) }}</td>
                                         </tr>
-                                        {{-- <tr>
-                                            <td colspan="2"></td>
-                                            <td colspan="2">Total IGV 18%</td>
-                                            <td>S/ {{ number_format($totalDiscount - $totalOG, 2) }}</td>
-                                        </tr> --}}
                                         <tr>
-                                            <td colspan="2"></td>
+                                            <td colspan="3"></td>
+                                            <td colspan="2">Total Ope. Exoneradas</td>
+                                            <td colspan="2">S/ {{ number_format($totalOE, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"></td>
+                                            <td colspan="2">Total Descuentos</td>
+                                            <td colspan="2">S/ {{ number_format($total - $totalDiscount, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"></td>
+                                            <td colspan="2">Total IGV 18%</td>
+                                            <td colspan="2">S/ {{ number_format($totaligvgrav, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"></td>
                                             <td colspan="2">TOTAL</td>
-                                            <td>S/ {{ number_format($totalDiscount, 2) }}</td>
+                                            <td colspan="2">S/ {{ number_format($totalDiscount + $totaligvgrav, 2) }}</td>
                                         </tr>
                                     </x-slot>
                                 </x-table>

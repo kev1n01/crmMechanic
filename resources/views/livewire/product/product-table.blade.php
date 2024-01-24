@@ -128,11 +128,15 @@
 
                                 <x-table.heading>Estado</x-table.heading>
 
-                                <x-table.heading>Unidad</x-table.heading>
+                                {{-- <x-table.heading>Unidad</x-table.heading>
 
                                 <x-table.heading>Categoría</x-table.heading>
 
-                                <x-table.heading>Marca</x-table.heading>
+                                <x-table.heading>Marca</x-table.heading> --}}
+
+                                <x-table.heading>Precio venta</x-table.heading>
+
+                                <x-table.heading>Precio compra</x-table.heading>
 
                                 <x-table.heading>Acción</x-table.heading>
 
@@ -161,11 +165,14 @@
                                             </button>
                                         </x-table.cell>
 
-                                        <x-table.cell>{{ $product->unit->name ?? 'N/A' }}</x-table.cell>
+                                        {{-- <x-table.cell>{{ $product->unit->name ?? 'N/A' }}</x-table.cell>
 
                                         <x-table.cell>{{ $product->category->name ?? 'N/A' }}</x-table.cell>
 
-                                        <x-table.cell>{{ $product->brand->name ?? 'N/A' }}</x-table.cell>
+                                        <x-table.cell>{{ $product->brand->name ?? 'N/A' }}</x-table.cell> --}}
+                                        <x-table.cell>S/ {{ $product->sale_price }}</x-table.cell>
+
+                                        <x-table.cell>S/ {{ $product->purchase_price }}</x-table.cell>
 
                                         <x-table.cell>
                                             <a class="btn btn-info btn-sm mb-1"

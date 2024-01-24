@@ -19,7 +19,7 @@ class CompanySeeder extends Seeder
         DB::table('companies')->insert([
             'name' => 'MECANICA AUTOMOTRIZ FLOPACH',
             'ruc' => '20610648771',
-            'phone' => '982654321',
+            'phone' => '957235173',
             'province' => 'Huanuco',
             'department' => 'Huanuco',
             'district' => 'Huanuco',

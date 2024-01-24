@@ -22,6 +22,7 @@ class SaleEdit extends Component
     public $methods_payment = [];
     public $types_payment = [];
     public $customers = [];
+    public $cf = [];
     public $cart = [];
 
     public $change = 0;
@@ -71,7 +72,7 @@ class SaleEdit extends Component
         $this->methods_payment = Sale::METHOD_PAYMENTS;
         $this->types_payment = Sale::TYPE_PAYMENTS;
         $this->customers = Customer::where('status', 'activo')->pluck('name', 'id');
-
+        $this->cf = Customer::find($this->editing->customer_id);
         $this->cart = Cart::session($this->editing->code_sale)->getContent()->sortBy('name');
 
         $dts = SaleDetail::where('sale_id', $this->editing->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get()->sortBy('name');
@@ -127,6 +128,11 @@ class SaleEdit extends Component
         return Sale::make();
     } /*para dejar vacios los inpust*/
 
+     
+    public function updatedEditingCustomerId($value){
+        $this->cf = Customer::find($value);
+    }
+    
     public function addProduct(Product $product, $cant = 1, $discount = 0)
     {
         if ($product->status == 'inactivo') {

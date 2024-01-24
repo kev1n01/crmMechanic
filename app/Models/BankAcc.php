@@ -13,5 +13,6 @@ class BankAcc extends Model
         'name',
         'cta_bank',
         'cta_interbank',
+        'nro',
     ];
 }

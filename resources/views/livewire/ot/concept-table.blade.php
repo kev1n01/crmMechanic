@@ -87,6 +87,8 @@
                                 <x-table.heading sortable wire:click="sortBy('name')" :direction="$sortField == 'name' ? $sortDirection : null">Nombre
                                 </x-table.heading>
 
+                                <x-table.heading sortable wire:click="sortBy('price')" :direction="$sortField == 'price' ? $sortDirection : null">Precio</x-table.heading>
+
                                 <x-table.heading sortable wire:click="sortBy('created_at')" :direction="$sortField == 'created_at' ? $sortDirection : null">Fecha
                                     creación</x-table.heading>
 
@@ -105,6 +107,8 @@
                                         <x-table.cell>{{ $concept->code }}</x-table.cell>
 
                                         <x-table.cell>{{ $concept->name }}</x-table.cell>
+                                        
+                                        <x-table.cell>S/. {{ $concept->price }}</x-table.cell>
 
                                         <x-table.cell>{{ \Carbon\Carbon::parse($concept->created_at)->format('d-m-Y') }}
                                         </x-table.cell>

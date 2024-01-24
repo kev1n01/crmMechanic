@@ -159,7 +159,7 @@ class OtCreateDirect extends Component
 
     public function addConcept(Concept $concept, $discount = 0)
     {
-        Cart::session($this->editing->vehicle)->add(intval($concept->code), $concept->name, 0, 1, array('discount' => $discount));
+        Cart::session($this->editing->vehicle)->add(intval($concept->code), $concept->name, $concept->price, 1, array('discount' => $discount));
         $this->searchProductService = '';
         $this->updateCartOptions();
         $this->emit('success_alert', 'Servicio agregado a la proforma');

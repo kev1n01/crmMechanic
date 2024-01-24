@@ -136,7 +136,7 @@
                                     @forelse ($concepts as $c)
                                         <span class="dropdown-item notify-item"
                                             wire:click.prevent="addConcept({{ $c->id }})">
-                                            <span>⚒️ {{ $c->name . ' - codigo: ' . $c->code }}</span>
+                                            <span>⚒️ {{ $c->name . ' - codigo: ' . $c->code . ' - precio: ' . $c->price }}</span>
                                         </span>
                                     @empty
                                         <a class="dropdown-item notify-item">
@@ -149,7 +149,7 @@
                                         <span class="dropdown-item notify-item"
                                             wire:click.prevent="addProduct({{ $p->id }})">
                                             <span>📦
-                                                {{ $p->name . ' - codigo: ' . $p->code . ' - stock: ' . $p->stock . ' - estado: ' . $p->status }}</span>
+                                                {{ $p->name . ' - codigo: ' . $p->sku . ' - stock: ' . $p->stock . ' - estado: ' . $p->status . ' - precio venta: ' . $p->sale_price . ' - precio compra: ' . $p->purchase_price }}</span>
                                         </span>
                                     @empty
                                         <a class="dropdown-item notify-item">
@@ -166,7 +166,7 @@
                                     <th width="40%">Producto</th>
                                     <th width="20%">Precio U.</th>
                                     <th width="15%">Cantidad</th>
-                                    <th width="15%">Descuento</th>
+                                    <th width="15%">Descuento %</th>
                                     <th width="20%">Subtotal</th>
                                     <th width="10%">Acción</th>
                                 </x-slot>

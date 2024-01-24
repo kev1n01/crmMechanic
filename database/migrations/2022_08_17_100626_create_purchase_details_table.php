@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('purchase_id')->nullable()->constrained();
             $table->foreignId('product_id')->nullable()->constrained();
             $table->integer('discount')->nullable();
+            $table->integer('typeAfectIgv')->nullable();
             $table->integer('quantity')->nullable();
             $table->decimal('price', 10, 2)->nullable();
             $table->timestamps();

@@ -22,8 +22,11 @@ class PurchaseEdit extends Component
     public $methods = [];
     public $types = [];
     public $providers = [];
+    public $pf = [];
 
     public $totalOG;
+    public $totalOE;
+    public $totaligvgrav;
     public $total;
     public $totalDiscount;
 
@@ -89,17 +92,16 @@ class PurchaseEdit extends Component
         $this->serial = substr($this->editing->nro_cpe, 0, 4);
         $this->correlative = substr($this->editing->nro_cpe, 7);
         $this->providers = Provider::where('status', 'activo')->pluck('name', 'id');
-
         $this->cart = Cart::session($this->editing->code_purchase)->getContent()->sortBy('name');
+        $this->pf = Provider::find($this->editing->provider_id);
 
-        $dtp = PurchaseDetail::where('purchase_id', $this->editing->id)->select('id', 'product_id', 'price', 'discount', 'quantity')->get();
+        $dtp = PurchaseDetail::where('purchase_id', $this->editing->id)->select('id', 'product_id', 'price', 'discount', 'typeAfectIgv', 'quantity')->get();
         if (count($dtp) == 0) {
             $dtp = [];
         } else {
             foreach ($dtp as $item) {
-                Cart::session($this->editing->code_purchase)->add($item->product_id, $item->product->name, $item->price, $item->quantity, ['discount' => $item->discount]);
+                Cart::session($this->editing->code_purchase)->add($item->product_id, $item->product->name, $item->price, $item->quantity, ['discount' => $item->discount, 'typeAfectIgv' => $item->typeAfectIgv]);
                 $id = Cart::session($this->editing->code_purchase)->get($item->product_id)->id;
-
                 $this->updateQuantityCart($id, $item->quantity, $item->discount);
             }
         }
@@ -138,6 +140,11 @@ class PurchaseEdit extends Component
         return Purchase::make();
     } /*para dejar vacios los inpust*/
 
+    public function updatedEditingProviderId($value)
+    {
+        $this->pf = Provider::find($value);
+    }
+
     public function updatedEditingTypeCpe($value)
     {
         if ($value == 'boleta') {
@@ -157,17 +164,17 @@ class PurchaseEdit extends Component
         $this->editing->nro_cpe = $this->serial . ' - ' . $value;
     }
 
-    public function addProduct(Product $product, $cant = 1, $discount = 0)
+    public function addProduct(Product $product, $cant = 1, $discount = 0, $typeAfectIgv = 20)
     {
         if ($product->status == 'inactivo') {
             $this->emit('error_alert', 'Este producto está inactivo');
             return;
         }
-        $item_exist = Cart::session($this->editing->code_purchase)->get($product->id);
-        if ($item_exist != null) {
-            Cart::session($this->editing->code_purchase)->add($product->id, $product->name, $item_exist->price, $cant, ['discount' => $item_exist->attributes['discount']]);
+        $item = Cart::session($this->editing->code_purchase)->get($product->id);
+        if ($item) {
+            $this->updateQuantityCart($product->id, $item->quantity + 1);
         } else {
-            Cart::session($this->editing->code_purchase)->add($product->id, $product->name, $product->purchase_price, $cant, ['discount' => $discount]);
+            Cart::session($this->editing->code_purchase)->add($product->id, $product->name, $product->purchase_price, $cant, ['discount' => $discount, 'typeAfectIgv' => $typeAfectIgv]);
         }
 
         $this->searchProduct = '';
@@ -184,10 +191,11 @@ class PurchaseEdit extends Component
     public function updateQuantityCart($id, $cant, $discount = 0)
     {
         $product = Product::find($id);
+        $item = Cart::session($this->editing->code_purchase)->get($product->id);
         if ($cant > 0) {
             $price_cart_exist = Cart::session($this->editing->code_purchase)->get($product->id)->price;
             $this->removeItem($product->id);
-            Cart::session($this->editing->code_purchase)->add($product->id, $product->name, $price_cart_exist, $cant, ['discount' => $discount]);
+            Cart::session($this->editing->code_purchase)->add($product->id, $product->name, $price_cart_exist, $cant, ['discount' => $discount, 'typeAfectIgv' => $item->attributes['typeAfectIgv']]);
         } else {
             $this->removeItem($product->id);
         }
@@ -196,10 +204,11 @@ class PurchaseEdit extends Component
 
     public function updateDiscountCart(Product $product, $discount)
     {
+        $item = Cart::session($this->editing->code_purchase)->get($product->id);
         if ($discount > 0) {
-            Cart::session($this->editing->code_purchase)->update($product->id, ['attributes' => ['discount' => $discount]]);
+            Cart::session($this->editing->code_purchase)->update($product->id, ['attributes' => ['discount' => $discount, 'typeAfectIgv' => $item->attributes['typeAfectIgv']]]);
         } else {
-            Cart::session($this->editing->code_purchase)->update($product->id, ['attributes' => ['discount' => 0]]);
+            Cart::session($this->editing->code_purchase)->update($product->id, ['attributes' => ['discount' => $discount = 0, 'typeAfectIgv' => $item->attributes['typeAfectIgv']]]);
         }
         $this->updateCartOptions();
     }
@@ -217,14 +226,51 @@ class PurchaseEdit extends Component
         $this->emit('success_alert', 'Lista de compra reiniciado');
     }
 
+    public function updateAfectIgvCart($id, $af)
+    {
+        $code = intval($id);
+        // $af == 20 ? $typeAfectIgv = 10 : $typeAfectIgv = 20;
+        if ($af == 20) {
+            $typeAfectIgv = 10;
+        }
+
+        if ($af == 10) {
+            $typeAfectIgv = 20;
+        }
+
+        $item = Cart::session($this->editing->code_purchase)->get($code);
+        Cart::session($this->editing->code_purchase)->update($code, ['attributes' => ['typeAfectIgv' => $typeAfectIgv, 'discount' => $item->attributes['discount']]]);
+        $this->updateCartOptions();
+    }
+
     public function calculeTotal()
     {
+        $this->totalOE = 0;
+        $this->totalOG = 0;
+        $this->totaligvgrav = 0;
         $this->totalDiscount = 0;
+
         $this->cart = Cart::session($this->editing->code_purchase)->getContent();
+        $afectGravada = $this->cart->filter(function ($i) {
+            return $i->attributes['typeAfectIgv'] === 10;
+        });
+
+        $afectExonerada = $this->cart->filter(function ($i) {
+            return $i->attributes['typeAfectIgv'] === 20;
+        });
+
+        foreach ($afectExonerada as $ae) {
+            $this->totalOE += $ae->price * $ae->quantity - (($ae->quantity * $ae->price) * ($ae->attributes['discount'] / 100));
+        }
+
+        foreach ($afectGravada as $ag) {
+            $this->totalOG += $ag->price * $ag->quantity - (($ag->quantity * $ag->price) * ($ag->attributes['discount'] / 100));
+            $this->totaligvgrav += $ag->price * $ag->quantity * 0.18 - (($ag->quantity * $ag->price) * ($ag->attributes['discount'] / 100)) * 0.18;
+        }
+
         foreach ($this->cart as $c) {
             $this->totalDiscount += $c->price * $c->quantity - (($c->quantity * $c->price) * ($c->attributes['discount'] / 100));
         }
-        $this->totalOG = $this->totalDiscount / 1.18;
     }
 
     public function cancel()

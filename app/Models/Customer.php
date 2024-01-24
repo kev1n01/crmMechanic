@@ -16,6 +16,7 @@ class Customer extends Model
     const TYPE_DOCUMENTS = [
         '6' => 'RUC',
         '1' => 'DNI',
+        '0' => 'SIN DOCUMENTO',
     ];
 
     use HasFactory;

@@ -182,7 +182,6 @@ class SaleCreate extends Component
         $this->change = 0;
     }
 
-    
     public function updatedEditingCustomerId($value){
         $this->cf = Customer::find($value);
     }

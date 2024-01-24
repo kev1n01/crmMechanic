@@ -1,4 +1,4 @@
-@section('title', 'Editar venta '.$editing->code_sale )
+@section('title', 'Editar venta ' . $editing->code_sale)
 <div>
     <div class="row mt-3">
         <div class="col-12">
@@ -13,46 +13,65 @@
                             Guardar
                         </button>
                     </div>
-                    <div class="col-lg-7">
+                    <div class="col-xl-6 col-lg-6 col-md-6">
                         <div class="card">
                             <div class="card-body">
-                                <div class="row g-2">
-                                    <x-input.input-tooltip-error class="col-xl-3" name="editing.code_sale"
+                                <div class="row">
+                                    <x-input.select-button class="col-xl-9" name="editing.customer_id" label="Cliente"
+                                        :options="$customers" :error="$errors->first('editing.customer_id')" :required=true
+                                        fnbtn="$emit('createprovider')" iconbtn="uil-user-plus" />
+                                </div>
+                                @if ($editing->customer_id > 0)
+                                    <div class="mt-2">
+                                        <ul class="mb-0 ms-2 list-inline">
+                                            <li class="list-inline-item">
+                                                <h5 class="mb-1">Cel: {{ $cf->phone }}</h5>
+                                                <h5 class="mb-1">N° documento: {{ $cf->num_doc }}</h5>
+                                            </li>
+                                            <li class="list-inline-item ps-3">
+                                                <h5 class="mb-1">Dirección: {{ $cf->address }}</h5>
+                                                <h4 class="mb-1">
+                                                    <span
+                                                        class="badge badge-{{ $cf->status_color }}-lighten">{{ $cf->status }}</span>
+                                                </h4>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <x-input.input-tooltip-error class="col-xl-4 mt-1" name="editing.code_sale"
                                         label="Código" type="text" :error="$errors->first('editing.code_sale')" :required=true :disabled=true />
 
-                                    <x-input.select class="col-xl-8" name="editing.customer_id" label="Cliente"
-                                        :required=true :options="$customers" :error="$errors->first('editing.customer_id')" />
-                                    <div class="col-xl-1">
-                                        <button type="button" wire:click="$emit('createcustomer')"
-                                            class="btn btn-primary rounded btn-md" style="margin-top:30px;"><i
-                                                class="uil-user-plus"></i></button>
-                                    </div>
-                                    <x-input.datepicker class="col-xl-6 mt-2" name="editing.date_sale" label="Fecha"
+                                    <x-input.datepicker class="col-xl-4 mt-1" name="editing.date_sale" label="Fecha"
                                         id="dp1" :error="$errors->first('editing.date_sale')" :required=true />
 
-                                    <x-input.select class="col-xl-6 mt-2" name="editing.type_payment" :disabled=true
-                                        label="Tipo de pago" :required=true :options="$types_payment" :error="$errors->first('editing.type_payment')" />
+                                    <x-input.select class="col-xl-4 mt-1" name="editing.type_payment"
+                                        label="Tipo de pago" :required=true :options="$types_payment" :error="$errors->first('editing.type_payment')" :disabled=true />
 
                                     @if ($editing->type_payment)
-                                        <x-input.select class="col-xl-6 mt-2" name="editing.status" label="Estado"
+                                        <x-input.select class="col-xl-6 mt-1" name="editing.status" label="Estado"
                                             :required=true :options="$statuses" :error="$errors->first('editing.status')" :disabled=true />
 
-                                        <x-input.select class="col-xl-6 mt-2" name="editing.method_payment"
+                                        <x-input.select class="col-xl-6 mt-1" name="editing.method_payment"
                                             label="Metodo de pago" :required=true :options="$methods_payment" :error="$errors->first('editing.method_payment')" />
                                     @endif
-                                    <x-input.textarea class="col-xl-12 mt-2 " name="editing.observation"
-                                        label="Observaciones" />
+                                    <x-input.textarea class="col-xl-12 mt-1" name="editing.observation"
+                                        label="Observaciones" rows="1" />
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-5">
+                    <div class="col-xl-6 col-lg-6 col-md-6">
                         <div class="card">
                             <div class="card-body">
-                                <div class="p-1 mt-4 mt-lg-0 rounded">
-                                    <h4 class="header-title mt-3 text-center">Monto total</h4>
+                                <div class="mt-2 p-1">
+                                    <h4 class="header-title mt-2 text-center">Monto total</h4>
                                     <div class="table-responsive">
-                                        <table class="table mb-4">
+                                        <table class="table mb-2">
                                             <tbody>
                                                 <tr>
                                                     <td class="fs-2 text-center" colspan="2">
@@ -62,20 +81,15 @@
                                                     <td class="fs-4">Pago: </td>
                                                     <td>
                                                         <input wire:model="editing.cash"
-                                                            {{ $editing->type_payment == 'credito' ? 'disabled' : '' }}
+                                                            {{ !$editing->customer_id || $editing->status != 'pagado' || count($cart) == 0 ? 'disabled' : '' }}
                                                             type="number" min="0"
                                                             class="fs-4 text-center form-control form-control-light">
+
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="fs-4">Cambio: </td>
-                                                    <td class="fs-4">
-                                                        @if ($editing->cash > $totalDiscount)
-                                                            S/{{ number_format($editing->cash - $totalDiscount, 2) }}
-                                                        @else
-                                                            S/{{ number_format(0, 2) }}
-                                                        @endif
-                                                    </td>
+                                                    <td class="fs-4"> S/{{ number_format($change, 2) }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -125,7 +139,7 @@
                                             <th width="40%">Producto</th>
                                             <th width="20%">Precio U.</th>
                                             <th width="15%">Cantidad</th>
-                                            <th width="15%">Descuento</th>
+                                            <th width="15%">Descuento %</th>
                                             <th width="10%">Subtotal</th>
                                             <th width="10%">Acción</th>
                                         </x-slot>

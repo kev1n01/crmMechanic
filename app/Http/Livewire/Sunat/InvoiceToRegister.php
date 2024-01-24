@@ -10,15 +10,15 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sunat;
 use App\Services\ProductService;
-use App\Traits\WithInvoiceSunat;
+use App\Traits\WithFacturaSunat;
 use Carbon\Carbon;
 use Livewire\Component;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Luecano\NumeroALetras\NumeroALetras;
 
-class CreateInvoiceTicket extends Component
+class InvoiceToRegister extends Component
 {
-    use WithInvoiceSunat;
+    use WithFacturaSunat;
 
     public $typescpe,
         $typescurrency,
@@ -265,7 +265,7 @@ class CreateInvoiceTicket extends Component
             ],
             'tipoMoneda' => $this->comprobant->moneda,
             'client' => [
-                'tipoDoc' => strlen($this->customer->num_doc) === 8 ? '1' : '6' ,
+                'tipoDoc' => '6',
                 'numDoc' => $this->customer->num_doc,
                 'rznSocial' => $this->customer->name,
                 'address' => [
@@ -336,10 +336,9 @@ class CreateInvoiceTicket extends Component
             $this->comprobant->fechaEmision = Carbon::parse($this->comprobant->fechaEmision)->format('Y-m-d');
 
             $this->comprobant->save();
-            return redirect()->route('comprobantes');
-            // return response()->streamDownload(function () {
-            //     echo $this->getComprobantPdf($this->json);
-            // }, 'invoice.pdf');
+            return response()->streamDownload(function () {
+                echo $this->getComprobantPdf($this->json);
+            }, 'invoice.pdf');
         } else {
             $this->emit('error_alert', 'Error al validar la factura');
         }
@@ -367,7 +366,7 @@ class CreateInvoiceTicket extends Component
             $this->cart = [];
         }
 
-        return view('livewire.sunat.create-invoice-ticket')
+        return view('livewire.sunat.invoice-to-register')
             ->extends('layouts.admin.app')
             ->section('content');
     }
