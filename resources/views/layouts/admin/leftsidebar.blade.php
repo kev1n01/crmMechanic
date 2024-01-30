@@ -1,4 +1,4 @@
-a<div class="leftside-menu position-fixed">
+<div class="leftside-menu position-fixed">
 
     <!-- LOGO -->
     <a href="#" class="logo text-center logo-light">
