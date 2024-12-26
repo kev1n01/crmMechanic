@@ -10,7 +10,6 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sunat;
 use App\Services\ProductService;
-use App\Traits\WithFacturaSunat;
 use Carbon\Carbon;
 use Livewire\Component;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
@@ -18,8 +17,6 @@ use Luecano\NumeroALetras\NumeroALetras;
 
 class InvoiceToRegister extends Component
 {
-    use WithFacturaSunat;
-
     public $typescpe,
         $typescurrency,
         $typespayments,
