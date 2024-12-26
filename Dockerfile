@@ -1,4 +1,4 @@
-FROM kevar01/flopach:latest
+FROM elrincondeisma/octane:latest
 
 RUN curl -sS https://getcomposer.org/installer | php -- \
      --install-dir=/usr/local/bin --filename=composer
