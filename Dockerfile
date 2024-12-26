@@ -13,6 +13,7 @@ RUN composer install
 RUN composer require laravel/octane spiral/roadrunner
 COPY .env.example .env
 RUN mkdir -p /app/storage/logs
+RUN php artisan key:generate
 RUN php artisan cache:clear
 RUN php artisan view:clear
 RUN php artisan config:clear
